@@ -2394,7 +2394,11 @@ function openDetail(id) {
         <span style="color:var(--ink-3);cursor:default">${f.title.split('—')[0].trim()}</span>
       </div>
       <div class="d-tags">${f.tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}</div>
-      <div class="d-title">${f.title}</div>
+      <div class="d-title">${f.title}
+        <button onclick="toggleSave(${f.id})" style="background:none;border:none;cursor:pointer;font-size:20px;margin-left:10px;color:var(--ink-4)">
+          ${getSaved().includes(f.id) ? '♥' : '♡'}
+        </button>
+      </div>
       <div class="d-desc">${f.detail}</div>
     </div>
     <div class="d-summary">
