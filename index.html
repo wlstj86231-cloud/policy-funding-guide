@@ -176,6 +176,7 @@ header {
   transition: color .15s, background .15s;
   white-space: nowrap;
 }
+.ham-btn { display: none; }
 .h-nav a:hover { color: var(--ink); background: var(--surface-2); }
 .h-nav a.on  { color: var(--blue); font-weight: 600; }
 
@@ -1293,8 +1294,16 @@ footer {
   .d-summary { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
-  .h-search { display: none; }
-  .h-nav a:not(:last-child):not(.on) { display: none; }
+  .h-top { gap: 12px; }
+  .ham-btn { display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; background: none; border: 1px solid var(--line-2);
+    border-radius: var(--r); font-size: 18px; cursor: pointer; }
+  .h-nav { display: none; }
+  .h-nav.open { display: flex; flex-direction: column; position: absolute;
+    top: 64px; right: 16px; background: var(--white);
+    border: 1px solid var(--line); border-radius: var(--r);
+    padding: 8px; min-width: 160px; z-index: 300;
+    box-shadow: 0 4px 16px rgba(0,0,0,.1); }
   .page { padding: 18px 16px 60px; }
   .detail-top, .d-body, .related-section { padding-left: 18px; padding-right: 18px; }
   .m-head { padding: 20px 20px 0; }
@@ -1320,6 +1329,7 @@ footer {
       </svg>
       <input id="search-input" type="text" placeholder="자금명, 업종, 키워드 검색..." oninput="handleSearch(this.value)">
     </div>
+    <button class="ham-btn" id="ham-btn" onclick="toggleHamburger()" aria-label="메뉴">☰</button>
     <nav class="h-nav">
       <a href="#" onclick="filterCat(event,'전체')" class="on" id="nav-all">전체</a>
       <a href="#" onclick="filterCat(event,'소상공인')">소상공인</a>
@@ -2079,6 +2089,14 @@ function showLiveFeed(page, cate) {
 }
 
 /* ── modal ── */
+function toggleHamburger() {
+  document.querySelector('.h-nav').classList.toggle('open');
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.h-nav') && !e.target.closest('#ham-btn')) {
+    document.querySelector('.h-nav').classList.remove('open');
+  }
+});
 function openModal() {
   document.getElementById('modal-bg').classList.add('open');
   document.body.style.overflow = 'hidden';
