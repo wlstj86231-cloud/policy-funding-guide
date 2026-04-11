@@ -2113,6 +2113,7 @@ function openDetail(id) {
 
   showView('detail');
   window.scrollTo({top:0,behavior:'smooth'});
+  document.title = f.title.split('—')[0].trim() + ' — 정책자금 백과';
 }
 
 /* ── filter / search ── */
@@ -2181,6 +2182,7 @@ function goHome() {
   showView('list');
   renderSections(FUNDS);
   window.scrollTo({top:0,behavior:'smooth'});
+  document.title = '정책자금 백과 — 정부 지원 정보 모음';
 }
 
 function showView(v) {
