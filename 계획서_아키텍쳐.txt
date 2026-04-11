@@ -1,0 +1,294 @@
+╔══════════════════════════════════════════════════════════╗
+║        정책자금 백과 — 전체 계획서 (Flash용)              ║
+╚══════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+프로젝트 파일 구조
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  C:\Users\wlstj\Desktop\국가정책자금\
+    policy-fund-site.html   ← 웹사이트 본체 (깃 O)
+    bizinfo-proxy.js        ← Cloudflare Workers 서버 코드 (깃 X)
+    필수_행동강령_cli.txt    (깃 X)
+    계획서_아키텍쳐.txt      (깃 X)
+    맥락노트.txt             (깃 X)
+    체크리스트_업데이트로그.txt (깃 X)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FUNDS 배열 필드 목록
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  id, cat, tags[], target[], title, excerpt
+  limit, rate, org, updated, deadline
+  detail, target_desc, amount_desc, rate_desc, period_desc
+  steps[], agency, agencyName, agencyNote, docs
+
+  cat 허용값   : '소상공인' / '창업' / '중소기업' / '고용' / '비사업자'
+  target 허용값: '사업자' / '예비창업자' / '고용주' / '비사업자'
+  tags.c 허용값: tb(파랑) tg(초록) ta(주황) tr(빨강) tp(보라)
+  deadline     : '상시' 또는 '2026.12.31' 형식
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+단계별 작업 목록
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+════════════════════════════════════════
+1단계 완료 (1~16번)
+════════════════════════════════════════
+
+  건드리지 않는다.
+
+════════════════════════════════════════
+2단계 — 데이터 늘리기
+════════════════════════════════════════
+
+  번호 17. 소상공인 항목 7개 추가 (5→12개)
+  ─────────────────────────────────────────
+  작업: FUNDS 배열에 cat='소상공인' 항목 7개 추가
+  규칙: 기존 id 1~5 건드리지 않음. 새 id는 19부터.
+  참고: https://www.semas.or.kr
+  내용:
+    1. 청년 소상공인 특별자금 (만 39세 이하 우대 금리, 소진공)
+    2. 여성 소상공인 특별자금 (여성 사업주 우대, 소진공)
+    3. 장애인 소상공인 특별자금 (장애인 사업주 우대, 소진공)
+    4. 소상공인 협업 활성화 자금 (공동 사업 추진, 소진공)
+    5. 폐업 예정 소상공인 지원 (폐업 준비·전직 지원, 소진공)
+    6. 소상공인 저금리 대환대출 (고금리 대출 갈아타기, 소진공)
+    7. 소상공인 특례보증 (피해 소상공인 신용보증, 신보·지역신보)
+
+  번호 18. 창업 항목 8개 추가 (4→12개)
+  ─────────────────────────────────────────
+  작업: FUNDS 배열에 cat='창업' 항목 8개 추가
+  규칙: 기존 id 6~9 건드리지 않음. id는 17번 후 이어서.
+  참고: https://www.k-startup.go.kr
+  내용:
+    1. 재도전성공패키지 (폐업 경험자 창업, 창업진흥원)
+    2. 창업도약패키지 (창업 3~7년 성장, 창업진흥원)
+    3. 스케일업 팁스(TIPS) (민간 투자 연계, 중기부)
+    4. 소셜벤처 육성 지원 (사회적 가치 창출, 중기부)
+    5. 농식품 창업 지원 (농업 기반 창업, 농림부)
+    6. 대학 창업 지원 (재학생·졸업생, 창업진흥원)
+    7. 로컬 크리에이터 (지역 자원 활용, 중기부)
+    8. 창업 중심대학 (대학 연계 보육·자금, 창업진흥원)
+
+  번호 19. 중소기업 항목 7개 추가 (3→10개)
+  ─────────────────────────────────────────
+  작업: FUNDS 배열에 cat='중소기업' 항목 7개 추가
+  규칙: 기존 id 10~12 건드리지 않음.
+  참고: https://www.sbc.or.kr
+  내용:
+    1. 중소기업 운전자금 (시중은행 연계, 중진공)
+    2. 혁신성장 자금 (신기술·혁신 기업, 중진공)
+    3. 소재부품장비 강화 자금 (국산화, 중진공)
+    4. 녹색성장 자금 (친환경·탄소중립, 중진공)
+    5. IP 담보 대출 (특허·상표권 담보, 기보)
+    6. 중소기업 R&D 자금 (연구개발 투자, 중기부)
+    7. 지역 특화 산업 자금 (지역 주력 산업, 중진공)
+
+  번호 20. 고용 항목 7개 추가 (3→10개)
+  ─────────────────────────────────────────
+  작업: FUNDS 배열에 cat='고용' 항목 7개 추가
+  규칙: 기존 id 13~15 건드리지 않음.
+  참고: https://www.work24.go.kr
+  내용:
+    1. 고령자 고용연장 지원금 (60세 이상 계속 고용)
+    2. 육아휴직 지원금 (육아휴직 사용 사업주)
+    3. 출산육아기 대체인력 지원금 (대체인력 채용)
+    4. 일학습병행 지원금 (현장 훈련 병행)
+    5. 특별고용촉진장려금 (취약계층 고용)
+    6. 고용창출장려금 (신규 일자리 창출)
+    7. 고용안정장려금 (실근로시간 단축)
+
+  번호 21. 비사업자 항목 5개 추가 (3→8개)
+  ─────────────────────────────────────────
+  작업: FUNDS 배열에 cat='비사업자' 항목 5개 추가
+  규칙: 기존 id 16~18 건드리지 않음.
+  참고: https://www.kinfa.or.kr
+  내용:
+    1. 미소금융 창업대출 (저신용자 창업, 서민금융진흥원)
+    2. 사잇돌 대출 (중신용자 중금리, 서민금융진흥원)
+    3. 바꿔드림론 (고금리→저금리 대환, 서민금융진흥원)
+    4. 소액생계비 대출 (긴급 소액, 서민금융진흥원)
+    5. 청년 햇살론 (만 34세 이하 저금리, 서민금융진흥원)
+
+════════════════════════════════════════
+3단계 — 기능 추가
+════════════════════════════════════════
+
+  번호 22. 카드 클릭 시 탭 제목 바꾸기
+  ─────────────────────────────────────────
+  할 일:
+    openDetail 함수 맨 끝에 1줄 추가:
+      document.title = f.title.split('—')[0].trim() + ' — 정책자금 백과';
+    goHome 함수 맨 끝에 1줄 추가:
+      document.title = '정책자금 백과 — 정부 지원 정보 모음';
+
+  번호 23. FUNDS 모든 항목에 deadline 필드 추가
+  ─────────────────────────────────────────
+  할 일: 모든 FUNDS 항목에 deadline 필드를 추가한다.
+    상시: deadline: '상시'
+    마감: deadline: '2026.12.31' (날짜 형식)
+  다른 필드는 건드리지 않는다.
+
+  번호 24. 카드에 D-n 배지 표시
+  ─────────────────────────────────────────
+  할 일: 23번 완료 후 작업.
+    renderCard 함수 fc-right div 안에 배지 추가.
+    D-30 이하: 빨간 배지 / D-31~60: 주황 배지 / 상시: 표시 없음
+    날짜 계산:
+      const diff = Math.ceil((new Date(f.deadline.replace(/\./g,'-')) - new Date()) / 86400000);
+    배지 HTML:
+      `<span style="font-size:11px;font-weight:700;background:#FEE2E2;color:#B91C1C;padding:2px 7px;border-radius:8px">D-${diff}</span>`
+
+  번호 25-A. 햄버거 메뉴 CSS 추가 (25번 1/3)
+  ─────────────────────────────────────────
+  할 일: 기존 @media (max-width: 600px) 블록 안에 아래 CSS 추가:
+    .ham-btn { display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; background: none; border: 1px solid var(--line-2);
+      border-radius: var(--r); font-size: 18px; cursor: pointer; }
+  기본(전체 너비) CSS에 추가:
+    .ham-btn { display: none; }
+
+  번호 25-B. 햄버거 메뉴 HTML 추가 (25번 2/3)
+  ─────────────────────────────────────────
+  할 일: h-top div 안 h-nav 바로 앞에 버튼 1개 추가:
+    <button class="ham-btn" id="ham-btn" onclick="toggleHamburger()" aria-label="메뉴">☰</button>
+
+  번호 25-C. 햄버거 메뉴 JS 추가 (25번 3/3)
+  ─────────────────────────────────────────
+  할 일: JS 영역에 함수 1개 + 이벤트 1개 추가:
+    function toggleHamburger() {
+      document.querySelector('.h-nav').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.h-nav') && !e.target.closest('#ham-btn')) {
+        document.querySelector('.h-nav').classList.remove('open');
+      }
+    });
+  또한 @media (max-width: 600px) 에 .h-nav.open 스타일 추가:
+    .h-nav.open { display: flex; flex-direction: column; position: absolute;
+      top: 64px; right: 16px; background: var(--white);
+      border: 1px solid var(--line); border-radius: var(--r);
+      padding: 8px; min-width: 160px; z-index: 300;
+      box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+
+  번호 26. 카드 찜하기 버튼 추가
+  ─────────────────────────────────────────
+  할 일:
+    renderCard 함수 fc-meta div 뒤에 버튼 추가:
+      `<button onclick="event.stopPropagation();toggleSave(${f.id})"
+        style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--ink-4)">
+        ${getSaved().includes(f.id) ? '♥' : '♡'}
+      </button>`
+    JS에 함수 2개 추가:
+      function getSaved() {
+        return JSON.parse(localStorage.getItem('pf_saved') || '[]');
+      }
+      function toggleSave(id) {
+        const list = getSaved();
+        const idx  = list.indexOf(id);
+        if (idx === -1) list.push(id);
+        else list.splice(idx, 1);
+        localStorage.setItem('pf_saved', JSON.stringify(list));
+        // 현재 뷰 다시 렌더 (목록 갱신)
+        const sections = document.getElementById('post-sections');
+        if (sections && sections.innerHTML) renderSections(FUNDS);
+      }
+
+  번호 27. "저장한 정보" 탭 추가
+  ─────────────────────────────────────────
+  할 일: 26번 완료 후 작업.
+    cat-tabs-inner 에 탭 추가 (보증 탭 뒤에):
+      <span class="cat-tab" id="saved-tab" onclick="showSaved()">♥ 저장한 정보</span>
+    JS에 함수 1개 추가:
+      function showSaved() {
+        const ids = getSaved();
+        const funds = FUNDS.filter(f => ids.includes(f.id));
+        document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('on'));
+        document.getElementById('saved-tab').classList.add('on');
+        showView('list');
+        document.getElementById('post-sections').innerHTML = funds.length
+          ? `<div class="fund-section"><div class="sec-head"><span class="sec-name">저장한 정보</span><span class="sec-cnt">${funds.length}건</span></div><div class="card-stack">${funds.map(renderCard).join('')}</div></div>`
+          : `<p style="color:var(--ink-4);text-align:center;padding:48px 0;font-size:14px">아직 저장한 정보가 없습니다.<br>카드의 ♡ 버튼을 눌러 저장해보세요.</p>`;
+      }
+
+════════════════════════════════════════
+4단계 — 이메일 연동
+════════════════════════════════════════
+
+  번호 28. EmailJS 키 3개 입력
+  ─────────────────────────────────────────
+  할 일: HTML 상단 script 안 3줄 교체:
+    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   → 실제 값
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  → 실제 값
+    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   → 실제 값
+  발급 방법: 맥락노트.txt 참고.
+
+  번호 29. 중복 신청 방지 (24시간 이내 같은 번호)
+  ─────────────────────────────────────────
+  할 일: 28번 완료 후 작업.
+    submitForm 함수 맨 앞 e.preventDefault(); 바로 뒤에 추가:
+      const _sent = JSON.parse(localStorage.getItem('pf_consult_sent') || 'null');
+      if (_sent && (Date.now() - _sent.time) < 86400000) {
+        alert('이미 신청하셨습니다. 담당자가 연락드릴 예정입니다.');
+        return;
+      }
+    showDone 함수 맨 앞에 추가:
+      localStorage.setItem('pf_consult_sent',
+        JSON.stringify({ phone: document.getElementById('f-phone').value, time: Date.now() }));
+
+════════════════════════════════════════
+5단계 — Cloudflare Workers API 연동
+════════════════════════════════════════
+
+  번호 30. 기업마당 API 키 발급
+  ─────────────────────────────────────────
+  할 일:
+    1. https://www.data.go.kr → 로그인
+    2. "중소기업지원사업목록" 검색 → 활용신청
+    3. 1~2시간 후 마이페이지 → 오픈API → 인증키(Encoding) 복사
+
+  번호 31-A. Cloudflare 계정 만들기
+  ─────────────────────────────────────────
+  할 일: https://workers.cloudflare.com → 무료 계정 생성
+
+  번호 31-B. Workers 프로젝트 생성
+  ─────────────────────────────────────────
+  할 일:
+    Dashboard → Workers & Pages → Create application → Create Worker
+    이름 입력 (예: bizinfo-proxy) → Create 클릭
+
+  번호 31-C. 코드 붙여넣기 및 배포
+  ─────────────────────────────────────────
+  할 일:
+    편집기에서 기존 코드 전체 선택 후 삭제
+    bizinfo-proxy.js 파일 내용 전체 복사 → 붙여넣기
+    Deploy 버튼 클릭
+    배포 완료 후 표시되는 주소 메모
+    (예: https://bizinfo-proxy.내아이디.workers.dev)
+
+  번호 31-D. 환경 변수에 API 키 입력
+  ─────────────────────────────────────────
+  할 일:
+    Workers 프로젝트 → Settings → Variables and Secrets
+    Add variable 클릭
+    Variable name: BIZINFO_API_KEY
+    Value: 30번에서 복사한 API 키
+    Save 클릭
+
+  번호 32. HTML에 Workers 주소 입력
+  ─────────────────────────────────────────
+  할 일: HTML 상단 script 안 아래 줄 찾기:
+    const PROXY_URL = 'YOUR_PROXY_URL';
+  31-C에서 메모한 주소로 교체:
+    const PROXY_URL = 'https://bizinfo-proxy.내아이디.workers.dev';
+
+  번호 33. 최신 공고 탭 동작 확인
+  ─────────────────────────────────────────
+  할 일: 32번 완료 후 확인:
+    - "📢 최신 공고" 탭 클릭 → 공고 목록 표시 여부
+    - 분야 필터 버튼 작동 여부
+    - 마감일 배지 표시 여부
+    - 페이지 이동 버튼 작동 여부
+    오류 시 체크리스트 오류 로그에 기록
+
