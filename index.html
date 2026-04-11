@@ -1296,10 +1296,10 @@ footer {
   .d-summary { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
-  .consult-strip-inner { flex-direction: column; gap: 8px; text-align: center; }
-  .consult-strip-label { font-size: 10px; }
-  .consult-strip-label strong { font-size: 11px; }
-  .btn-strip { font-size: 10px; padding: 3px 10px; }
+  .consult-strip-inner { flex-direction: row; gap: 8px; justify-content: center; }
+  .consult-strip-label { font-size: 9px; white-space: nowrap; }
+  .consult-strip-label strong { display: none; }
+  .btn-strip { font-size: 9px; padding: 3px 8px; }
   .h-top { gap: 12px; }
   .ham-btn { display: flex; align-items: center; justify-content: center;
     width: 36px; height: 36px; background: none; border: 1px solid var(--line-2);
