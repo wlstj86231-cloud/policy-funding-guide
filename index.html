@@ -16,13 +16,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
   // ★ EmailJS 설정 (28번 작업 시 입력)
-  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
-  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+  const EMAILJS_SERVICE_ID  = 'service_n9kkhv6';
+  const EMAILJS_TEMPLATE_ID = 'template_9oo9dsn';
+  const EMAILJS_PUBLIC_KEY  = 'XvEpYnrVRgnYgXPId';
 
   // ★ Cloudflare Workers 주소 (31번 작업 완료 후 입력)
   // 예시: 'https://bizinfo-proxy.내아이디.workers.dev'
-  const PROXY_URL = 'YOUR_PROXY_URL';
+  const PROXY_URL = 'https://bizinfo-proxy.wlstj86231-cloud.workers.dev';
 
   document.addEventListener('DOMContentLoaded', function(){
     if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
