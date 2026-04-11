@@ -1341,6 +1341,7 @@ footer {
       <a href="#" onclick="filterCat(event,'소상공인')">소상공인</a>
       <a href="#" onclick="filterCat(event,'창업')">창업</a>
       <a href="#" onclick="filterCat(event,'고용')">고용</a>
+      <a href="#" onclick="showSaved()">찜한 정보</a>
     </nav>
   </div>
 
@@ -2475,11 +2476,14 @@ function chipFilter(btn, val) {
   renderSections(filtered);
 }
 
-function resetChip() {
-  activeChip = null;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+function showSaved() {
+  const savedIds = getSaved();
+  const filtered = FUNDS.filter(f => savedIds.includes(f.id));
+  activeCat = '찜한 정보';
+  document.querySelectorAll('.h-nav a').forEach(a=>a.classList.remove('on'));
   showView('list');
-  renderSections(FUNDS);
+  renderSections(filtered);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function handleSearch(val) {
