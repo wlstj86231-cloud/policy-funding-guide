@@ -2340,6 +2340,10 @@ function renderCard(f) {
         <span class="fm">한도 <b>${f.limit}</b></span>
         <span class="fm">금리 <b>${f.rate}</b></span>
         <span class="fm" style="margin-left:auto;font-size:12px">${f.updated} 기준</span>
+        <button onclick="event.stopPropagation();toggleSave(${f.id})"
+          style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--ink-4)">
+          ${getSaved().includes(f.id) ? '♥' : '♡'}
+        </button>
       </div>
     </div>
     <div class="fc-right">
@@ -2347,6 +2351,20 @@ function renderCard(f) {
       <span class="fc-rate">${f.rate}</span>
     </div>
   </div>`;
+}
+
+function getSaved() {
+  return JSON.parse(localStorage.getItem('pf_saved') || '[]');
+}
+
+function toggleSave(id) {
+  const list = getSaved();
+  const idx  = list.indexOf(id);
+  if (idx === -1) list.push(id);
+  else list.splice(idx, 1);
+  localStorage.setItem('pf_saved', JSON.stringify(list));
+  const sections = document.getElementById('post-sections');
+  if (sections && sections.innerHTML) renderSections(FUNDS);
 }
 
 function renderSideCats() {
