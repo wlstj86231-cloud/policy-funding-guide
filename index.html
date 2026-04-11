@@ -183,9 +183,11 @@ header {
 /* 민간 컨설턴트 배너 */
 .consult-strip {
   background: var(--ink);
-  height: 50px;
+  height: auto;
+  min-height: 50px;
   display: flex;
   align-items: center;
+  padding: 12px 0;
 }
 .consult-strip-inner {
   max-width: 1080px;
@@ -198,7 +200,7 @@ header {
   gap: 16px;
 }
 .consult-strip-label {
-  font-size: 15px;
+  font-size: 14px;
   color: rgba(255,255,255,.55);
   display: flex;
   align-items: center;
@@ -207,7 +209,7 @@ header {
 .consult-strip-label strong {
   color: rgba(255,255,255,.92);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
 }
 .consult-strip-dot {
   width: 6px;
@@ -223,10 +225,10 @@ header {
   background: rgba(255,255,255,.12);
   border: 1px solid rgba(255,255,255,.22);
   color: rgba(255,255,255,.9);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   font-family: var(--font-sans);
-  padding: 7px 18px;
+  padding: 6px 14px;
   border-radius: 14px;
   transition: background .15s, color .15s;
   white-space: nowrap;
@@ -1294,6 +1296,7 @@ footer {
   .d-summary { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
+  .consult-strip-inner { flex-direction: column; gap: 12px; text-align: center; }
   .h-top { gap: 12px; }
   .ham-btn { display: flex; align-items: center; justify-content: center;
     width: 36px; height: 36px; background: none; border: 1px solid var(--line-2);
