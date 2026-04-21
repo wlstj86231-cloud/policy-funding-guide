@@ -383,11 +383,10 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
   .d-summary{grid-template-columns:1fr}
   .d-si{border-right:none;border-bottom:1px solid var(--line)}
   .c-strip-label>span:not(.ad-label){display:none}
-  /* 모바일 배너 — 2줄 컴팩트 */
-  .c-strip{height:auto;padding:8px 0}
-  .c-strip-in{flex-direction:column;align-items:flex-start;gap:5px;padding:0 16px}
-  .c-strip-label{gap:7px;font-size:13px}
-  .btn-strip{padding:6px 18px;border-radius:14px;font-size:13px}
+  .c-strip{height:40px}
+  .c-strip-in{padding:0 14px;gap:10px}
+  .c-strip-label{font-size:12px;gap:6px}
+  .btn-strip{font-size:12px;padding:5px 13px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -1536,7 +1535,11 @@ document.addEventListener('keydown', function(e) {
     closeModal();
   }
 });
-
+// 카테고리/상세 페이지 문의하기 버튼 → 자동 모달 오픈
+if (new URLSearchParams(window.location.search).get('contact') === '1') {
+  window.history.replaceState({}, '', '/');
+  setTimeout(openModal, 100);
+}
 /* ══════════════════════════════════════
    MODAL
 ══════════════════════════════════════ */
