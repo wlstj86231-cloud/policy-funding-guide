@@ -10,10 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -70,6 +70,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,11 +85,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            PolicyFundTheme {
-                PolicyFundApp()
-            }
-        }
+        setContent { PolicyFundTheme { PolicyFundApp() } }
     }
 }
 
@@ -103,9 +100,10 @@ private fun PolicyFundApp() {
     val programs = remember { FundRepository.programs }
     val filtered = programs.filter { fund ->
         val q = query.trim()
-        val queryMatch = q.isBlank() ||
-            listOf(fund.title, fund.summary, fund.agency, fund.target, fund.note)
-                .any { it.contains(q, ignoreCase = true) }
+        val queryMatch = q.isBlank() || listOf(
+            fund.title, fund.summary, fund.detail, fund.agency, fund.agencyName,
+            fund.target, fund.note, fund.tags.joinToString(" ")
+        ).any { it.contains(q, ignoreCase = true) }
         val categoryMatch = category == null || fund.category == category
         val applicantMatch = applicant == null || applicant in fund.applicantTypes
         queryMatch && categoryMatch && applicantMatch
@@ -118,49 +116,27 @@ private fun PolicyFundApp() {
             TopAppBar(
                 title = {
                     Column {
-                        Text("정책자금 백과", fontWeight = FontWeight.ExtraBold)
-                        Text("모바일 정책자금 탐색", style = MaterialTheme.typography.labelMedium)
+                        Text("???? ??", fontWeight = FontWeight.ExtraBold)
+                        Text("??? ???? ??", style = MaterialTheme.typography.labelMedium)
                     }
                 },
                 navigationIcon = {
                     if (selected != null) {
                         IconButton(onClick = { selected = null }) {
-                            Icon(Icons.Outlined.ArrowBack, contentDescription = "뒤로")
+                            Icon(Icons.Outlined.ArrowBack, contentDescription = "??")
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         },
         bottomBar = {
             if (selected == null) {
                 NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                    NavigationBarItem(
-                        selected = true,
-                        onClick = {},
-                        icon = { Icon(Icons.Outlined.Home, contentDescription = null) },
-                        label = { Text("홈") }
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = {},
-                        icon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                        label = { Text("검색") }
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = {},
-                        icon = { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) },
-                        label = { Text("저장") }
-                    )
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = {},
-                        icon = { Icon(Icons.Outlined.Menu, contentDescription = null) },
-                        label = { Text("더보기") }
-                    )
+                    NavigationBarItem(true, {}, { Icon(Icons.Outlined.Home, contentDescription = null) }, label = { Text("?") })
+                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Search, contentDescription = null) }, label = { Text("??") })
+                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) }, label = { Text("??") })
+                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Menu, contentDescription = null) }, label = { Text("???") })
                 }
             }
         },
@@ -169,9 +145,7 @@ private fun PolicyFundApp() {
         AnimatedContent(
             targetState = selected,
             label = "screen",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+            modifier = Modifier.fillMaxSize().padding(padding)
         ) { current ->
             if (current == null) {
                 HomeScreen(
@@ -208,13 +182,9 @@ private fun HomeScreen(
     LazyColumn(
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
+        modifier = Modifier.fillMaxSize().statusBarsPadding()
     ) {
-        item {
-            HeroCard(programs.size)
-        }
+        item { HeroCard(programs.size) }
         item {
             OutlinedTextField(
                 value = query,
@@ -222,15 +192,13 @@ private fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                placeholder = { Text("예: 청년, 창업, 고용, 대환, 보증") },
+                placeholder = { Text("??, ??, ??, ??, ???? ??") },
                 shape = RoundedCornerShape(18.dp)
             )
         }
+        item { SectionTitle("? ??? ?? ??? ??", "??? ??? ??? ?? ?????") }
         item {
-            SectionTitle("내 상황에 맞춰 빠르게 보기", "필터를 누르면 목록이 바로 좁혀집니다.")
-        }
-        item {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 FundCategory.entries.forEach {
                     FilterChip(
                         selected = category == it,
@@ -244,30 +212,16 @@ private fun HomeScreen(
             }
         }
         item {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 ApplicantType.entries.forEach {
-                    FilterChip(
-                        selected = applicant == it,
-                        onClick = { onApplicantChange(it) },
-                        label = { Text(it.label) }
-                    )
+                    FilterChip(selected = applicant == it, onClick = { onApplicantChange(it) }, label = { Text(it.label) })
                 }
             }
         }
-        item {
-            CategoryDashboard(programs)
-        }
-        item {
-            SectionTitle("${filtered.size}개 정책자금", "금액·대상·준비서류를 카드에서 먼저 확인하세요.")
-        }
-        items(filtered, key = { it.id }) { fund ->
-            FundCard(fund, onOpen)
-        }
-        if (filtered.isEmpty()) {
-            item {
-                EmptyState()
-            }
-        }
+        item { CategoryDashboard() }
+        item { SectionTitle("\${filtered.size}? ????", "??????????? ???? ?? ?????") }
+        items(filtered, key = { it.id }) { fund -> FundCard(fund, onOpen) }
+        if (filtered.isEmpty()) item { EmptyState() }
     }
 }
 
@@ -281,30 +235,25 @@ private fun HeroCard(total: Int) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = .16f)),
+                    modifier = Modifier.size(44.dp).clip(CircleShape).background(Color.White.copy(alpha = .16f)),
                     contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Outlined.Shield, contentDescription = null, tint = Color.White)
-                }
+                ) { Icon(Icons.Outlined.Shield, contentDescription = null, tint = Color.White) }
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text("정부지원금, 폰에서 먼저 정리", color = Color.White, fontWeight = FontWeight.ExtraBold)
-                    Text("복잡한 공고를 신청 흐름 중심으로 압축", color = Color.White.copy(alpha = .76f))
+                    Text("?????, ???? ?? ??", color = Color.White, fontWeight = FontWeight.ExtraBold)
+                    Text("??? ??? ?? ?? ???? ??", color = Color.White.copy(alpha = .76f))
                 }
             }
             Text(
-                "소상공인·창업·중소기업·고용·서민금융까지 ${total}개 핵심 항목을 모바일 전용 카드로 확인합니다.",
+                "?????????????????????? \${total}? ?? ??? ??? ??? ?????.",
                 color = Color.White,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                HeroPill("신청단계")
-                HeroPill("서류")
-                HeroPill("공식기관")
+                HeroPill("????")
+                HeroPill("????")
+                HeroPill("????")
             }
         }
     }
@@ -312,16 +261,13 @@ private fun HeroCard(total: Int) {
 
 @Composable
 private fun HeroPill(text: String) {
-    Surface(
-        color = Color.White.copy(alpha = .14f),
-        shape = RoundedCornerShape(999.dp)
-    ) {
+    Surface(color = Color.White.copy(alpha = .14f), shape = RoundedCornerShape(999.dp)) {
         Text(text, color = Color.White, modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp))
     }
 }
 
 @Composable
-private fun CategoryDashboard(programs: List<FundProgram>) {
+private fun CategoryDashboard() {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         FundRepository.summaries().chunked(2).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
@@ -333,7 +279,7 @@ private fun CategoryDashboard(programs: List<FundProgram>) {
                     ) {
                         Column(Modifier.padding(14.dp)) {
                             Text(summary.category.label, fontWeight = FontWeight.Bold)
-                            Text("${summary.count}개", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
+                            Text("\${summary.count}?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
                             Text(summary.headline, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
@@ -352,12 +298,11 @@ private fun SectionTitle(title: String, caption: String) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FundCard(fund: FundProgram, onOpen: (FundProgram) -> Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onOpen(fund) },
+        modifier = Modifier.fillMaxWidth().clickable { onOpen(fund) },
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
@@ -371,17 +316,13 @@ private fun FundCard(fund: FundProgram, onOpen: (FundProgram) -> Unit) {
                 Text(fund.deadline, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Text(fund.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold)
-            Text(
-                fund.summary,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(fund.summary, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 InfoBadge(fund.amount)
                 InfoBadge(fund.rate)
+                fund.tags.take(2).forEach { InfoBadge(it) }
             }
-            Text("기관: ${fund.agency}", style = MaterialTheme.typography.labelMedium)
+            Text("??: \${fund.agencyName}", style = MaterialTheme.typography.labelMedium)
         }
     }
 }
@@ -400,62 +341,45 @@ private fun InfoBadge(text: String) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DetailScreen(program: FundProgram) {
     val context = LocalContext.current
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
+        modifier = Modifier.fillMaxSize().navigationBarsPadding(),
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                AssistChip(
-                    onClick = {},
-                    label = { Text(program.category.label) },
-                    leadingIcon = { Icon(Icons.Outlined.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) }
-                )
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    AssistChip(onClick = {}, label = { Text(program.category.label) }, leadingIcon = { Icon(Icons.Outlined.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) })
+                    program.tags.forEach { AssistChip(onClick = {}, label = { Text(it) }) }
+                }
                 Text(program.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
                 Text(program.summary, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
-        item {
-            KeyValueGrid(program)
-        }
-        item {
-            DetailBlock("지원 대상", program.target, Icons.Outlined.TrendingUp)
-        }
-        item {
-            StepBlock("신청 순서", program.steps)
-        }
-        item {
-            StepBlock("준비 서류", program.documents)
-        }
-        item {
-            DetailBlock("체크 메모", program.note, Icons.Outlined.Description)
-        }
+        item { KeyValueGrid(program) }
+        item { DetailBlock("?? ??", program.target, Icons.Outlined.TrendingUp) }
+        item { DetailBlock("?? ??", program.detail, Icons.Outlined.Description) }
+        item { StepBlock("?? ??", program.steps) }
+        item { StepBlock("?? ??", program.documents) }
+        item { DetailBlock("?? ??", program.note, Icons.Outlined.Description) }
         item {
             Button(
-                onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(program.officialUrl)))
-                },
+                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(program.officialUrl))) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("공식 기관에서 확인")
+                Text("\${program.agencyName}?? ??")
                 Spacer(Modifier.width(6.dp))
                 Icon(Icons.Outlined.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
             }
             TextButton(
-                onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://policyfundpedia.com/")))
-                },
+                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://policyfundpedia.com/"))) },
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("policyfundpedia.com 열기")
-            }
+            ) { Text("policyfundpedia.com ??") }
         }
     }
 }
@@ -464,12 +388,12 @@ private fun DetailScreen(program: FundProgram) {
 private fun KeyValueGrid(program: FundProgram) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-            KeyTile("한도", program.amount, Modifier.weight(1f))
-            KeyTile("금리", program.rate, Modifier.weight(1f))
+            KeyTile("??", program.amount, Modifier.weight(1f))
+            KeyTile("??", program.rate, Modifier.weight(1f))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-            KeyTile("기간", program.period, Modifier.weight(1f))
-            KeyTile("마감", program.deadline, Modifier.weight(1f))
+            KeyTile("??", program.period, Modifier.weight(1f))
+            KeyTile("??", program.deadline, Modifier.weight(1f))
         }
     }
 }
@@ -485,7 +409,7 @@ private fun KeyTile(label: String, value: String, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun DetailBlock(title: String, body: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
+private fun DetailBlock(title: String, body: String, icon: ImageVector) {
     Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -506,13 +430,10 @@ private fun StepBlock(title: String, items: List<String>) {
             items.forEachIndexed { index, item ->
                 Row(verticalAlignment = Alignment.Top) {
                     Box(
-                        modifier = Modifier
-                            .size(26.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        modifier = Modifier.size(26.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("${index + 1}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text("\${index + 1}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
                     }
                     Spacer(Modifier.width(10.dp))
                     Text(item, modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -528,8 +449,8 @@ private fun EmptyState() {
         Column(Modifier.padding(22.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Outlined.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
-            Text("조건에 맞는 항목이 없습니다", fontWeight = FontWeight.Bold)
-            Text("검색어를 줄이거나 필터를 해제해보세요.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("??? ?? ??? ????", fontWeight = FontWeight.Bold)
+            Text("???? ???? ??? ??????.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
