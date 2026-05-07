@@ -219,7 +219,7 @@ private fun HomeScreen(
             }
         }
         item { CategoryDashboard() }
-        item { SectionTitle("${filtered.size}개 정책자금", "웹과 동일한 문서 데이터로 검색합니다") }
+        item { SectionTitle("${filtered.size}개 정책자금", "웹과 같은 202개 문서를 앱 안에서도 확인합니다") }
         items(filtered, key = { it.id }) { fund -> FundCard(fund, onOpen) }
         if (filtered.isEmpty()) item { EmptyState() }
     }
@@ -245,7 +245,7 @@ private fun HeroCard(total: Int) {
                 }
             }
             Text(
-                "정책자금 백과 웹사이트와 동일한 ${total}개 문서를 앱에서도 확인할 수 있습니다.",
+                "정책자금 백과 웹사이트의 ${total}개 문서를 휴대폰에서도 같은 밀도로 확인할 수 있습니다.",
                 color = Color.White,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
@@ -450,7 +450,7 @@ private fun EmptyState() {
             Icon(Icons.Outlined.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
             Text("조건에 맞는 문서가 없습니다", fontWeight = FontWeight.Bold)
-            Text("검색어 또는 필터를 조금 넓혀보세요.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("검색어 또는 필터를 조금 넓혀보세요", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
