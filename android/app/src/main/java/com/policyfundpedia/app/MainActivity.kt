@@ -1,5 +1,6 @@
 package com.policyfundpedia.app
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -35,6 +36,7 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.BusinessCenter
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Home
@@ -54,6 +56,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -81,6 +84,13 @@ import com.policyfundpedia.app.data.FundProgram
 import com.policyfundpedia.app.data.FundRepository
 import com.policyfundpedia.app.ui.PolicyFundTheme
 
+private enum class AppTab(val label: String) {
+    Home("홈"),
+    Search("검색"),
+    Saved("저장"),
+    Menu("메뉴")
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,10 +102,22 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PolicyFundApp() {
+    val context = LocalContext.current
+    val prefs = remember { context.getSharedPreferences("policy_fund_prefs", Context.MODE_PRIVATE) }
     var selected by remember { mutableStateOf<FundProgram?>(null) }
+    var tab by remember { mutableStateOf(AppTab.Home) }
     var query by remember { mutableStateOf("") }
     var category by remember { mutableStateOf<FundCategory?>(null) }
     var applicant by remember { mutableStateOf<ApplicantType?>(null) }
+    var savedIds by remember {
+        mutableStateOf(prefs.getStringSet("saved_fund_ids", emptySet())?.toSet().orEmpty())
+    }
+
+    fun toggleSaved(id: String) {
+        val next = if (id in savedIds) savedIds - id else savedIds + id
+        savedIds = next
+        prefs.edit().putStringSet("saved_fund_ids", next).apply()
+    }
 
     val programs = remember { FundRepository.programs }
     val filtered = programs.filter { fund ->
@@ -108,8 +130,11 @@ private fun PolicyFundApp() {
         val applicantMatch = applicant == null || applicant in fund.applicantTypes
         queryMatch && categoryMatch && applicantMatch
     }
+    val saved = programs.filter { it.id in savedIds }
 
-    BackHandler(enabled = selected != null) { selected = null }
+    BackHandler(enabled = selected != null || tab != AppTab.Home) {
+        if (selected != null) selected = null else tab = AppTab.Home
+    }
 
     Scaffold(
         topBar = {
@@ -117,7 +142,7 @@ private fun PolicyFundApp() {
                 title = {
                     Column {
                         Text("정책자금 백과", fontWeight = FontWeight.ExtraBold)
-                        Text("정부 지원금·대출 정보", style = MaterialTheme.typography.labelMedium)
+                        Text("${programs.size}개 정부 지원금·대출 정보", style = MaterialTheme.typography.labelMedium)
                     }
                 },
                 navigationIcon = {
@@ -133,10 +158,10 @@ private fun PolicyFundApp() {
         bottomBar = {
             if (selected == null) {
                 NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                    NavigationBarItem(true, {}, { Icon(Icons.Outlined.Home, contentDescription = null) }, label = { Text("홈") })
-                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Search, contentDescription = null) }, label = { Text("검색") })
-                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) }, label = { Text("저장") })
-                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Menu, contentDescription = null) }, label = { Text("메뉴") })
+                    NavigationBarItem(tab == AppTab.Home, { tab = AppTab.Home }, { Icon(Icons.Outlined.Home, contentDescription = null) }, label = { Text("홈") })
+                    NavigationBarItem(tab == AppTab.Search, { tab = AppTab.Search }, { Icon(Icons.Outlined.Search, contentDescription = null) }, label = { Text("검색") })
+                    NavigationBarItem(tab == AppTab.Saved, { tab = AppTab.Saved }, { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) }, label = { Text("저장") })
+                    NavigationBarItem(tab == AppTab.Menu, { tab = AppTab.Menu }, { Icon(Icons.Outlined.Menu, contentDescription = null) }, label = { Text("메뉴") })
                 }
             }
         },
@@ -147,20 +172,51 @@ private fun PolicyFundApp() {
             label = "screen",
             modifier = Modifier.fillMaxSize().padding(padding)
         ) { current ->
-            if (current == null) {
-                HomeScreen(
-                    programs = programs,
-                    filtered = filtered,
-                    query = query,
-                    onQueryChange = { query = it },
-                    category = category,
-                    onCategoryChange = { category = if (category == it) null else it },
-                    applicant = applicant,
-                    onApplicantChange = { applicant = if (applicant == it) null else it },
-                    onOpen = { selected = it }
+            if (current != null) {
+                DetailScreen(
+                    program = current,
+                    isSaved = current.id in savedIds,
+                    onToggleSaved = { toggleSaved(current.id) }
                 )
             } else {
-                DetailScreen(program = current)
+                when (tab) {
+                    AppTab.Home -> FundListScreen(
+                        programs = programs,
+                        filtered = filtered,
+                        query = query,
+                        onQueryChange = { query = it },
+                        category = category,
+                        onCategoryChange = { category = if (category == it) null else it },
+                        applicant = applicant,
+                        onApplicantChange = { applicant = if (applicant == it) null else it },
+                        onOpen = { selected = it },
+                        isSaved = { it.id in savedIds },
+                        onToggleSaved = { toggleSaved(it.id) },
+                        showHero = true,
+                        showDashboard = true
+                    )
+                    AppTab.Search -> FundListScreen(
+                        programs = programs,
+                        filtered = filtered,
+                        query = query,
+                        onQueryChange = { query = it },
+                        category = category,
+                        onCategoryChange = { category = if (category == it) null else it },
+                        applicant = applicant,
+                        onApplicantChange = { applicant = if (applicant == it) null else it },
+                        onOpen = { selected = it },
+                        isSaved = { it.id in savedIds },
+                        onToggleSaved = { toggleSaved(it.id) },
+                        showHero = false,
+                        showDashboard = false
+                    )
+                    AppTab.Saved -> SavedScreen(
+                        saved = saved,
+                        onOpen = { selected = it },
+                        onToggleSaved = { toggleSaved(it.id) }
+                    )
+                    AppTab.Menu -> MenuScreen()
+                }
             }
         }
     }
@@ -168,7 +224,7 @@ private fun PolicyFundApp() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-private fun HomeScreen(
+private fun FundListScreen(
     programs: List<FundProgram>,
     filtered: List<FundProgram>,
     query: String,
@@ -177,14 +233,18 @@ private fun HomeScreen(
     onCategoryChange: (FundCategory) -> Unit,
     applicant: ApplicantType?,
     onApplicantChange: (ApplicantType) -> Unit,
-    onOpen: (FundProgram) -> Unit
+    onOpen: (FundProgram) -> Unit,
+    isSaved: (FundProgram) -> Boolean,
+    onToggleSaved: (FundProgram) -> Unit,
+    showHero: Boolean,
+    showDashboard: Boolean
 ) {
     LazyColumn(
         contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
         modifier = Modifier.fillMaxSize().statusBarsPadding()
     ) {
-        item { HeroCard(programs.size) }
+        if (showHero) item { HeroCard(programs.size) }
         item {
             OutlinedTextField(
                 value = query,
@@ -218,9 +278,11 @@ private fun HomeScreen(
                 }
             }
         }
-        item { CategoryDashboard() }
+        if (showDashboard) item { CategoryDashboard() }
         item { SectionTitle("${filtered.size}개 정책자금", "웹과 같은 202개 문서를 앱 안에서도 확인합니다") }
-        items(filtered, key = { it.id }) { fund -> FundCard(fund, onOpen) }
+        items(filtered, key = { it.id }) { fund ->
+            FundCard(fund, onOpen, isSaved(fund), { onToggleSaved(fund) })
+        }
         if (filtered.isEmpty()) item { EmptyState() }
     }
 }
@@ -300,7 +362,12 @@ private fun SectionTitle(title: String, caption: String) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun FundCard(fund: FundProgram, onOpen: (FundProgram) -> Unit) {
+private fun FundCard(
+    fund: FundProgram,
+    onOpen: (FundProgram) -> Unit,
+    isSaved: Boolean,
+    onToggleSaved: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onOpen(fund) },
         shape = RoundedCornerShape(24.dp),
@@ -314,6 +381,12 @@ private fun FundCard(fund: FundProgram, onOpen: (FundProgram) -> Unit) {
                 Text(fund.category.label, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.weight(1f))
                 Text(fund.deadline, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                IconButton(onClick = onToggleSaved) {
+                    Icon(
+                        if (isSaved) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = if (isSaved) "저장 해제" else "저장"
+                    )
+                }
             }
             Text(fund.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold)
             Text(fund.summary, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -343,7 +416,7 @@ private fun InfoBadge(text: String) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DetailScreen(program: FundProgram) {
+private fun DetailScreen(program: FundProgram, isSaved: Boolean, onToggleSaved: () -> Unit) {
     val context = LocalContext.current
     LazyColumn(
         modifier = Modifier.fillMaxSize().navigationBarsPadding(),
@@ -358,6 +431,11 @@ private fun DetailScreen(program: FundProgram) {
                 }
                 Text(program.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.ExtraBold)
                 Text(program.summary, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                OutlinedButton(onClick = onToggleSaved, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+                    Icon(if (isSaved) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(if (isSaved) "저장됨" else "이 정책자금 저장")
+                }
             }
         }
         item { KeyValueGrid(program) }
@@ -368,7 +446,7 @@ private fun DetailScreen(program: FundProgram) {
         item { DetailBlock("확인 메모", program.note, Icons.Outlined.Description) }
         item {
             Button(
-                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(program.officialUrl))) },
+                onClick = { openUrl(context, program.officialUrl) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -377,9 +455,91 @@ private fun DetailScreen(program: FundProgram) {
                 Icon(Icons.Outlined.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
             }
             TextButton(
-                onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://policyfundpedia.com/"))) },
+                onClick = { openUrl(context, "https://policyfundpedia.com/") },
                 modifier = Modifier.fillMaxWidth()
             ) { Text("policyfundpedia.com 열기") }
+        }
+    }
+}
+
+@Composable
+private fun SavedScreen(saved: List<FundProgram>, onOpen: (FundProgram) -> Unit, onToggleSaved: (FundProgram) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().statusBarsPadding(),
+        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item { SectionTitle("저장한 정책자금", "관심 있는 공고를 기기 안에 따로 모아둡니다") }
+        if (saved.isEmpty()) {
+            item {
+                Card(shape = RoundedCornerShape(24.dp)) {
+                    Column(Modifier.padding(22.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Outlined.FavoriteBorder, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        Spacer(Modifier.height(8.dp))
+                        Text("저장한 정책자금이 없습니다", fontWeight = FontWeight.Bold)
+                        Text("목록이나 상세 화면에서 저장 버튼을 눌러보세요", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+        } else {
+            items(saved, key = { it.id }) { fund -> FundCard(fund, onOpen, true, { onToggleSaved(fund) }) }
+        }
+    }
+}
+
+@Composable
+private fun MenuScreen() {
+    val context = LocalContext.current
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().statusBarsPadding(),
+        contentPadding = PaddingValues(start = 18.dp, end = 18.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item { SectionTitle("메뉴", "공식 정보와 앱 안내를 확인하세요") }
+        item {
+            MenuCard(
+                title = "정책자금 백과 웹사이트",
+                body = "웹에서도 같은 정책자금 문서를 확인할 수 있습니다.",
+                button = "웹사이트 열기",
+                onClick = { openUrl(context, "https://policyfundpedia.com/") }
+            )
+        }
+        item {
+            MenuCard(
+                title = "공식 기관 확인",
+                body = "지원 조건, 신청 기간, 금액은 기관 공고에 따라 바뀔 수 있습니다.",
+                button = "기업마당 열기",
+                onClick = { openUrl(context, "https://www.bizinfo.go.kr") }
+            )
+        }
+        item {
+            DetailBlock(
+                title = "정보 제공 고지",
+                body = "정책자금 백과는 정부 정책자금 정보를 정리해 보여주는 정보성 앱입니다. 특정 금융상품 가입이나 대출 실행을 보장하지 않으며, 최종 신청 전에는 반드시 공식 기관 공고를 확인해야 합니다.",
+                icon = Icons.Outlined.Description
+            )
+        }
+        item {
+            DetailBlock(
+                title = "개인정보",
+                body = "이 앱은 회원가입을 받지 않고, 저장한 정책자금 목록은 사용자의 기기 내부에만 보관합니다.",
+                icon = Icons.Outlined.Shield
+            )
+        }
+    }
+}
+
+@Composable
+private fun MenuCard(title: String, body: String, button: String, onClick: () -> Unit) {
+    Card(shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(title, fontWeight = FontWeight.ExtraBold)
+            Text(body, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            OutlinedButton(onClick = onClick, shape = RoundedCornerShape(16.dp), modifier = Modifier.fillMaxWidth()) {
+                Text(button)
+                Spacer(Modifier.width(6.dp))
+                Icon(Icons.Outlined.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
+            }
         }
     }
 }
@@ -453,4 +613,8 @@ private fun EmptyState() {
             Text("검색어 또는 필터를 조금 넓혀보세요", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
+}
+
+private fun openUrl(context: Context, url: String) {
+    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
 }

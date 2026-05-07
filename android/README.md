@@ -9,6 +9,9 @@
 - 카테고리 필터
 - 신청자 유형 필터
 - 정책자금 상세 화면
+- 관심 정책자금 저장
+- 저장한 정책자금 목록
+- 공식 기관/웹사이트 메뉴
 - 신청 절차, 준비 서류, 확인 메모
 - 공식 기관 링크와 웹사이트 링크
 
@@ -23,3 +26,9 @@ node scripts/sync-policy-data.mjs
 ## 실행
 
 Android Studio에서 `android/` 폴더를 열고 Gradle Sync 후 실행합니다. 로컬 CLI 빌드는 Android SDK와 Gradle이 필요합니다.
+
+## 출시 메모
+
+- 앱은 회원가입을 받지 않습니다.
+- 저장한 정책자금 목록은 사용자의 기기 내부 SharedPreferences에만 보관됩니다.
+- Play Store 업로드 전에는 별도 upload key로 서명한 release AAB를 생성해야 합니다.
