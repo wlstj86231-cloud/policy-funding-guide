@@ -1,18 +1,19 @@
 package com.policyfundpedia.app.data
 
 enum class FundCategory(val label: String) {
-    SmallBusiness("????"),
-    Startup("??"),
-    Sme("????"),
-    Employment("??"),
-    Personal("????")
+    SmallBusiness("소상공인"),
+    Startup("창업"),
+    Sme("중소기업"),
+    Employment("고용"),
+    Personal("비사업자"),
+    LowIncomeFinance("서민금융")
 }
 
 enum class ApplicantType(val label: String) {
-    BusinessOwner("???"),
-    PreFounder("?????"),
-    Employer("???"),
-    Individual("????")
+    BusinessOwner("사업자"),
+    PreFounder("예비창업자"),
+    Employer("고용주"),
+    Individual("개인")
 }
 
 data class FundProgram(

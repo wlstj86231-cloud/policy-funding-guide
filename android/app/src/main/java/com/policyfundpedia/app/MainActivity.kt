@@ -116,14 +116,14 @@ private fun PolicyFundApp() {
             TopAppBar(
                 title = {
                     Column {
-                        Text("???? ??", fontWeight = FontWeight.ExtraBold)
-                        Text("??? ???? ??", style = MaterialTheme.typography.labelMedium)
+                        Text("정책자금 백과", fontWeight = FontWeight.ExtraBold)
+                        Text("정부 지원금·대출 정보", style = MaterialTheme.typography.labelMedium)
                     }
                 },
                 navigationIcon = {
                     if (selected != null) {
                         IconButton(onClick = { selected = null }) {
-                            Icon(Icons.Outlined.ArrowBack, contentDescription = "??")
+                            Icon(Icons.Outlined.ArrowBack, contentDescription = "뒤로")
                         }
                     }
                 },
@@ -133,10 +133,10 @@ private fun PolicyFundApp() {
         bottomBar = {
             if (selected == null) {
                 NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
-                    NavigationBarItem(true, {}, { Icon(Icons.Outlined.Home, contentDescription = null) }, label = { Text("?") })
-                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Search, contentDescription = null) }, label = { Text("??") })
-                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) }, label = { Text("??") })
-                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Menu, contentDescription = null) }, label = { Text("???") })
+                    NavigationBarItem(true, {}, { Icon(Icons.Outlined.Home, contentDescription = null) }, label = { Text("홈") })
+                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Search, contentDescription = null) }, label = { Text("검색") })
+                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) }, label = { Text("저장") })
+                    NavigationBarItem(false, {}, { Icon(Icons.Outlined.Menu, contentDescription = null) }, label = { Text("메뉴") })
                 }
             }
         },
@@ -192,11 +192,11 @@ private fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
-                placeholder = { Text("??, ??, ??, ??, ???? ??") },
+                placeholder = { Text("창업, 고용, 보증, 금리, 기관명 검색") },
                 shape = RoundedCornerShape(18.dp)
             )
         }
-        item { SectionTitle("? ??? ?? ??? ??", "??? ??? ??? ?? ?????") }
+        item { SectionTitle("내 상황에 맞는 조건 선택", "카테고리와 신청자 유형을 함께 좁혀보세요") }
         item {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 FundCategory.entries.forEach {
@@ -219,7 +219,7 @@ private fun HomeScreen(
             }
         }
         item { CategoryDashboard() }
-        item { SectionTitle("\${filtered.size}? ????", "??????????? ???? ?? ?????") }
+        item { SectionTitle("${filtered.size}개 정책자금", "웹과 동일한 문서 데이터로 검색합니다") }
         items(filtered, key = { it.id }) { fund -> FundCard(fund, onOpen) }
         if (filtered.isEmpty()) item { EmptyState() }
     }
@@ -240,20 +240,20 @@ private fun HeroCard(total: Int) {
                 ) { Icon(Icons.Outlined.Shield, contentDescription = null, tint = Color.White) }
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text("?????, ???? ?? ??", color = Color.White, fontWeight = FontWeight.ExtraBold)
-                    Text("??? ??? ?? ?? ???? ??", color = Color.White.copy(alpha = .76f))
+                    Text("사업자부터 개인까지", color = Color.White, fontWeight = FontWeight.ExtraBold)
+                    Text("필요한 정책자금을 빠르게 확인", color = Color.White.copy(alpha = .76f))
                 }
             }
             Text(
-                "?????????????????????? \${total}? ?? ??? ??? ??? ?????.",
+                "정책자금 백과 웹사이트와 동일한 ${total}개 문서를 앱에서도 확인할 수 있습니다.",
                 color = Color.White,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                HeroPill("????")
-                HeroPill("????")
-                HeroPill("????")
+                HeroPill("지원 대상")
+                HeroPill("한도·금리")
+                HeroPill("신청 서류")
             }
         }
     }
@@ -279,7 +279,7 @@ private fun CategoryDashboard() {
                     ) {
                         Column(Modifier.padding(14.dp)) {
                             Text(summary.category.label, fontWeight = FontWeight.Bold)
-                            Text("\${summary.count}?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
+                            Text("${summary.count}개", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.ExtraBold)
                             Text(summary.headline, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
@@ -322,7 +322,7 @@ private fun FundCard(fund: FundProgram, onOpen: (FundProgram) -> Unit) {
                 InfoBadge(fund.rate)
                 fund.tags.take(2).forEach { InfoBadge(it) }
             }
-            Text("??: \${fund.agencyName}", style = MaterialTheme.typography.labelMedium)
+            Text("기관: ${fund.agencyName}", style = MaterialTheme.typography.labelMedium)
         }
     }
 }
@@ -361,25 +361,25 @@ private fun DetailScreen(program: FundProgram) {
             }
         }
         item { KeyValueGrid(program) }
-        item { DetailBlock("?? ??", program.target, Icons.Outlined.TrendingUp) }
-        item { DetailBlock("?? ??", program.detail, Icons.Outlined.Description) }
-        item { StepBlock("?? ??", program.steps) }
-        item { StepBlock("?? ??", program.documents) }
-        item { DetailBlock("?? ??", program.note, Icons.Outlined.Description) }
+        item { DetailBlock("지원 대상", program.target, Icons.Outlined.TrendingUp) }
+        item { DetailBlock("상세 설명", program.detail, Icons.Outlined.Description) }
+        item { StepBlock("신청 절차", program.steps) }
+        item { StepBlock("준비 서류", program.documents) }
+        item { DetailBlock("확인 메모", program.note, Icons.Outlined.Description) }
         item {
             Button(
                 onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(program.officialUrl))) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text("\${program.agencyName}?? ??")
+                Text("${program.agencyName}에서 확인")
                 Spacer(Modifier.width(6.dp))
                 Icon(Icons.Outlined.OpenInNew, contentDescription = null, modifier = Modifier.size(18.dp))
             }
             TextButton(
                 onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://policyfundpedia.com/"))) },
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("policyfundpedia.com ??") }
+            ) { Text("policyfundpedia.com 열기") }
         }
     }
 }
@@ -388,12 +388,12 @@ private fun DetailScreen(program: FundProgram) {
 private fun KeyValueGrid(program: FundProgram) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-            KeyTile("??", program.amount, Modifier.weight(1f))
-            KeyTile("??", program.rate, Modifier.weight(1f))
+            KeyTile("한도", program.amount, Modifier.weight(1f))
+            KeyTile("금리", program.rate, Modifier.weight(1f))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
-            KeyTile("??", program.period, Modifier.weight(1f))
-            KeyTile("??", program.deadline, Modifier.weight(1f))
+            KeyTile("기간", program.period, Modifier.weight(1f))
+            KeyTile("마감", program.deadline, Modifier.weight(1f))
         }
     }
 }
@@ -433,7 +433,7 @@ private fun StepBlock(title: String, items: List<String>) {
                         modifier = Modifier.size(26.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("\${index + 1}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text("${index + 1}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
                     }
                     Spacer(Modifier.width(10.dp))
                     Text(item, modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -449,8 +449,8 @@ private fun EmptyState() {
         Column(Modifier.padding(22.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(Icons.Outlined.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
-            Text("??? ?? ??? ????", fontWeight = FontWeight.Bold)
-            Text("???? ???? ??? ??????.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("조건에 맞는 문서가 없습니다", fontWeight = FontWeight.Bold)
+            Text("검색어 또는 필터를 조금 넓혀보세요.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
