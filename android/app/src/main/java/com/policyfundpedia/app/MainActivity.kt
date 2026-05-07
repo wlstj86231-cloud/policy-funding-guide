@@ -35,7 +35,10 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.BusinessCenter
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Shield
@@ -49,6 +52,8 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -128,6 +133,36 @@ private fun PolicyFundApp() {
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
+        },
+        bottomBar = {
+            if (selected == null) {
+                NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+                    NavigationBarItem(
+                        selected = true,
+                        onClick = {},
+                        icon = { Icon(Icons.Outlined.Home, contentDescription = null) },
+                        label = { Text("홈") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = {},
+                        icon = { Icon(Icons.Outlined.Search, contentDescription = null) },
+                        label = { Text("검색") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = {},
+                        icon = { Icon(Icons.Outlined.FavoriteBorder, contentDescription = null) },
+                        label = { Text("저장") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = {},
+                        icon = { Icon(Icons.Outlined.Menu, contentDescription = null) },
+                        label = { Text("더보기") }
+                    )
+                }
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
