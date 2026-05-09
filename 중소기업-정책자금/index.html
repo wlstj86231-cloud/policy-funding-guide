@@ -27,6 +27,7 @@
     .tags{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0}.tag{padding:5px 10px;background:#eff6ff;color:#1e429f;border-radius:999px;font-size:13px;font-weight:700}
     .card{padding:26px;margin-bottom:16px}.rows{border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:132px 1fr;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.row b{color:var(--muted)}
     .related{display:grid;gap:8px;padding:0;margin:0;list-style:none}.related li{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--soft)}.related a{font-weight:700;color:var(--ink);text-decoration:none}.related span{color:var(--muted);font-size:13px}
+    .intent-list{display:grid;gap:8px;padding:0;margin:14px 0 0;list-style:none}.intent-list li{display:grid;gap:3px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--soft)}.intent-list b{color:var(--ink)}.intent-list span{color:var(--muted);font-size:14px}
     .note{border-left:4px solid var(--blue);padding:14px 16px;background:#eff6ff;border-radius:0 10px 10px 0}
     @media(max-width:720px){.row{grid-template-columns:1fr}.related li{display:grid}.hero,.card{padding:20px}.nav{align-items:flex-start;flex-direction:column}}
   </style>
@@ -60,6 +61,34 @@
         <div class="row"><b>3단계</b><span>사업자등록증, 매출 증빙, 납세증명, 고용보험 자료 등 반복 제출 서류를 미리 준비합니다.</span></div>
         <div class="row"><b>4단계</b><span>아래 관련 문서에서 한도와 신청 흐름을 비교한 뒤 공식 사이트로 이동합니다.</span></div>
       </div>
+    </section>
+
+    <section class="card">
+      <h2>검색어별로 다르게 봐야 하는 이유</h2>
+      <p>중소기업 정책자금을 찾는 사람은 대부분 같은 단어를 검색해도 실제 상황은 조금씩 다릅니다. 사업자등록을 막 끝낸 사람, 매출이 줄어 긴급 자금이 필요한 사람, 직원을 새로 뽑으려는 사람, 기존 대출을 갈아타려는 사람은 모두 확인해야 할 공고와 서류가 달라집니다.</p>
+      <p>그래서 이 페이지는 중소기업 정책자금, 중소기업 운전자금, 중소기업 경영안정자금처럼 많이 찾는 표현을 하나의 입구로 묶고, 아래 관련 문서에서 실제 제도별 조건을 다시 확인하도록 구성했습니다. 검색에서 바로 들어온 사용자가 첫 화면에서 방향을 잡고, 세부 문서로 넘어가면서 신청 가능성과 준비 순서를 좁혀갈 수 있게 만든 구조입니다.</p>
+      <ul class="intent-list"><li><b>중소기업 정책자금</b><span>처음 검색한 사람이 가장 먼저 보는 핵심어입니다.</span></li><li><b>중소기업 운전자금</b><span>자격 조건과 신청 가능성을 확인할 때 자주 쓰입니다.</span></li><li><b>중소기업 경영안정자금</b><span>공식 공고와 실제 준비 서류를 대조할 때 유용합니다.</span></li><li><b>중소기업 시설자금</b><span>비슷한 제도 사이에서 우선순위를 정할 때 필요합니다.</span></li></ul>
+    </section>
+    <section class="card">
+      <h2>편집자가 먼저 확인하는 기준</h2>
+      <p>정책자금 공고를 정리하다 보면 이름은 비슷하지만 실제 판단 기준은 다른 경우가 많습니다. 같은 중소기업 영역이라도 업력, 매출 규모, 고용 인원, 신용 상태, 사업장 소재지, 이전 지원 이력에 따라 신청 가능성이 갈립니다. 제목만 보고 바로 신청하기보다 이 기준을 먼저 나누면 헛걸음을 줄일 수 있습니다.</p>
+      <p>특히 공고문에는 지원 대상, 제외 대상, 접수 방식, 예산 소진 여부가 따로 적혀 있는 경우가 많습니다. 정책자금 백과는 이 흐름을 기준으로 문서를 정리해 사용자가 공식 사이트로 이동하기 전에 스스로 맞는 제도를 추릴 수 있도록 돕습니다.</p>
+    </section>
+    <section class="card">
+      <h2>세부 문서로 넘어가기 전 체크</h2>
+      <div class="rows">
+        <div class="row"><b>대상 확인</b><span>개인, 법인, 예비창업자, 소상공인, 중소기업, 근로자 등 내 위치를 먼저 정합니다.</span></div>
+        <div class="row"><b>목적 확인</b><span>운영비, 시설비, 고용, 창업, 생계, 보증, 교육처럼 자금의 쓰임을 나눕니다.</span></div>
+        <div class="row"><b>시점 확인</b><span>상시 접수인지, 회차별 접수인지, 예산 소진형인지 확인해야 합니다.</span></div>
+        <div class="row"><b>증빙 확인</b><span>사업자등록증, 매출 자료, 납세 증명, 고용보험 자료, 금융거래 자료를 미리 모읍니다.</span></div>
+      </div>
+      <p>중소기업운전자금, 중소기업 경영안정자금, 중소기업 설비투자자금, 중소기업 수출보증 같은 문서는 이 기준을 실제 제도 단위로 다시 풀어둔 페이지입니다. 큰 키워드에서 들어왔다면 여기서 방향을 잡고, 세부 키워드 문서에서 공식 신청처와 조건을 확인하는 흐름이 가장 빠릅니다.</p>
+    </section>
+    <section class="card">
+      <h2>자주 헷갈리는 질문</h2>
+      <p><b>중소기업 정책자금은 한 번에 여러 개 신청해도 되나요?</b><br>제도마다 중복 수혜 제한과 기존 지원 이력 기준이 다릅니다. 같은 목적의 자금을 동시에 받기 어렵거나, 이미 받은 보증과 대출이 심사에 영향을 주는 경우가 있어 공식 공고의 중복 제한을 꼭 확인해야 합니다.</p>
+      <p><b>검색 결과에서 바로 공식 사이트로 가면 안 되나요?</b><br>바로 가도 됩니다. 다만 공식 사이트는 공고 단위로 흩어져 있어 처음 보는 사람은 어느 제도부터 봐야 할지 헷갈릴 수 있습니다. 이 페이지는 공식 신청 전 방향을 잡는 비교 지도 역할을 합니다.</p>
+      <p><b>가장 먼저 준비할 서류는 무엇인가요?</b><br>대부분은 본인 또는 사업자 확인 자료, 매출 또는 소득 자료, 납세 관련 증명, 금융 또는 고용 관련 증빙에서 시작합니다. 세부 문서로 이동하면 제도별로 더 가까운 준비 순서를 확인할 수 있습니다.</p>
     </section>
     <section class="card">
       <h2>같이 봐야 할 세부 문서</h2>
