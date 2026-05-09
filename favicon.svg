@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Policy Fundpedia icon">
+  <rect width="64" height="64" rx="14" fill="#0f172a"/>
+  <path d="M19 10h22l10 10v31a5 5 0 0 1-5 5H19a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5Z" fill="#f8fafc"/>
+  <path d="M41 10v10h10" fill="#cbd5e1"/>
+  <path d="M22 24h20M22 30h12M22 48h20" stroke="#334155" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="36" cy="38" r="10.5" fill="#16a34a"/>
+  <path d="M36 30v16M30 34c1.7-2 3.6-3 6-3s4.3 1 6 3M30 42c1.7 2 3.6 3 6 3s4.3-1 6-3" stroke="#f8fafc" stroke-width="3" stroke-linecap="round"/>
+</svg>
