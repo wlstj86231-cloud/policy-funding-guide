@@ -210,10 +210,10 @@ function pageHtml(fund, related) {
   <style>
     :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--soft:#f8fafc;--blue:#1a56db;--green:#166534}
     *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:#f8f7f5;color:var(--ink);line-height:1.78;word-break:keep-all}
-    header{position:sticky;top:0;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);z-index:2}
-    .nav{max-width:980px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .logo{font-weight:800;text-decoration:none;color:var(--ink)} .logo span{color:var(--blue)}
-    .nav a:not(.logo){font-size:14px;color:var(--muted);text-decoration:none}
+    header{position:sticky;top:0;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);z-index:60}
+    .nav{max-width:980px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:58px;flex-wrap:nowrap}
+    .logo{font-weight:800;text-decoration:none;color:var(--ink);white-space:nowrap;line-height:1.2;min-width:0} .logo span{color:var(--blue)}
+    .nav a:not(.logo){font-size:14px;color:var(--muted);text-decoration:none;white-space:nowrap;flex-shrink:0;padding:8px 10px;border-radius:8px;transition:background .15s,color .15s} .nav a:not(.logo):hover{background:#f8fafc;color:var(--ink)}
     main{max-width:980px;margin:0 auto;padding:28px 20px 72px}
     .hero,.card{background:#fff;border:1px solid var(--line);border-radius:14px}
     .hero{padding:30px;margin-bottom:18px}.crumb{font-size:13px;color:var(--muted);margin-bottom:12px}.crumb a{color:var(--blue);text-decoration:none}
@@ -226,7 +226,7 @@ function pageHtml(fund, related) {
     .note{border-left:4px solid var(--blue);padding:14px 16px;background:#eff6ff;border-radius:0 10px 10px 0}
     .related{display:grid;gap:8px;padding:0;margin:0;list-style:none}.related li{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--soft)}.related a{font-weight:700;color:var(--ink);text-decoration:none}.related span{color:var(--muted);font-size:13px}
     .official{display:inline-flex;margin-top:12px;padding:12px 16px;background:var(--blue);color:#fff;text-decoration:none;border-radius:10px;font-weight:800}
-    @media(max-width:720px){.summary{grid-template-columns:1fr}.row{grid-template-columns:1fr}.steps li{grid-template-columns:1fr}.related li{display:grid}.hero,.card{padding:20px}.nav{align-items:flex-start;flex-direction:column}}
+    @media(max-width:720px){.summary{grid-template-columns:1fr}.row{grid-template-columns:1fr}.steps li{grid-template-columns:1fr}.related li{display:grid}.hero,.card{padding:20px}.nav{align-items:center;flex-direction:row;padding:12px 16px;gap:10px}.logo{font-size:16px}.nav a:not(.logo){font-size:13px;padding:7px 9px;background:#f8fafc;border:1px solid var(--line)}}
   </style>
   <script type="application/ld+json">${JSON.stringify({
     "@context": "https://schema.org",
