@@ -4,7 +4,6 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const siteUrl = "https://policyfundpedia.com";
 const lastmod = "2026-05-09";
-const adsenseClient = "ca-pub-7217591196020054";
 const searchConsoleVerification = "tSlD6MvlQAUKN3XASMGLU-vJTeaoUxCSFg-tn3JMmvk";
 
 const hubPages = [
@@ -395,12 +394,10 @@ function hubHtml(page) {
   <title>${escapeHtml(page.title)} | 정책자금 백과</title>
   <meta name="description" content="${escapeHtml(page.desc)}">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta name="google-adsense-account" content="${adsenseClient}">
   <meta name="google-site-verification" content="${searchConsoleVerification}">
   <meta name="author" content="정책자금 백과 편집팀">
   <meta name="keywords" content="${escapeHtml(keywords)}">
   <link rel="canonical" href="${canonical}">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}" crossorigin="anonymous"></script>
   <style>
     :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--soft:#f8fafc;--blue:#1a56db;--green:#166534}
     *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:#f8f7f5;color:var(--ink);line-height:1.78;word-break:keep-all}
