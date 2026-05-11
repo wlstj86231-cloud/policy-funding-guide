@@ -219,11 +219,16 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 #live-view.show{display:block}
 .search-head{font-size:14px;color:var(--ink3);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .search-head b{color:var(--blue)}
+.detail-loading,.detail-error{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:48px 24px;text-align:center;color:var(--ink3);font-size:14px}
+.detail-error b{display:block;color:var(--ink);font-size:16px;margin-bottom:8px}
+.detail-error a{color:var(--blue);font-weight:700}
 
 /* ── 상세 ── */
 .d-card{background:var(--white);border-radius:var(--r2);overflow:hidden;border:1px solid var(--line)}
 .d-top{padding:26px 26px 22px;border-bottom:1px solid var(--line)}
 .breadcrumb{font-size:12px;color:var(--ink4);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:var(--blue);text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
 .breadcrumb span{cursor:pointer;color:var(--blue)}
 .breadcrumb span:hover{text-decoration:underline}
 .breadcrumb i{font-style:normal}
@@ -250,13 +255,18 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .step-t{font-size:13px;color:var(--ink2);line-height:1.65}
 .official-btn{display:flex;align-items:center;gap:12px;background:var(--blue-bg);border:1px solid rgba(26,86,219,.15);border-radius:var(--r);padding:14px 18px;margin-top:20px;text-decoration:none;transition:background .15s;width:100%;text-align:left;cursor:pointer}
 .official-btn:hover{background:#dce9fd}
+.official-btn>span{flex:1}
+.official-btn>span>strong{display:block;font-size:13px;font-weight:700;color:var(--blue-t)}
+.official-btn>span>span{display:block;font-size:12px;color:var(--ink3)}
 .ob-text{flex:1}
 .ob-text strong{display:block;font-size:13px;font-weight:700;color:var(--blue-t)}
 .ob-text span{font-size:12px;color:var(--ink3)}
+.note{margin-top:20px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:var(--r);padding:13px 15px;font-size:13px}
 .related-sec{padding:20px 26px;background:var(--sur);border-top:1px solid var(--line)}
 .related-title{font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
 .related-items{display:flex;flex-direction:column;gap:6px}
 .related-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--white);border:1px solid var(--line);border-radius:var(--r);cursor:pointer;transition:border-color .15s}
+.related-item{text-decoration:none;color:inherit}
 .related-item:hover{border-color:var(--blue)}
 .ri-name{font-size:13px;color:var(--ink);flex:1}
 .ri-org{font-size:11px;color:var(--ink4)}
@@ -653,6 +663,14 @@ function queueVisibleFundPrefetch() {
     });
   }, { rootMargin: '640px 0px' });
   links.forEach(link => observer.observe(link));
+}
+
+function escapeSoftHtml(value = "") {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function normalizeFunds(items) {
@@ -8589,6 +8607,8 @@ const CATS = ['소상공인','창업','중소기업','고용','비사업자','�
 let activeCat  = '전체';
 let activeChip = null;
 let searchTmr  = null;
+let softDetailController = null;
+const HOME_TITLE = document.title;
 
 /* ══════════════════════════════════════
    LIVE FEED 상태
@@ -8679,7 +8699,7 @@ function renderCard(f) {
   const badge  = makeBadge(f.deadline);
   const href = fundPath(f);
   return `<div class="fcard">
-    <a class="fcard-link" href="${href}" data-prefetch-fund onmouseenter="prefetchFundPage('${href}')" ontouchstart="prefetchFundPage('${href}')" aria-label="${f.title} 문서 열기">
+    <a class="fcard-link" href="${href}" data-prefetch-fund onclick="return openDetailPath(event,'${href}')" onmouseenter="prefetchFundPage('${href}')" ontouchstart="prefetchFundPage('${href}')" aria-label="${f.title} 문서 열기">
       <div>
         <div class="fc-tags">
           ${(f.tags||[]).map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}
@@ -8721,7 +8741,72 @@ function makeBadge(deadline) {
 function openDetail(id) {
   const f = FUNDS.find(x=>x.id===id);
   if (!f) return;
-  window.location.href = fundPath(f);
+  openDetailPath(null, fundPath(f));
+}
+
+async function openDetailPath(event, href, options = {}) {
+  if (event && event.preventDefault) event.preventDefault();
+  const shouldPush = options.push !== false;
+  const url = new URL(href, window.location.href);
+  if (url.origin !== window.location.origin) {
+    window.location.href = url.href;
+    return false;
+  }
+  if (url.pathname === '/') {
+    const cat = url.searchParams.get('cat');
+    if (cat && CATS.includes(cat)) {
+      filterCat(null, cat);
+      if (shouldPush) history.pushState({view:'list', cat}, '', `/?cat=${encodeURIComponent(cat)}`);
+    } else {
+      goHome({push: shouldPush});
+    }
+    return false;
+  }
+
+  if (softDetailController) softDetailController.abort();
+  softDetailController = new AbortController();
+  document.getElementById('detail-content').className = '';
+  document.getElementById('detail-content').innerHTML =
+    '<div class="detail-loading"><div class="live-spin"></div><br>문서를 불러오는 중...</div>';
+  showView('detail');
+  window.scrollTo({top:0, behavior:'auto'});
+
+  try {
+    const res = await fetch(url.pathname, { signal: softDetailController.signal });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const main = doc.querySelector('main.d-card');
+    if (!main) throw new Error('detail main not found');
+    const relatedLinks = Array.from(doc.querySelectorAll('.related-list a.related-item'));
+    const relatedHtml = relatedLinks.length ? `
+      <div class="related-sec">
+        <div class="related-title">같은 카테고리 다른 정보</div>
+        <div class="related-items">
+          ${relatedLinks.map(a => {
+            const link = new URL(a.getAttribute('href'), url.href);
+            const name = a.querySelector('span')?.textContent || a.textContent || '관련 문서';
+            const org = a.querySelector('small')?.textContent || '';
+            return `<a class="related-item" href="${link.pathname}" data-soft-detail><span class="ri-name">${escapeSoftHtml(name)}</span><span class="ri-org">${escapeSoftHtml(org)}</span></a>`;
+          }).join('')}
+        </div>
+      </div>` : '';
+    document.getElementById('detail-content').className = 'd-card';
+    document.getElementById('detail-content').innerHTML = main.innerHTML + relatedHtml;
+    document.title = doc.title || HOME_TITLE;
+    if (shouldPush && window.location.pathname !== url.pathname) {
+      history.pushState({view:'detail', href:url.pathname}, '', url.pathname);
+    }
+    requestAnimationFrame(() => {
+      document.querySelectorAll('#detail-content a[data-soft-detail]').forEach(a => prefetchFundPage(a.getAttribute('href')));
+    });
+  } catch (err) {
+    if (err.name === 'AbortError') return false;
+    document.getElementById('detail-content').className = '';
+    document.getElementById('detail-content').innerHTML =
+      `<div class="detail-error"><b>문서를 불러오지 못했습니다</b><span>잠시 후 다시 시도하거나 </span><a href="${url.pathname}">직접 열기</a></div>`;
+  }
+  return false;
 }
 
 /* ══════════════════════════════════════
@@ -8917,7 +9002,8 @@ function setLivePage(page) {
 /* ══════════════════════════════════════
    NAVIGATION
 ══════════════════════════════════════ */
-function goHome() {
+function goHome(options = {}) {
+  const shouldPush = options.push !== false;
   activeCat='전체'; activeChip=null;
   document.getElementById('search-input').value='';
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
@@ -8925,10 +9011,13 @@ function goHome() {
   document.getElementById('tab-전체').classList.add('on');
   document.querySelectorAll('.h-nav a').forEach(a=>a.classList.remove('on'));
   document.getElementById('nav-all').classList.add('on');
-  document.title='정책자금 백과 — 정부 지원 정보 모음';
+  document.title=HOME_TITLE;
   renderSideCats();
   showView('list');
   renderSections(FUNDS);
+  if (shouldPush && (window.location.pathname !== '/' || window.location.search)) {
+    history.pushState({view:'list', cat:'전체'}, '', '/');
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -8939,6 +9028,30 @@ function showView(v) {
   document.getElementById('search-view').classList.toggle('show', v==='search');
   document.getElementById('live-view').classList.toggle('show', v==='live');
 }
+
+document.addEventListener('click', function(e) {
+  const link = e.target.closest('#detail-content a');
+  if (!link) return;
+  const url = new URL(link.href, window.location.href);
+  if (url.origin !== window.location.origin) return;
+  if (url.pathname !== '/' || url.searchParams.has('cat')) {
+    openDetailPath(e, link.href);
+  }
+});
+
+window.addEventListener('popstate', function() {
+  const url = new URL(window.location.href);
+  if (url.pathname === '/') {
+    const cat = url.searchParams.get('cat');
+    if (cat && CATS.includes(cat)) {
+      filterCat(null, cat);
+    } else {
+      goHome({push:false});
+    }
+    return;
+  }
+  openDetailPath(null, url.pathname, {push:false});
+});
 
 /* ══════════════════════════════════════
    HAMBURGER
