@@ -213,6 +213,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 #list-view.hide{display:none}
 #detail-view{display:none}
 #detail-view.show{display:block}
+#detail-view.inline-detail{margin-top:18px}
 #search-view{display:none}
 #search-view.show{display:block}
 #live-view{display:none}
@@ -232,6 +233,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .breadcrumb span{cursor:pointer;color:var(--blue)}
 .breadcrumb span:hover{text-decoration:underline}
 .breadcrumb i{font-style:normal}
+.detail-actions{display:flex;justify-content:flex-end;margin:-4px 0 14px}
+.detail-close{border:1px solid var(--line);background:var(--sur);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer}
+.detail-close:hover{border-color:var(--blue);color:var(--blue)}
 .d-tags{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
 .d-title{font-size:22px;font-weight:700;color:var(--ink);line-height:1.38;margin-bottom:10px;letter-spacing:-.5px}
 .d-desc{font-size:14px;color:var(--ink3);line-height:1.75;max-width:640px}
@@ -8608,6 +8612,7 @@ let activeCat  = '전체';
 let activeChip = null;
 let searchTmr  = null;
 let softDetailController = null;
+let activeDetailPath = null;
 const HOME_TITLE = document.title;
 
 /* ══════════════════════════════════════
@@ -8744,6 +8749,120 @@ function openDetail(id) {
   openDetailPath(null, fundPath(f));
 }
 
+function normalizeRoutePath(pathname) {
+  try {
+    return decodeURIComponent(new URL(pathname, window.location.href).pathname).replace(/\/+$/,'') || '/';
+  } catch(e) {
+    return String(pathname || '/').replace(/\/+$/,'') || '/';
+  }
+}
+
+function findFundByPath(pathname) {
+  const target = normalizeRoutePath(pathname);
+  return FUNDS.find(f => normalizeRoutePath(fundPath(f)) === target);
+}
+
+function renderDetailHtml(f) {
+  const related = FUNDS.filter(x=>x.cat===f.cat&&x.id!==f.id).slice(0,5);
+  const shortTitle = f.title.split('—')[0].trim();
+  const steps = Array.isArray(f.steps) ? f.steps : [];
+  const tags = Array.isArray(f.tags) ? f.tags : [];
+  return `
+    <div class="d-top">
+      <div class="detail-actions">
+        <button class="detail-close" onclick="return closeInlineDetail()">접기</button>
+      </div>
+      <div class="breadcrumb">
+        <span onclick="return closeInlineDetail()">홈</span>
+        <i>›</i>
+        <span onclick="filterCat(null,'${f.cat}')">${f.cat}</span>
+        <i>›</i>
+        <span style="color:var(--ink3);cursor:default">${shortTitle}</span>
+      </div>
+      <div class="d-tags">${tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}</div>
+      <div class="d-title">${f.title}</div>
+      <div class="d-desc">${f.detail}</div>
+    </div>
+    <div class="d-summary">
+      <div class="d-si"><div class="d-sl">지원 한도</div><div class="d-sv">${f.limit}</div></div>
+      <div class="d-si"><div class="d-sl">금리 / 지원</div><div class="d-sv" style="font-size:15px">${f.rate}</div></div>
+      <div class="d-si"><div class="d-sl">담당 기관</div><div class="d-sv ink">${f.org}</div></div>
+    </div>
+    <div class="d-body">
+      <div class="d-stitle">지원 내용</div>
+      <div class="info-rows">
+        <div class="info-row"><span class="info-k">지원 대상</span><span class="info-v">${f.target_desc}</span></div>
+        <div class="info-row"><span class="info-k">지원 금액</span><span class="info-v">${f.amount_desc}</span></div>
+        <div class="info-row"><span class="info-k">금리·지원</span><span class="info-v">${f.rate_desc}</span></div>
+        <div class="info-row"><span class="info-k">지원 기간</span><span class="info-v">${f.period_desc}</span></div>
+        <div class="info-row"><span class="info-k">필요 서류</span><span class="info-v">${f.docs}</span></div>
+      </div>
+      <div class="d-stitle">신청 절차</div>
+      <div class="step-list">
+        ${steps.map((s,i)=>`<div class="step-item"><span class="step-n">${i+1}</span><span class="step-t">${s}</span></div>`).join('')}
+      </div>
+      <a class="official-btn" href="${f.agency}" target="_blank" rel="noopener">
+        <span>
+          <strong>${f.agencyName} 공식 사이트에서 신청하기 ↗</strong>
+          <span>${f.agencyNote}</span>
+        </span>
+      </a>
+      <div class="note">접수 기간과 예산 소진 여부는 공고마다 달라질 수 있으니 신청 전 공식 기관 공고를 다시 확인하세요.</div>
+      <button class="m-submit" style="margin-top:20px;border-radius:var(--r);padding:13px 0;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;cursor:pointer;background:var(--ink);color:#fff;border:none;letter-spacing:-.1px" onclick="openModal()">정책자금 신청 상담 받기 (무료)</button>
+    </div>
+    ${related.length?`<div class="related-sec">
+      <div class="related-title">같은 카테고리 다른 정보</div>
+      <div class="related-items">${related.map(r=>`
+        <a class="related-item" href="${fundPath(r)}" data-soft-detail>
+          <span class="tag ${r.tags[0].c}">${r.tags[0].t}</span>
+          <span class="ri-name">${r.title}</span>
+          <span class="ri-org">${r.org}</span>
+        </a>`).join('')}
+      </div>
+    </div>`:''}`;
+}
+
+function showInlineDetail(options = {}) {
+  const listView = document.getElementById('list-view');
+  const detailView = document.getElementById('detail-view');
+  listView.classList.remove('hide');
+  document.getElementById('search-view').classList.remove('show');
+  document.getElementById('live-view').classList.remove('show');
+  if (detailView.parentElement !== listView) listView.appendChild(detailView);
+  detailView.classList.add('show','inline-detail');
+  if (options.scroll !== false) {
+    requestAnimationFrame(() => detailView.scrollIntoView({behavior: options.instant ? 'auto' : 'smooth', block:'start'}));
+  }
+}
+
+function closeInlineDetail(options = {}) {
+  if (softDetailController) softDetailController.abort();
+  activeDetailPath = null;
+  const detailView = document.getElementById('detail-view');
+  detailView.classList.remove('show','inline-detail');
+  document.title = HOME_TITLE;
+  if (options.clear !== false) document.getElementById('detail-content').innerHTML = '';
+  if (options.push !== false && (window.location.pathname !== '/' || window.location.search)) {
+    history.pushState({view:'list', cat:'전체'}, '', '/');
+  }
+  if (options.scroll !== false) window.scrollTo({top:0, behavior:'smooth'});
+  return false;
+}
+
+function openInlineDetail(f, path, options = {}) {
+  activeDetailPath = path;
+  document.getElementById('detail-content').className = 'd-card';
+  document.getElementById('detail-content').innerHTML = renderDetailHtml(f);
+  document.title = f.title.split('—')[0].trim() + ' | 정책자금 백과';
+  if (options.push !== false && window.location.pathname !== path) {
+    history.pushState({view:'detail', href:path}, '', path);
+  }
+  showInlineDetail({scroll: options.scroll !== false, instant: options.instant === true});
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#detail-content a[data-soft-detail]').forEach(a => prefetchFundPage(a.getAttribute('href')));
+  });
+}
+
 async function openDetailPath(event, href, options = {}) {
   if (event && event.preventDefault) event.preventDefault();
   const shouldPush = options.push !== false;
@@ -8763,13 +8882,18 @@ async function openDetailPath(event, href, options = {}) {
     return false;
   }
 
+  const fund = findFundByPath(url.pathname);
+  if (fund) {
+    openInlineDetail(fund, url.pathname, {push: shouldPush, scroll: options.scroll !== false, instant: options.instant === true});
+    return false;
+  }
+
   if (softDetailController) softDetailController.abort();
   softDetailController = new AbortController();
   document.getElementById('detail-content').className = '';
   document.getElementById('detail-content').innerHTML =
     '<div class="detail-loading"><div class="live-spin"></div><br>문서를 불러오는 중...</div>';
-  showView('detail');
-  window.scrollTo({top:0, behavior:'auto'});
+  showInlineDetail({instant:true});
 
   try {
     const res = await fetch(url.pathname, { signal: softDetailController.signal });
@@ -8814,6 +8938,8 @@ async function openDetailPath(event, href, options = {}) {
 ══════════════════════════════════════ */
 function filterCat(e, cat) {
   if (e && e.preventDefault) e.preventDefault();
+  const detailIsOpen = document.getElementById('detail-view').classList.contains('show') && window.location.pathname !== '/';
+  closeInlineDetail({push: detailIsOpen, scroll:false});
   activeCat  = cat;
   activeChip = null;
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
@@ -9004,6 +9130,7 @@ function setLivePage(page) {
 ══════════════════════════════════════ */
 function goHome(options = {}) {
   const shouldPush = options.push !== false;
+  closeInlineDetail({push:false, scroll:false});
   activeCat='전체'; activeChip=null;
   document.getElementById('search-input').value='';
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
