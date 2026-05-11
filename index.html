@@ -8762,6 +8762,13 @@ function findFundByPath(pathname) {
   return FUNDS.find(f => normalizeRoutePath(fundPath(f)) === target);
 }
 
+function findRenderedCardByPath(pathname) {
+  const target = normalizeRoutePath(pathname);
+  return Array.from(document.querySelectorAll('a.fcard-link'))
+    .find(a => normalizeRoutePath(a.getAttribute('href')) === target)
+    ?.closest('.fcard') || null;
+}
+
 function renderDetailHtml(f) {
   const related = FUNDS.filter(x=>x.cat===f.cat&&x.id!==f.id).slice(0,5);
   const shortTitle = f.title.split('—')[0].trim();
@@ -8825,13 +8832,19 @@ function renderDetailHtml(f) {
 function showInlineDetail(options = {}) {
   const listView = document.getElementById('list-view');
   const detailView = document.getElementById('detail-view');
+  const anchorCard = options.anchorElement?.closest?.('.fcard') || findRenderedCardByPath(activeDetailPath);
   listView.classList.remove('hide');
   document.getElementById('search-view').classList.remove('show');
   document.getElementById('live-view').classList.remove('show');
-  if (detailView.parentElement !== listView) listView.appendChild(detailView);
+  if (anchorCard && anchorCard.parentElement) {
+    anchorCard.insertAdjacentElement('afterend', detailView);
+  } else if (detailView.parentElement !== listView) {
+    listView.appendChild(detailView);
+  }
   detailView.classList.add('show','inline-detail');
   if (options.scroll !== false) {
-    requestAnimationFrame(() => detailView.scrollIntoView({behavior: options.instant ? 'auto' : 'smooth', block:'start'}));
+    const scrollTarget = anchorCard || detailView;
+    requestAnimationFrame(() => scrollTarget.scrollIntoView({behavior: options.instant ? 'auto' : 'smooth', block:'start'}));
   }
 }
 
@@ -8857,7 +8870,7 @@ function openInlineDetail(f, path, options = {}) {
   if (options.push !== false && window.location.pathname !== path) {
     history.pushState({view:'detail', href:path}, '', path);
   }
-  showInlineDetail({scroll: options.scroll !== false, instant: options.instant === true});
+  showInlineDetail({scroll: options.scroll !== false, instant: options.instant === true, anchorElement: options.anchorElement});
   requestAnimationFrame(() => {
     document.querySelectorAll('#detail-content a[data-soft-detail]').forEach(a => prefetchFundPage(a.getAttribute('href')));
   });
@@ -8866,6 +8879,7 @@ function openInlineDetail(f, path, options = {}) {
 async function openDetailPath(event, href, options = {}) {
   if (event && event.preventDefault) event.preventDefault();
   const shouldPush = options.push !== false;
+  const anchorElement = event?.currentTarget || event?.target || options.anchorElement;
   const url = new URL(href, window.location.href);
   if (url.origin !== window.location.origin) {
     window.location.href = url.href;
@@ -8884,7 +8898,7 @@ async function openDetailPath(event, href, options = {}) {
 
   const fund = findFundByPath(url.pathname);
   if (fund) {
-    openInlineDetail(fund, url.pathname, {push: shouldPush, scroll: options.scroll !== false, instant: options.instant === true});
+    openInlineDetail(fund, url.pathname, {push: shouldPush, scroll: options.scroll !== false, instant: options.instant === true, anchorElement});
     return false;
   }
 
