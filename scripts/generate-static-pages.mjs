@@ -6,6 +6,12 @@ const root = path.resolve(import.meta.dirname, "..");
 const siteUrl = "https://policyfundpedia.com";
 const apiUrl = "https://policyfund-api.wlstj86231.workers.dev/api/funds?limit=1000";
 const searchConsoleVerification = "tSlD6MvlQAUKN3XASMGLU-vJTeaoUxCSFg-tn3JMmvk";
+const sitemapLastmod = process.env.SITEMAP_LASTMOD || new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit"
+}).format(new Date());
 const generatedMarker = "policyfundpedia-static-detail";
 
 function escapeHtml(value = "") {
@@ -279,8 +285,8 @@ async function main() {
   }
 
   const urls = [
-    `<url><loc>${siteUrl}/</loc><lastmod>2026-05-11</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
-    ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>2026-05-11</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
+    `<url><loc>${siteUrl}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
+    ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
   ];
 
   await fs.writeFile(
