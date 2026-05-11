@@ -645,29 +645,73 @@ function fundPath(f) {
 }
 
 const PREFETCHED_FUND_PAGES = new Set();
+const PENDING_FUND_PREFETCHES = new Map();
+let fundPrefetchObserver = null;
+let fundPrefetchFrame = 0;
+let detailScrollFrame = 0;
+let prefetchQueueTimer = 0;
+
+function fundPrefetchKey(href) {
+  try { return new URL(href, window.location.href).pathname; } catch { return href; }
+}
+
 function prefetchFundPage(href) {
-  if (!href || PREFETCHED_FUND_PAGES.has(href)) return;
-  PREFETCHED_FUND_PAGES.add(href);
+  const key = fundPrefetchKey(href);
+  if (!href || !key || PREFETCHED_FUND_PAGES.has(key)) return;
+  PREFETCHED_FUND_PAGES.add(key);
   const link = document.createElement('link');
   link.rel = 'prefetch';
-  link.href = href;
+  link.href = new URL(href, window.location.href).href;
   document.head.appendChild(link);
 }
 
+function enqueueFundPrefetch(href) {
+  const key = fundPrefetchKey(href);
+  if (!href || !key || PREFETCHED_FUND_PAGES.has(key) || PENDING_FUND_PREFETCHES.has(key)) return;
+  PENDING_FUND_PREFETCHES.set(key, href);
+  if (prefetchQueueTimer) return;
+  prefetchQueueTimer = window.setTimeout(flushFundPrefetchQueue, 120);
+}
+
+function flushFundPrefetchQueue() {
+  prefetchQueueTimer = 0;
+  const batch = Array.from(PENDING_FUND_PREFETCHES.entries()).slice(0, 4);
+  batch.forEach(([key, href]) => {
+    PENDING_FUND_PREFETCHES.delete(key);
+    prefetchFundPage(href);
+  });
+  if (PENDING_FUND_PREFETCHES.size) {
+    prefetchQueueTimer = window.setTimeout(flushFundPrefetchQueue, 240);
+  }
+}
+
+function scheduleVisibleFundPrefetch() {
+  if (fundPrefetchFrame) cancelAnimationFrame(fundPrefetchFrame);
+  fundPrefetchFrame = requestAnimationFrame(() => {
+    fundPrefetchFrame = 0;
+    queueVisibleFundPrefetch();
+  });
+}
+
 function queueVisibleFundPrefetch() {
+  if (fundPrefetchObserver) {
+    fundPrefetchObserver.disconnect();
+    fundPrefetchObserver = null;
+  }
   const links = Array.from(document.querySelectorAll('[data-prefetch-fund]'));
   if (!links.length) return;
-  links.slice(0, 12).forEach(link => prefetchFundPage(link.href));
+  links.slice(0, 6).forEach(link => enqueueFundPrefetch(link.href));
   if (!('IntersectionObserver' in window)) {
     return;
   }
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      prefetchFundPage(entry.target.href);
+      enqueueFundPrefetch(entry.target.href);
       observer.unobserve(entry.target);
     });
   }, { rootMargin: '640px 0px' });
+  fundPrefetchObserver = observer;
   links.forEach(link => observer.observe(link));
 }
 
@@ -681,6 +725,20 @@ function escapeSoftHtml(value = "") {
 
 function buildAbsoluteUrl(pathname) {
   return new URL(pathname || '/', 'https://policyfundpedia.com').href;
+}
+
+function parkInlineDetail() {
+  const detailView = document.getElementById('detail-view');
+  const liveView = document.getElementById('live-view');
+  const stableParent = liveView?.parentElement || document.querySelector('main') || document.body;
+  if (detailView && stableParent && detailView.parentElement !== stableParent) {
+    if (liveView && liveView.parentElement === stableParent) {
+      stableParent.insertBefore(detailView, liveView);
+    } else {
+      stableParent.appendChild(detailView);
+    }
+  }
+  return detailView;
 }
 
 function normalizeFunds(items) {
@@ -8687,6 +8745,7 @@ function renderSideCats() {
 }
 
 function renderSections(funds) {
+  parkInlineDetail();
   const cats = activeCat === '전체' ? CATS : [activeCat];
   let html = '';
   cats.forEach(cat => {
@@ -8702,7 +8761,7 @@ function renderSections(funds) {
   });
   document.getElementById('post-sections').innerHTML = html ||
     '<p style="color:var(--ink4);text-align:center;padding:48px 0;font-size:14px">해당 조건의 정보가 없습니다.</p>';
-  requestAnimationFrame(queueVisibleFundPrefetch);
+  scheduleVisibleFundPrefetch();
 }
 
 function renderCard(f) {
@@ -8840,7 +8899,8 @@ function renderDetailHtml(f) {
 
 function showInlineDetail(options = {}) {
   const listView = document.getElementById('list-view');
-  const detailView = document.getElementById('detail-view');
+  const detailView = parkInlineDetail();
+  if (!listView || !detailView) return;
   const anchorCard = options.anchorElement?.closest?.('.fcard') || findRenderedCardByPath(activeDetailPath);
   listView.classList.remove('hide');
   document.getElementById('search-view').classList.remove('show');
@@ -8853,21 +8913,26 @@ function showInlineDetail(options = {}) {
   detailView.classList.add('show','inline-detail');
   if (options.scroll !== false) {
     const scrollTarget = anchorCard || detailView;
-    requestAnimationFrame(() => scrollTarget.scrollIntoView({behavior: options.instant ? 'auto' : 'smooth', block:'start'}));
+    if (detailScrollFrame) cancelAnimationFrame(detailScrollFrame);
+    detailScrollFrame = requestAnimationFrame(() => {
+      detailScrollFrame = 0;
+      scrollTarget.scrollIntoView({behavior:'auto', block:'start'});
+    });
   }
 }
 
 function closeInlineDetail(options = {}) {
   if (softDetailController) softDetailController.abort();
   activeDetailPath = null;
-  const detailView = document.getElementById('detail-view');
-  detailView.classList.remove('show','inline-detail');
+  const detailView = parkInlineDetail();
+  if (detailView) detailView.classList.remove('show','inline-detail');
   document.title = HOME_TITLE;
-  if (options.clear !== false) document.getElementById('detail-content').innerHTML = '';
+  const detailContent = document.getElementById('detail-content');
+  if (detailContent && options.clear !== false) detailContent.innerHTML = '';
   if (options.push !== false && (window.location.pathname !== '/' || window.location.search)) {
     history.pushState({view:'list', cat:'전체'}, '', '/');
   }
-  if (options.scroll !== false) window.scrollTo({top:0, behavior:'smooth'});
+  if (options.scroll !== false) window.scrollTo({top:0, behavior:'auto'});
   return false;
 }
 
@@ -8905,8 +8970,13 @@ async function shareFund(event) {
 
 function openInlineDetail(f, path, options = {}) {
   activeDetailPath = path;
-  document.getElementById('detail-content').className = 'd-card';
-  document.getElementById('detail-content').innerHTML = renderDetailHtml(f);
+  const detailContent = document.getElementById('detail-content');
+  if (!detailContent) {
+    window.location.href = path;
+    return;
+  }
+  detailContent.className = 'd-card';
+  detailContent.innerHTML = renderDetailHtml(f);
   document.title = f.title.split('—')[0].trim() + ' | 정책자금 백과';
   if (options.push !== false && window.location.pathname !== path) {
     history.pushState({view:'detail', href:path}, '', path);
@@ -8945,8 +9015,13 @@ async function openDetailPath(event, href, options = {}) {
 
   if (softDetailController) softDetailController.abort();
   softDetailController = new AbortController();
-  document.getElementById('detail-content').className = '';
-  document.getElementById('detail-content').innerHTML =
+  const detailContent = document.getElementById('detail-content');
+  if (!detailContent) {
+    window.location.href = url.href;
+    return false;
+  }
+  detailContent.className = '';
+  detailContent.innerHTML =
     '<div class="detail-loading"><div class="live-spin"></div><br>문서를 불러오는 중...</div>';
   showInlineDetail({instant:true});
 
@@ -8970,8 +9045,8 @@ async function openDetailPath(event, href, options = {}) {
           }).join('')}
         </div>
       </div>` : '';
-    document.getElementById('detail-content').className = 'd-card';
-    document.getElementById('detail-content').innerHTML = main.innerHTML + relatedHtml;
+    detailContent.className = 'd-card';
+    detailContent.innerHTML = main.innerHTML + relatedHtml;
     document.title = doc.title || HOME_TITLE;
     if (shouldPush && window.location.pathname !== url.pathname) {
       history.pushState({view:'detail', href:url.pathname}, '', url.pathname);
@@ -8981,8 +9056,8 @@ async function openDetailPath(event, href, options = {}) {
     });
   } catch (err) {
     if (err.name === 'AbortError') return false;
-    document.getElementById('detail-content').className = '';
-    document.getElementById('detail-content').innerHTML =
+    detailContent.className = '';
+    detailContent.innerHTML =
       `<div class="detail-error"><b>문서를 불러오지 못했습니다</b><span>잠시 후 다시 시도하거나 </span><a href="${url.pathname}">직접 열기</a></div>`;
   }
   return false;
@@ -8993,7 +9068,8 @@ async function openDetailPath(event, href, options = {}) {
 ══════════════════════════════════════ */
 function filterCat(e, cat) {
   if (e && e.preventDefault) e.preventDefault();
-  const detailIsOpen = document.getElementById('detail-view').classList.contains('show') && window.location.pathname !== '/';
+  const detailView = document.getElementById('detail-view');
+  const detailIsOpen = !!detailView && detailView.classList.contains('show') && window.location.pathname !== '/';
   closeInlineDetail({push: detailIsOpen, scroll:false});
   activeCat  = cat;
   activeChip = null;
@@ -9012,7 +9088,7 @@ function filterCat(e, cat) {
   renderSideCats();
   showView('list');
   renderSections(FUNDS);
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'auto'});
 }
 
 function chipFilter(btn, val) {
@@ -9052,7 +9128,7 @@ async function handleSearch(val) {
         ? results.map(renderCard).join('')
         : '<p style="color:var(--ink4);text-align:center;padding:40px 0;font-size:14px">검색 결과가 없습니다.</p>';
       showView('search');
-      requestAnimationFrame(queueVisibleFundPrefetch);
+      scheduleVisibleFundPrefetch();
     } catch(e) {
       // API 실패 시 로컬 검색 fallback
       const q   = val.trim().toLowerCase();
@@ -9067,7 +9143,7 @@ async function handleSearch(val) {
         ? res.map(renderCard).join('')
         : '<p style="color:var(--ink4);text-align:center;padding:40px 0;font-size:14px">검색 결과가 없습니다.</p>';
       showView('search');
-      requestAnimationFrame(queueVisibleFundPrefetch);
+      scheduleVisibleFundPrefetch();
     }
   }, 300);
 }
@@ -9078,6 +9154,7 @@ async function handleSearch(val) {
 function showSaved() {
   const ids   = getSaved();
   const funds = FUNDS.filter(f=>ids.includes(f.id));
+  parkInlineDetail();
   document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
   document.getElementById('tab-저장').classList.add('on');
   document.querySelectorAll('.h-nav a').forEach(a=>a.classList.remove('on'));
@@ -9086,8 +9163,8 @@ function showSaved() {
   document.getElementById('post-sections').innerHTML = funds.length
     ? `<div class="fund-sec"><div class="sec-head"><span class="sec-name">저장한 정보</span><span class="sec-cnt">${funds.length}건</span></div><div class="card-stack">${funds.map(renderCard).join('')}</div></div>`
     : '<p style="color:var(--ink4);text-align:center;padding:48px 0;font-size:14px">아직 저장한 정보가 없습니다.<br>카드의 ♡ 버튼을 눌러 저장해보세요.</p>';
-  requestAnimationFrame(queueVisibleFundPrefetch);
-  window.scrollTo({top:0,behavior:'smooth'});
+  scheduleVisibleFundPrefetch();
+  window.scrollTo({top:0,behavior:'auto'});
 }
 
 /* ══════════════════════════════════════
@@ -9101,7 +9178,7 @@ function showLive() {
     liveState.loaded = true;
     renderLive();
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'auto'});
 }
 
 async function renderLive() {
@@ -9177,7 +9254,7 @@ function setLiveCate(cate) {
 }
 function setLivePage(page) {
   liveState.pageNo=page; liveState.loading=false; renderLive();
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'auto'});
 }
 
 /* ══════════════════════════════════════
@@ -9200,13 +9277,14 @@ function goHome(options = {}) {
   if (shouldPush && (window.location.pathname !== '/' || window.location.search)) {
     history.pushState({view:'list', cat:'전체'}, '', '/');
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:'auto'});
 }
 
 /* 단일 showView — 모든 뷰 처리 */
 function showView(v) {
   document.getElementById('list-view').classList.toggle('hide', v!=='list');
-  document.getElementById('detail-view').classList.toggle('show', v==='detail');
+  const detailView = document.getElementById('detail-view');
+  if (detailView) detailView.classList.toggle('show', v==='detail');
   document.getElementById('search-view').classList.toggle('show', v==='search');
   document.getElementById('live-view').classList.toggle('show', v==='live');
 }
