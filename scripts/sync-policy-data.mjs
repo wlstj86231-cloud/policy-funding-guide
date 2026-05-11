@@ -756,6 +756,7 @@ async function main() {
   const funds = (data.items || []).map(normalizeFund);
   writeFundModels();
   writeFundRepository(funds);
+  writeMainActivity();
   writeAndroidResources();
   writeReadme();
   writePreview(funds);

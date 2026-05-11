@@ -15,11 +15,9 @@
 <meta name="description" content="소상공인 정책자금, 창업지원금, 중소기업 대출, 고용지원금, 서민금융 정보를 한눈에. 지원 대상·한도·금리·신청방법을 무료로 확인하세요.">
 <meta name="keywords" content="정책자금,소상공인 대출,창업지원금,중소기업 지원,정부보조금,고용지원금,서민금융,정책금융,소진공,창업패키지,비사업자 대출,정부 지원금 종류,정책자금 신청방법">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta name="google-adsense-account" content="ca-pub-7217591196020054">
 <meta name="google-site-verification" content="tSlD6MvlQAUKN3XASMGLU-vJTeaoUxCSFg-tn3JMmvk">
 <meta name="author" content="정책자금 백과">
 <link rel="canonical" href="https://policyfundpedia.com/">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7217591196020054" crossorigin="anonymous"></script>
 
 <!-- ── Open Graph ── -->
 <meta property="og:type" content="website">
@@ -126,7 +124,7 @@ button,input,select,textarea{font-family:var(--f)}
 
 /* ── HEADER ── */
 header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.h-top{max-width:1080px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;gap:16px;position:relative}
+.h-top{max-width:1080px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;gap:16px}
 .logo{display:flex;flex-direction:column;cursor:pointer;user-select:none;flex-shrink:0}
 .logo-main{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.4px;line-height:1.2}
 .logo-main span{color:var(--blue)}
@@ -170,12 +168,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .chip{font-size:13px;font-weight:500;color:var(--ink3);background:var(--white);border:1.5px solid var(--line2);padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .15s;user-select:none}
 .chip:hover{border-color:var(--blue);color:var(--blue)}
 .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
-.trust-db-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:-4px 0 22px;display:grid;gap:8px}
-.trust-db-kicker{font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.5px;text-transform:uppercase}
-.trust-db-title{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
-.trust-db-text{font-size:13px;color:var(--ink3);line-height:1.7}
-.trust-db-points{display:flex;gap:7px;flex-wrap:wrap}
-.trust-db-points span{font-size:11px;color:var(--ink3);background:var(--sur2);border:1px solid var(--line);border-radius:999px;padding:4px 8px}
 
 /* 섹션 헤드 */
 .sec-head{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
@@ -185,14 +177,11 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .card-stack{display:flex;flex-direction:column;gap:2px}
 
 /* ── 카드 ── */
-.fcard{background:var(--white);border-radius:var(--r);padding:18px 20px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;cursor:pointer;border:1px solid transparent;transition:border-color .15s,box-shadow .15s;position:relative}
+.fcard{background:var(--white);border-radius:var(--r);display:block;cursor:pointer;border:1px solid transparent;transition:border-color .15s,box-shadow .15s;position:relative;overflow:hidden}
 .fcard::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:0;background:var(--blue);border-radius:0 2px 2px 0;transition:height .2s}
 .fcard:hover{border-color:var(--line2);box-shadow:0 2px 14px rgba(15,23,42,.07)}
 .fcard:hover::before{height:55%}
-.fcard:focus-within{outline:2px solid var(--blue);outline-offset:2px}
-.fcard-link{color:inherit;text-decoration:none}
-.fcard-link::after{content:'';position:absolute;inset:0;z-index:1;border-radius:var(--r)}
-.fcard-link:focus-visible{outline:0}
+.fcard-link{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:18px 20px;text-decoration:none;color:inherit}
 .fc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
 .tag{display:inline-flex;align-items:center;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px}
 .tb{background:var(--blue-bg);color:var(--blue-t)}
@@ -215,9 +204,10 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .badge-amber{background:var(--amber-bg);color:var(--amber-t)}
 .badge-blue{background:var(--blue-bg);color:var(--blue-t)}
 /* 찜 버튼 */
-.heart-btn{background:none;border:none;cursor:pointer;font-size:15px;color:var(--ink4);padding:2px 4px;border-radius:4px;transition:color .15s;flex-shrink:0;position:relative;z-index:2}
+.heart-btn{background:none;border:none;cursor:pointer;font-size:15px;color:var(--ink4);padding:2px 4px;border-radius:4px;transition:color .15s;flex-shrink:0}
 .heart-btn:hover{color:#ef4444}
 .heart-btn.saved{color:#ef4444}
+.card-heart{position:absolute;right:16px;bottom:14px;background:rgba(255,255,255,.9)}
 
 /* ── VIEWS ── */
 #list-view.hide{display:none}
@@ -266,7 +256,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .related-sec{padding:20px 26px;background:var(--sur);border-top:1px solid var(--line)}
 .related-title{font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
 .related-items{display:flex;flex-direction:column;gap:6px}
-.related-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--white);border:1px solid var(--line);border-radius:var(--r);cursor:pointer;transition:border-color .15s;text-decoration:none;color:inherit}
+.related-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--white);border:1px solid var(--line);border-radius:var(--r);cursor:pointer;transition:border-color .15s}
 .related-item:hover{border-color:var(--blue)}
 .ri-name{font-size:13px;color:var(--ink);flex:1}
 .ri-org{font-size:11px;color:var(--ink4)}
@@ -388,7 +378,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
 @media(max-width:600px){
   .h-search{display:none}
   .ham-btn{display:flex}
-  .h-nav{display:none;position:absolute;top:calc(100% + 8px);right:14px;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:8px;min-width:160px;max-width:calc(100vw - 28px);z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+  .h-nav{display:none;position:absolute;top:60px;right:16px;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:8px;min-width:160px;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.12)}
   .h-nav.open{display:flex}
   .h-nav a{padding:9px 14px;border-radius:6px}
   .page{padding:18px 16px 60px}
@@ -416,8 +406,6 @@ document.addEventListener('DOMContentLoaded', function(){
   emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 });
 </script>
-<script type="application/ld+json" id="policyfundpedia-seo-graph">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","@id":"https://policyfundpedia.com/#collection","url":"https://policyfundpedia.com/","name":"정책자금 백과","description":"소상공인, 창업자, 중소기업, 사업주, 서민금융 이용자를 위한 정책자금 정보 모음입니다.","inLanguage":"ko-KR","dateModified":"2026-05-09","mainEntity":{"@type":"ItemList","name":"정책자금 핵심 키워드 허브","itemListElement":[{"@type":"ListItem","position":1,"name":"소상공인 정책자금 종류 및 신청 방법","url":"https://policyfundpedia.com/%EC%86%8C%EC%83%81%EA%B3%B5%EC%9D%B8-%EC%A0%95%EC%B1%85%EC%9E%90%EA%B8%88/"},{"@type":"ListItem","position":2,"name":"창업지원금","url":"https://policyfundpedia.com/%EC%B0%BD%EC%97%85%EC%A7%80%EC%9B%90%EA%B8%88/"},{"@type":"ListItem","position":3,"name":"중소기업 정책자금","url":"https://policyfundpedia.com/%EC%A4%91%EC%86%8C%EA%B8%B0%EC%97%85-%EC%A0%95%EC%B1%85%EC%9E%90%EA%B8%88/"},{"@type":"ListItem","position":4,"name":"고용지원금","url":"https://policyfundpedia.com/%EA%B3%A0%EC%9A%A9%EC%A7%80%EC%9B%90%EA%B8%88/"},{"@type":"ListItem","position":5,"name":"서민금융 대출","url":"https://policyfundpedia.com/%EC%84%9C%EB%AF%BC%EA%B8%88%EC%9C%B5-%EB%8C%80%EC%B6%9C/"},{"@type":"ListItem","position":6,"name":"정부지원금 종류","url":"https://policyfundpedia.com/%EC%A0%95%EB%B6%80%EC%A7%80%EC%9B%90%EA%B8%88-%EC%A2%85%EB%A5%98/"},{"@type":"ListItem","position":7,"name":"정책자금 신청방법","url":"https://policyfundpedia.com/%EC%A0%95%EC%B1%85%EC%9E%90%EA%B8%88-%EC%8B%A0%EC%B2%AD%EB%B0%A9%EB%B2%95/"}]}}]}</script>
-<script type="application/ld+json" id="policyfundpedia-trust-db">{"@context":"https://schema.org","@type":"Dataset","@id":"https://policyfundpedia.com/#policy-trust-db","name":"정책자금 백과 공식 공고 검수 DB","description":"소상공인, 창업, 중소기업, 고용, 서민금융 정책자금의 지원 대상, 한도, 금리, 서류, 신청 경로를 공식 공고 기준으로 정리한 정책자금 정보 데이터베이스입니다.","url":"https://policyfundpedia.com/","inLanguage":"ko-KR","creator":{"@type":"Organization","name":"정책자금 백과","url":"https://policyfundpedia.com/"},"dateModified":"2026-05-09","isAccessibleForFree":true,"keywords":["정책자금","정부지원금","소상공인 정책자금","창업지원금","중소기업 정책자금","고용지원금","서민금융"],"isBasedOn":[{"@type":"WebSite","url":"https://www.semas.or.kr"},{"@type":"WebSite","url":"https://www.kodit.co.kr"},{"@type":"WebSite","url":"https://www.kised.or.kr"},{"@type":"WebSite","url":"https://www.k-startup.go.kr"},{"@type":"WebSite","url":"https://www.sbc.or.kr"},{"@type":"WebSite","url":"https://www.kibo.or.kr"},{"@type":"WebSite","url":"https://www.work24.go.kr"},{"@type":"WebSite","url":"https://www.hrd.go.kr"},{"@type":"WebSite","url":"https://www.kinfa.or.kr"},{"@type":"WebSite","url":"https://nhuf.molit.go.kr"},{"@type":"WebSite","url":"https://www.comwel.or.kr"},{"@type":"WebSite","url":"https://www.jointips.or.kr"},{"@type":"WebSite","url":"https://www.mafra.go.kr"},{"@type":"WebSite","url":"https://www.kead.or.kr"},{"@type":"WebSite","url":"https://www.bokjiro.go.kr"},{"@type":"WebSite","url":"https://www.hug.go.kr"},{"@type":"WebSite","url":"https://www.8899.or.kr"},{"@type":"WebSite","url":"https://www.koreg.or.kr"},{"@type":"WebSite","url":"https://www.ei.go.kr"},{"@type":"WebSite","url":"https://edu.semas.or.kr"}]}</script>
 </head>
 <body>
 
@@ -431,12 +419,12 @@ document.addEventListener('DOMContentLoaded', function(){
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M11 11l3 3"/></svg>
       <input id="search-input" type="text" placeholder="자금명, 업종, 키워드 검색..." oninput="handleSearch(this.value)">
     </div>
-    <button class="ham-btn" id="ham-btn" onclick="toggleHam()" aria-label="메뉴" aria-controls="h-nav" aria-expanded="false">☰</button>
+    <button class="ham-btn" id="ham-btn" onclick="toggleHam()" aria-label="메뉴">☰</button>
     <nav class="h-nav" id="h-nav">
       <a onclick="filterCat(null,'전체')" class="on" id="nav-all">전체</a>
-      <a href="/소상공인-정책자금/">소상공인</a>
-      <a href="/창업지원금/">창업</a>
-      <a href="/고용지원금/">고용</a>
+      <a onclick="filterCat(null,'소상공인')" id="nav-소상공인">소상공인</a>
+      <a onclick="filterCat(null,'창업')" id="nav-창업">창업</a>
+      <a onclick="filterCat(null,'고용')" id="nav-고용">고용</a>
       <a onclick="showSaved()">♥ 찜한 정보</a>
     </nav>
   </div>
@@ -454,11 +442,11 @@ document.addEventListener('DOMContentLoaded', function(){
   <div class="cat-bar">
     <div class="cat-bar-in">
       <span class="ctab on" id="tab-전체" onclick="filterCat(null,'전체')">전체 <span id="total-cnt" style="font-size:12px;color:var(--ink4)"></span></span>
-      <span class="ctab" id="tab-소상공인" onclick="location.href='/소상공인-정책자금/'">소상공인</span>
-      <span class="ctab" id="tab-창업" onclick="location.href='/창업지원금/'">창업 · 스타트업</span>
-      <span class="ctab" id="tab-중소기업" onclick="location.href='/중소기업-정책자금/'">중소기업</span>
-      <span class="ctab" id="tab-고용" onclick="location.href='/고용지원금/'">고용 · 일자리</span>
-      <span class="ctab" id="tab-비사업자" onclick="location.href='/서민금융-대출/'">비사업자</span>
+      <span class="ctab" id="tab-소상공인" onclick="filterCat(null,'소상공인')">소상공인</span>
+      <span class="ctab" id="tab-창업" onclick="filterCat(null,'창업')">창업 · 스타트업</span>
+      <span class="ctab" id="tab-중소기업" onclick="filterCat(null,'중소기업')">중소기업</span>
+      <span class="ctab" id="tab-고용" onclick="filterCat(null,'고용')">고용 · 일자리</span>
+      <span class="ctab" id="tab-비사업자" onclick="filterCat(null,'비사업자')">비사업자</span>
       <span class="ctab" id="tab-서민금융" onclick="filterCat(null,'서민금융')">서민금융</span>
       <span class="ctab" id="tab-보증" onclick="filterCat(null,'보증')">보증 제도</span>
       <span class="ctab" id="tab-저장" onclick="showSaved()" style="color:var(--ink3)">♥ 저장한 정보</span>
@@ -479,14 +467,6 @@ document.addEventListener('DOMContentLoaded', function(){
         <button class="chip" onclick="chipFilter(this,'비사업자')">비사업자</button>
         <button class="chip" onclick="resetChip()">전체 보기</button>
       </div>
-      <section class="trust-db-card" aria-label="정책자금 백과 검수 기준">
-        <div class="trust-db-kicker">Verified Policy DB</div>
-        <div class="trust-db-title">공식 공고를 신청자 관점으로 다시 읽어주는 정책자금 신뢰 DB</div>
-        <p class="trust-db-text">정책자금 백과는 지원금 이름만 나열하지 않고 지원 대상, 한도, 금리, 준비 서류, 신청 경로를 공식 기관 기준으로 분리해 정리합니다. 실제 신청 전에는 각 문서의 공식 기관 링크에서 최신 공고와 접수 상태를 다시 확인하도록 설계했습니다.</p>
-        <div class="trust-db-points">
-          <span>공식 출처 우선</span><span>신청 전 체크리스트</span><span>최종 조건 재확인 안내</span><span>금융상품 권유 아님</span>
-        </div>
-      </section>
       <div id="post-sections"></div>
     </div>
     <!-- 검색 결과 -->
@@ -529,14 +509,6 @@ document.addEventListener('DOMContentLoaded', function(){
         <div class="sb-tip">신용이 낮아도 신보·기보 보증서를 활용하면 대출이 가능할 수 있습니다.</div>
         <div class="sb-tip">목적이 다른 자금은 동시에 신청할 수 있습니다. 중복 여부는 각 기관에 문의하세요.</div>
         <div class="sb-tip">정부24의 '나의 보조금 서비스'에서 본인 맞춤 지원 목록을 확인할 수 있습니다.</div>
-      </div>
-    </div>
-    <div class="sb-box">
-      <div class="sb-title">검수 기준</div>
-      <div class="sb-tips">
-        <div class="sb-tip">정책자금 백과는 공식 기관 공고와 접수 페이지를 우선 출처로 삼습니다.</div>
-        <div class="sb-tip">한도·금리·대상은 공고 회차와 예산 상황에 따라 바뀔 수 있어 문서마다 공식 확인 버튼을 둡니다.</div>
-        <div class="sb-tip">민간 상담 영역은 정보 영역과 분리하며, 특정 금융상품 가입을 권유하지 않습니다.</div>
       </div>
     </div>
   </aside>
@@ -643,6 +615,46 @@ function parseFundArray(value, fallback = []) {
   }
 }
 
+function slugifyFund(value) {
+  return String(value || 'policy-fund')
+    .replace(/[\\/:*?"<>|#%{}^[\]`]+/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || 'policy-fund';
+}
+
+function fundPath(f) {
+  const slug = slugifyFund(f.slug || f.title || f.id);
+  return `/${encodeURIComponent(slug)}/`;
+}
+
+const PREFETCHED_FUND_PAGES = new Set();
+function prefetchFundPage(href) {
+  if (!href || PREFETCHED_FUND_PAGES.has(href)) return;
+  PREFETCHED_FUND_PAGES.add(href);
+  const link = document.createElement('link');
+  link.rel = 'prefetch';
+  link.href = href;
+  document.head.appendChild(link);
+}
+
+function queueVisibleFundPrefetch() {
+  const links = Array.from(document.querySelectorAll('[data-prefetch-fund]'));
+  if (!links.length) return;
+  links.slice(0, 12).forEach(link => prefetchFundPage(link.href));
+  if (!('IntersectionObserver' in window)) {
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      prefetchFundPage(entry.target.href);
+      observer.unobserve(entry.target);
+    });
+  }, { rootMargin: '640px 0px' });
+  links.forEach(link => observer.observe(link));
+}
+
 function normalizeFunds(items) {
   return (items || []).map(f => {
     const tags = parseFundArray(f.tags, []).map(t => typeof t === 'string' ? {t, c:'tb'} : t);
@@ -656,6 +668,7 @@ function normalizeFunds(items) {
       target,
       lim: limit,
       limit,
+      slug: slugifyFund(f.slug || f.title || f.id),
       agencyName: f.agency_name || f.agencyName || f.org || '공식 기관',
       agencyNote: f.agency_note || f.agencyNote || '공식 공고와 접수 기간을 함께 확인하세요.'
     };
@@ -8597,6 +8610,14 @@ document.addEventListener('DOMContentLoaded', async function() {
   // API에서 데이터 로드
   await loadFunds();
 
+  const initialCat = new URLSearchParams(window.location.search).get('cat');
+  if (initialCat && CATS.includes(initialCat)) activeCat = initialCat;
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'));
+  const initialTab = document.getElementById('tab-'+activeCat);
+  if (initialTab) initialTab.classList.add('on');
+  document.querySelectorAll('.h-nav a').forEach(a=>a.classList.remove('on'));
+  const initialNav = document.getElementById(activeCat === '전체' ? 'nav-all' : 'nav-'+activeCat);
+  if (initialNav) initialNav.classList.add('on');
   document.getElementById('total-cnt').textContent = FUNDS.length;
   renderSideCats();
   renderSections(FUNDS);
@@ -8609,7 +8630,7 @@ function getSaved() {
   try { return JSON.parse(localStorage.getItem('pf_saved') || '[]'); } catch { return []; }
 }
 function toggleSave(id, e) {
-  if (e) { e.preventDefault(); e.stopPropagation(); }
+  if (e) e.stopPropagation();
   const list = getSaved();
   const idx  = list.indexOf(id);
   if (idx === -1) list.push(id); else list.splice(idx, 1);
@@ -8619,16 +8640,6 @@ function toggleSave(id, e) {
   if (pv && !pv.closest('#list-view').classList.contains('hide')) {
     renderSections(activeChip ? FUNDS.filter(f=>f.target.includes(activeChip)) : FUNDS);
   }
-}
-
-function fundUrl(f) {
-  return f && f.slug ? `/${encodeURIComponent(f.slug)}/` : '/';
-}
-
-function escapeAttr(v) {
-  return String(v ?? '').replace(/[&<>"']/g, ch => ({
-    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-  }[ch]));
 }
 
 /* ══════════════════════════════════════
@@ -8660,32 +8671,36 @@ function renderSections(funds) {
   });
   document.getElementById('post-sections').innerHTML = html ||
     '<p style="color:var(--ink4);text-align:center;padding:48px 0;font-size:14px">해당 조건의 정보가 없습니다.</p>';
+  requestAnimationFrame(queueVisibleFundPrefetch);
 }
 
 function renderCard(f) {
   const saved  = getSaved().includes(f.id);
   const badge  = makeBadge(f.deadline);
-  return `<article class="fcard">
-    <div>
-      <div class="fc-tags">
-        ${(f.tags||[]).map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}
-        <span class="tag torg">${f.org}</span>
+  const href = fundPath(f);
+  return `<div class="fcard">
+    <a class="fcard-link" href="${href}" data-prefetch-fund onmouseenter="prefetchFundPage('${href}')" ontouchstart="prefetchFundPage('${href}')" aria-label="${f.title} 문서 열기">
+      <div>
+        <div class="fc-tags">
+          ${(f.tags||[]).map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}
+          <span class="tag torg">${f.org}</span>
+        </div>
+        <div class="fc-title">${f.title}</div>
+        <div class="fc-desc">${f.excerpt}</div>
+        <div class="fc-meta">
+          <span class="fm">한도 <b>${f.lim||f.limit}</b></span>
+          <span class="fm">금리 <b>${f.rate}</b></span>
+          <span class="fm" style="margin-left:auto;font-size:11px;padding-right:26px">${f.updated} 기준</span>
+        </div>
       </div>
-      <div class="fc-title"><a class="fcard-link" href="${fundUrl(f)}" aria-label="${escapeAttr(f.title)} 상세 문서 열기">${f.title}</a></div>
-      <div class="fc-desc">${f.excerpt}</div>
-      <div class="fc-meta">
-        <span class="fm">한도 <b>${f.lim||f.limit}</b></span>
-        <span class="fm">금리 <b>${f.rate}</b></span>
-        <span class="fm" style="margin-left:auto;font-size:11px">${f.updated} 기준</span>
-        <button class="heart-btn${saved?' saved':''}" onclick="toggleSave(${f.id},event)">${saved?'♥':'♡'}</button>
+      <div class="fc-right">
+        <span class="fc-limit">${f.lim||f.limit}</span>
+        <span class="fc-rate">${f.rate}</span>
+        ${badge}
       </div>
-    </div>
-    <div class="fc-right">
-      <span class="fc-limit">${f.lim||f.limit}</span>
-      <span class="fc-rate">${f.rate}</span>
-      ${badge}
-    </div>
-  </article>`;
+    </a>
+    <button class="heart-btn card-heart${saved?' saved':''}" onclick="toggleSave(${f.id},event)" aria-label="찜하기">${saved?'♥':'♡'}</button>
+  </div>`;
 }
 
 function makeBadge(deadline) {
@@ -8706,59 +8721,7 @@ function makeBadge(deadline) {
 function openDetail(id) {
   const f = FUNDS.find(x=>x.id===id);
   if (!f) return;
-  document.title = f.title.split('—')[0].trim() + ' — 정책자금 백과';
-  const related = FUNDS.filter(x=>x.cat===f.cat&&x.id!==f.id).slice(0,4);
-  document.getElementById('detail-content').innerHTML = `
-    <div class="d-top">
-      <div class="breadcrumb">
-        <span onclick="goHome()">홈</span>
-        <i>›</i>
-        <span onclick="filterCat(null,'${f.cat}')">${f.cat}</span>
-        <i>›</i>
-        <span style="color:var(--ink3);cursor:default">${f.title.split('—')[0].trim()}</span>
-      </div>
-      <div class="d-tags">${f.tags.map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}</div>
-      <div class="d-title">${f.title}</div>
-      <div class="d-desc">${f.detail}</div>
-    </div>
-    <div class="d-summary">
-      <div class="d-si"><div class="d-sl">지원 한도</div><div class="d-sv">${f.limit}</div></div>
-      <div class="d-si"><div class="d-sl">금리 / 지원</div><div class="d-sv" style="font-size:15px">${f.rate}</div></div>
-      <div class="d-si"><div class="d-sl">담당 기관</div><div class="d-sv ink">${f.org}</div></div>
-    </div>
-    <div class="d-body">
-      <div class="d-stitle">지원 내용</div>
-      <div class="info-rows">
-        <div class="info-row"><span class="info-k">지원 대상</span><span class="info-v">${f.target_desc}</span></div>
-        <div class="info-row"><span class="info-k">지원 금액</span><span class="info-v">${f.amount_desc}</span></div>
-        <div class="info-row"><span class="info-k">금리·지원</span><span class="info-v">${f.rate_desc}</span></div>
-        <div class="info-row"><span class="info-k">지원 기간</span><span class="info-v">${f.period_desc}</span></div>
-        <div class="info-row"><span class="info-k">필요 서류</span><span class="info-v">${f.docs}</span></div>
-      </div>
-      <div class="d-stitle">신청 절차</div>
-      <div class="step-list">
-        ${f.steps.map((s,i)=>`<div class="step-item"><span class="step-n">${i+1}</span><span class="step-t">${s}</span></div>`).join('')}
-      </div>
-      <a class="official-btn" href="${f.agency}" target="_blank">
-        <div class="ob-text">
-          <strong>${f.agencyName} 공식 사이트에서 신청하기 ↗</strong>
-          <span>${f.agencyNote}</span>
-        </div>
-      </a>
-      <button class="m-submit" style="margin-top:20px;border-radius:var(--r);padding:13px 0;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;cursor:pointer;background:var(--ink);color:#fff;border:none;letter-spacing:-.1px" onclick="openModal()">💬 정책자금 신청 상담 받기 (무료)</button>
-    </div>
-    ${related.length?`<div class="related-sec">
-      <div class="related-title">같은 카테고리 다른 정보</div>
-      <div class="related-items">${related.map(r=>`
-        <a class="related-item" href="${fundUrl(r)}">
-          <span class="tag ${r.tags[0].c}">${r.tags[0].t}</span>
-          <span class="ri-name">${r.title}</span>
-          <span class="ri-org">${r.org}</span>
-        </a>`).join('')}
-      </div>
-    </div>`:''}`;
-  showView('detail');
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.location.href = fundPath(f);
 }
 
 /* ══════════════════════════════════════
@@ -8823,6 +8786,7 @@ async function handleSearch(val) {
         ? results.map(renderCard).join('')
         : '<p style="color:var(--ink4);text-align:center;padding:40px 0;font-size:14px">검색 결과가 없습니다.</p>';
       showView('search');
+      requestAnimationFrame(queueVisibleFundPrefetch);
     } catch(e) {
       // API 실패 시 로컬 검색 fallback
       const q   = val.trim().toLowerCase();
@@ -8837,6 +8801,7 @@ async function handleSearch(val) {
         ? res.map(renderCard).join('')
         : '<p style="color:var(--ink4);text-align:center;padding:40px 0;font-size:14px">검색 결과가 없습니다.</p>';
       showView('search');
+      requestAnimationFrame(queueVisibleFundPrefetch);
     }
   }, 300);
 }
@@ -8855,6 +8820,7 @@ function showSaved() {
   document.getElementById('post-sections').innerHTML = funds.length
     ? `<div class="fund-sec"><div class="sec-head"><span class="sec-name">저장한 정보</span><span class="sec-cnt">${funds.length}건</span></div><div class="card-stack">${funds.map(renderCard).join('')}</div></div>`
     : '<p style="color:var(--ink4);text-align:center;padding:48px 0;font-size:14px">아직 저장한 정보가 없습니다.<br>카드의 ♡ 버튼을 눌러 저장해보세요.</p>';
+  requestAnimationFrame(queueVisibleFundPrefetch);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -8978,33 +8944,18 @@ function showView(v) {
    HAMBURGER
 ══════════════════════════════════════ */
 function toggleHam() {
-  const nav = document.getElementById('h-nav');
-  const btn = document.getElementById('ham-btn');
-  const isOpen = nav.classList.toggle('open');
-  if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  document.getElementById('h-nav').classList.toggle('open');
 }
 document.addEventListener('click', function(e) {
   const nav = document.getElementById('h-nav');
   const btn = document.getElementById('ham-btn');
   if (nav && btn && !nav.contains(e.target) && !btn.contains(e.target)) {
     nav.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
   }
-});
-document.querySelectorAll('.h-nav a').forEach(function(link) {
-  link.addEventListener('click', function() {
-    const nav = document.getElementById('h-nav');
-    const btn = document.getElementById('ham-btn');
-    if (nav) nav.classList.remove('open');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-  });
 });
 document.addEventListener('keydown', function(e) {
   if (e.key==='Escape') {
-    const nav = document.getElementById('h-nav');
-    const btn = document.getElementById('ham-btn');
-    if (nav) nav.classList.remove('open');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
+    document.getElementById('h-nav').classList.remove('open');
     closeModal();
   }
 });
@@ -9019,12 +8970,9 @@ if (new URLSearchParams(window.location.search).get('contact') === '1') {
 function openModal() {
   const bg = document.getElementById("pfp-modal-bg");
   const modal = document.querySelector(".pfp-modal");
-  const nav = document.getElementById('h-nav');
-  const ham = document.getElementById('ham-btn');
-  if (nav) nav.classList.remove('open');
-  if (ham) ham.setAttribute('aria-expanded', 'false');
   bg.style.cssText = 'display:flex !important; position:fixed; inset:0; z-index:99999; background:rgba(15,23,42,.55); padding:24px 16px; overflow-y:auto; backdrop-filter:blur(3px); align-items:flex-start; justify-content:center;';
   modal.style.cssText = 'display:block !important; width:520px !important; max-width:calc(100vw - 32px) !important; background:white !important; margin:auto !important; border-radius:20px !important; box-shadow:0 24px 64px rgba(15,23,42,.22) !important; position:relative !important; box-sizing:border-box !important; flex-shrink:0 !important;';
+  document.querySelector('header').style.zIndex = '1';
   document.body.style.overflow = 'hidden';
   // 폼 초기화
   const form = document.getElementById('m-form');
@@ -9045,6 +8993,7 @@ function closeModal() {
   const modal = document.querySelector(".pfp-modal");
   bg.style.cssText = 'display:none !important;';
   modal.style.cssText = '';
+  document.querySelector('header').style.zIndex = '';
   document.body.style.overflow = '';
   const form = document.getElementById('m-form');
   const done = document.getElementById('m-done');
