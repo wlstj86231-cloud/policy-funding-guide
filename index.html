@@ -214,11 +214,6 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 #detail-view{display:none}
 #detail-view.show{display:block}
 #detail-view.inline-detail{margin-top:18px}
-#detail-view.detail-reveal .d-card{animation:detailReveal .22s cubic-bezier(.2,.8,.2,1) both;transform-origin:top center}
-#detail-view.detail-reveal .d-top{animation:detailGlow .34s ease-out both}
-@keyframes detailReveal{from{opacity:.35;transform:translateY(8px) scale(.992);box-shadow:0 0 0 rgba(15,23,42,0)}to{opacity:1;transform:translateY(0) scale(1);box-shadow:0 14px 34px rgba(15,23,42,.07)}}
-@keyframes detailGlow{from{background:#f8fbff}to{background:var(--white)}}
-@media (prefers-reduced-motion:reduce){#detail-view.detail-reveal .d-card,#detail-view.detail-reveal .d-top{animation:none}}
 #search-view{display:none}
 #search-view.show{display:block}
 #live-view{display:none}
@@ -746,11 +741,37 @@ function parkInlineDetail() {
   return detailView;
 }
 
-function playDetailReveal(detailView) {
-  if (!detailView) return;
-  detailView.classList.remove('detail-reveal');
-  void detailView.offsetWidth;
-  detailView.classList.add('detail-reveal');
+function getPageScrollY() {
+  return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+}
+
+function scrollToInlineDetail(targetElement, instant = false) {
+  if (!targetElement) return;
+  if (detailScrollFrame) cancelAnimationFrame(detailScrollFrame);
+  const headerOffset = (document.querySelector('header')?.offsetHeight || 0) + 12;
+  const start = getPageScrollY();
+  const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const target = Math.max(0, Math.min(maxScroll, start + targetElement.getBoundingClientRect().top - headerOffset));
+  const distance = target - start;
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  if (instant || reducedMotion || Math.abs(distance) < 4) {
+    window.scrollTo({top:target, behavior:'auto'});
+    detailScrollFrame = 0;
+    return;
+  }
+  const duration = Math.min(360, Math.max(190, Math.abs(distance) * .32));
+  const startedAt = performance.now();
+  const step = (now) => {
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    window.scrollTo(0, start + distance * eased);
+    if (progress < 1) {
+      detailScrollFrame = requestAnimationFrame(step);
+    } else {
+      detailScrollFrame = 0;
+    }
+  };
+  detailScrollFrame = requestAnimationFrame(step);
 }
 
 function normalizeFunds(items) {
@@ -8923,14 +8944,9 @@ function showInlineDetail(options = {}) {
     listView.appendChild(detailView);
   }
   detailView.classList.add('show','inline-detail');
-  playDetailReveal(detailView);
   if (options.scroll !== false) {
     const scrollTarget = anchorCard || detailView;
-    if (detailScrollFrame) cancelAnimationFrame(detailScrollFrame);
-    detailScrollFrame = requestAnimationFrame(() => {
-      detailScrollFrame = 0;
-      scrollTarget.scrollIntoView({behavior:'auto', block:'start'});
-    });
+    scrollToInlineDetail(scrollTarget, options.instant === true);
   }
 }
 
@@ -8938,7 +8954,11 @@ function closeInlineDetail(options = {}) {
   if (softDetailController) softDetailController.abort();
   activeDetailPath = null;
   const detailView = parkInlineDetail();
-  if (detailView) detailView.classList.remove('show','inline-detail','detail-reveal');
+  if (detailScrollFrame) {
+    cancelAnimationFrame(detailScrollFrame);
+    detailScrollFrame = 0;
+  }
+  if (detailView) detailView.classList.remove('show','inline-detail');
   document.title = HOME_TITLE;
   const detailContent = document.getElementById('detail-content');
   if (detailContent && options.clear !== false) detailContent.innerHTML = '';
