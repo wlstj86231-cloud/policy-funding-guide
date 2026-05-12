@@ -320,7 +320,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .sb-box{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:18px 18px 14px}
 .sb-title{font-size:11px;font-weight:700;color:var(--ink4);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .sb-cat-list{display:flex;flex-direction:column;gap:1px}
-.sb-cat{display:flex;align-items:center;justify-content:space-between;padding:8px 9px;border-radius:6px;cursor:pointer;transition:background .12s}
+.sb-cat{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 9px;border:0;background:transparent;border-radius:6px;cursor:pointer;transition:background .12s;font:inherit;text-align:left}
 .sb-cat:hover{background:var(--sur)}
 .sb-cat.on{background:var(--blue-bg)}
 .sb-cat-name{font-size:13px;color:var(--ink2)}
@@ -8737,10 +8737,10 @@ function toggleSave(id, e) {
 function renderSideCats() {
   const all = [{name:'전체',cnt:FUNDS.length}].concat(CATS.map(c=>({name:c,cnt:FUNDS.filter(f=>f.cat===c).length})));
   document.getElementById('sb-cats').innerHTML = all.map(c=>
-    `<div class="sb-cat${activeCat===c.name?' on':''}" onclick="filterCat(null,'${c.name}')">
+    `<button type="button" class="sb-cat${activeCat===c.name?' on':''}" data-cat="${escapeSoftHtml(c.name)}">
       <span class="sb-cat-name">${c.name}</span>
       <span class="sb-cat-n">${c.cnt}</span>
-    </div>`
+    </button>`
   ).join('');
 }
 
@@ -9089,6 +9089,7 @@ function filterCat(e, cat) {
   showView('list');
   renderSections(FUNDS);
   window.scrollTo({top:0,behavior:'auto'});
+  return false;
 }
 
 function chipFilter(btn, val) {
@@ -9290,6 +9291,11 @@ function showView(v) {
 }
 
 document.addEventListener('click', function(e) {
+  const sideCategory = e.target.closest('#sb-cats .sb-cat');
+  if (sideCategory) {
+    return filterCat(e, sideCategory.dataset.cat);
+  }
+
   const link = e.target.closest('#detail-content a');
   if (!link) return;
   const url = new URL(link.href, window.location.href);
