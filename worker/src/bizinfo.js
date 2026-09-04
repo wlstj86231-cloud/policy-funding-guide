@@ -182,6 +182,7 @@ export async function readLimitedBody(response, maxBytes = MAX_UPSTREAM_BYTES) {
 	if (rawLength !== null) {
 		const declaredLength = Number(rawLength);
 		if (!Number.isSafeInteger(declaredLength) || declaredLength < 0 || declaredLength > maxBytes) {
+			try { await response.body?.cancel(); } catch {}
 			throw new UpstreamError("upstream body too large");
 		}
 	}
@@ -205,6 +206,7 @@ export async function readLimitedBody(response, maxBytes = MAX_UPSTREAM_BYTES) {
 	} catch (error) {
 		try { await reader.cancel(); } catch {}
 		if (error instanceof UpstreamError) throw error;
+		if (error?.name === "TimeoutError" || error?.name === "AbortError") throw error;
 		throw new UpstreamError("upstream body read failed");
 	}
 

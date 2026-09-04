@@ -37,25 +37,24 @@
     - workers.dev에서 /api/bizinfo 사용 차단
 
   기업마당 API 정보:
-    주소: https://www.bizinfo.go.kr/uss/rss/bizinfoApi.do
+    주소: https://apis.data.go.kr/1421000/mssBizService_v2/getbizList_v2
     제공: 전국 정부·지자체 지원사업 공고
     업데이트: 실시간 (새 공고 즉시 반영)
     비용: 무료 (공공데이터포털 API 키 필요)
 
   API 파라미터:
     serviceKey  -> 공공데이터포털 발급 인증 키
-    numOfRows   -> 한 번에 가져올 공고 수 (20 추천)
-    pageNo      -> 페이지 번호 (1 = 가장 최신)
+    numOfRows   -> 한 번에 가져올 공고 수 (화면 15, 최대 30)
+    pageNo      -> 페이지 번호 (1~1000, 1 = 가장 최신)
     분야 분류   -> 현재 사용 중인 상류 API가 지원하지 않으므로 제공하지 않음
 
   응답 데이터 주요 항목:
-    pblancNm    -> 공고 제목
-    pblancUrl   -> 공고 상세 주소
-    intrcnMemo  -> 공고 요약
-    rcptPrdBegin -> 신청 시작일
-    rcptPrdEnd  -> 신청 마감일
-    insttNm     -> 소관 기관
-    excInsttNm  -> 수행 기관
+    title                -> 공고 제목
+    viewUrl              -> 공고 상세 주소
+    dataContents         -> 공고 요약
+    applicationStartDate -> 신청 시작일
+    applicationEndDate   -> 신청 마감일
+    writerName           -> 작성 기관
 
   기업마당 API 키 발급 방법:
     1. https://www.data.go.kr 접속 -> 로그인

@@ -80,6 +80,33 @@ test("a body without content-length is cancelled as soon as it exceeds the limit
 	assert.equal(cancelled, true);
 });
 
+test("an oversized declared body is cancelled before it is read", async () => {
+	let cancelled = false;
+	const body = new ReadableStream({ cancel() { cancelled = true; } });
+	const response = new Response(body, { headers: { "content-length": "17" } });
+	await assert.rejects(() => readLimitedBody(response, 16));
+	assert.equal(cancelled, true);
+});
+
+test("a body timeout remains a timeout response", async () => {
+	const response = await handleBizinfo(
+		new Request("https://policyfundpedia.com/api/bizinfo"),
+		env(),
+		{},
+		{
+			fetch: async () => new Response(new ReadableStream({
+				pull() {
+					const error = new Error("late body");
+					error.name = "TimeoutError";
+					throw error;
+				},
+			})),
+			cache: new MemoryCache(),
+		},
+	);
+	assert.equal(response.status, 504);
+});
+
 test("successful responses are cached and a cache hit skips upstream", async () => {
 	const cache = new MemoryCache();
 	let calls = 0;
