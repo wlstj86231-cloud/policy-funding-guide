@@ -1,0 +1,26 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "policyfund-api",
+	"main": "src/index.js",
+	"compatibility_date": "2026-04-12",
+	"workers_dev": true,
+	"preview_urls": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "policyfund-db",
+			"database_id": "c4b40380-ab52-4e5b-9b78-333a79cc518f"
+		}
+	],
+	"ratelimits": [
+		{
+			"name": "BIZINFO_RATE_LIMIT",
+			"namespace_id": "4101",
+			"simple": {
+				"limit": 60,
+				"period": 60
+			}
+		}
+	]
+}
+

@@ -623,7 +623,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
    API 설정
 ══════════════════════════════════════ */
 const VERIFIED_DATA_URL = '/data/verified-funds.json';
-const PROXY_URL = 'https://bizinfo-proxy.wlstj86231.workers.dev';
+const PROXY_URL = '/api/bizinfo';
 
 /* ══════════════════════════════════════
    DATA (API에서 로드)
@@ -832,11 +832,7 @@ const HOME_TITLE = document.title;
 /* ══════════════════════════════════════
    LIVE FEED 상태
 ══════════════════════════════════════ */
-const liveState = { cate:'', pageNo:1, total:0, loading:false, loaded:false };
-const LIVE_CATES = [
-  {val:'',label:'전체'},{val:'금융',label:'금융'},{val:'창업',label:'창업'},
-  {val:'기술',label:'기술'},{val:'인력',label:'인력'},{val:'수출',label:'수출'},{val:'경영',label:'경영'}
-];
+const liveState = { pageNo:1, total:0, loading:false, loaded:false };
 
 /* ══════════════════════════════════════
    INIT
@@ -1321,16 +1317,11 @@ async function renderLive() {
   const el = document.getElementById('live-content');
   el.innerHTML = `<div class="live-wrap"><div class="live-header"><div class="live-title">📢 최신 공고 <small>정부 기업마당 실시간 연동</small></div>${renderLiveFilter()}</div><div class="live-loading"><div class="live-spin"></div><br>공고를 불러오는 중...</div></div>`;
 
-  if (!PROXY_URL || PROXY_URL === 'YOUR_PROXY_URL') {
-    el.innerHTML = `<div class="live-wrap"><div class="live-header"><div class="live-title">📢 최신 공고</div>${renderLiveFilter()}</div>
-      <div class="live-error"><div class="live-error-h">⚙️ Cloudflare Workers 연결 필요</div><div class="live-error-p">HTML 상단의 <code>PROXY_URL</code> 에 Workers 주소를 입력하면 실시간 공고가 표시됩니다.<br><br>지금은 <a href="https://www.bizinfo.go.kr" target="_blank">기업마당에서 직접 확인</a>하실 수 있습니다.</div></div></div>`;
-    liveState.loading = false; return;
-  }
   try {
-    const url  = `${PROXY_URL}?cate=${encodeURIComponent(liveState.cate)}&numOfRows=15&pageNo=${liveState.pageNo}`;
+    const url  = `${PROXY_URL}?numOfRows=15&pageNo=${liveState.pageNo}`;
     const res  = await fetch(url);
     const data = await res.json();
-    if (!data.success) throw new Error(data.error||'API 오류');
+    if (!res.ok || !data.success) throw new Error(data.error||'API 오류');
     liveState.total   = data.totalCount || 0;
     liveState.loading = false;
     const tp = Math.ceil(liveState.total/15);
@@ -1347,25 +1338,39 @@ async function renderLive() {
   } catch(err) {
     liveState.loading = false;
     el.innerHTML = `<div class="live-wrap"><div class="live-header"><div class="live-title">📢 최신 공고</div>${renderLiveFilter()}</div>
-      <div class="live-error"><div class="live-error-h">⚠️ 공고를 불러오지 못했습니다</div><div class="live-error-p">${err.message}<br><br><a href="https://www.bizinfo.go.kr" target="_blank">기업마당에서 직접 확인하기 →</a></div></div></div>`;
+      <div class="live-error"><div class="live-error-h">⚠️ 공고를 불러오지 못했습니다</div><div class="live-error-p">${escapeSoftHtml(err.message)}<br><br><a href="https://www.bizinfo.go.kr" target="_blank" rel="noopener noreferrer">기업마당에서 직접 확인하기 →</a></div></div></div>`;
   }
 }
 
 function renderLiveCard(item) {
-  const badge = liveBadge(item.endDate);
-  const period = item.startDate&&item.endDate ? `${item.startDate} ~ ${item.endDate}` : item.endDate||'상시';
+  const title = escapeSoftHtml(item.title);
+  const summary = escapeSoftHtml(item.summary);
+  const org = escapeSoftHtml(item.org||'—');
+  const category = escapeSoftHtml(item.category);
+  const startDate = escapeSoftHtml(item.startDate);
+  const endDate = escapeSoftHtml(item.endDate);
+  const safeLink = safeExternalLink(item.url);
+  const badge = liveBadge(endDate);
+  const period = startDate&&endDate ? `${startDate} ~ ${endDate}` : endDate||'상시';
   return `<div class="live-card">
     <div class="lc-top">
-      <div class="lc-title">${item.url?`<a href="${item.url}" target="_blank" rel="noopener">${item.title}</a>`:item.title}</div>
+      <div class="lc-title">${safeLink?`<a href="${escapeSoftHtml(safeLink)}" target="_blank" rel="noopener noreferrer">${title}</a>`:title}</div>
       ${badge}
     </div>
     <div class="lc-meta">
-      <span><b>기관</b> ${item.org||'—'}</span>
+      <span><b>기관</b> ${org}</span>
       <span><b>기간</b> ${period}</span>
-      ${item.category?`<span><b>분야</b> ${item.category}</span>`:''}
+      ${category?`<span><b>분야</b> ${category}</span>`:''}
     </div>
-    ${item.summary?`<div class="lc-summary">${item.summary}</div>`:''}
+    ${summary?`<div class="lc-summary">${summary}</div>`:''}
   </div>`;
+}
+
+function safeExternalLink(value) {
+  try {
+    const url = new URL(String(value||''));
+    return url.protocol === 'https:' ? url.href : '';
+  } catch { return ''; }
 }
 
 function liveBadge(endDate) {
@@ -1380,11 +1385,7 @@ function liveBadge(endDate) {
 }
 
 function renderLiveFilter() {
-  return `<div class="live-filter">${LIVE_CATES.map(c=>`<button class="lf-btn${liveState.cate===c.val?' on':''}" onclick="setLiveCate('${c.val}')">${c.label}</button>`).join('')}</div>`;
-}
-
-function setLiveCate(cate) {
-  liveState.cate=cate; liveState.pageNo=1; liveState.loading=false; renderLive();
+  return '<a class="lf-btn" href="https://www.bizinfo.go.kr" target="_blank" rel="noopener noreferrer">기업마당 원문</a>';
 }
 function setLivePage(page) {
   liveState.pageNo=page; liveState.loading=false; renderLive();

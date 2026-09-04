@@ -54,9 +54,12 @@ for (const fund of funds) {
 
 const indexHtml = await read("index.html");
 assert(indexHtml.includes("/data/verified-funds.json"), "홈이 로컬 검증 데이터를 사용하지 않습니다.");
-for (const forbidden of ["policyfund-api.wlstj86231.workers.dev", "emailjs", "EMAILJS_", "pf_consult_sent", "민간 컨설턴트", "정책자금 신청 상담 받기", "D-NaN"]) {
+for (const forbidden of ["policyfund-api.wlstj86231.workers.dev", "bizinfo-proxy.wlstj86231.workers.dev", "emailjs", "EMAILJS_", "pf_consult_sent", "민간 컨설턴트", "정책자금 신청 상담 받기", "D-NaN"]) {
   assert(!indexHtml.includes(forbidden), `홈에 금지된 레거시 문자열이 남았습니다: ${forbidden}`);
 }
+assert(indexHtml.includes("const PROXY_URL = '/api/bizinfo';"), "최신 공고가 동일 출처 API를 사용하지 않습니다.");
+assert(!indexHtml.includes("LIVE_CATES"), "동작하지 않는 최신 공고 카테고리 필터가 남았습니다.");
+assert(indexHtml.includes("escapeSoftHtml(err.message)"), "최신 공고 오류 문구가 안전하게 출력되지 않습니다.");
 assert(indexHtml.includes("const _FUNDS_PLACEHOLDER = [];"), "홈의 대량 레거시 내장 데이터가 제거되지 않았습니다.");
 
 const publicPages = [

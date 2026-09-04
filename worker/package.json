@@ -1,0 +1,13 @@
+{
+	"name": "policyfund-api",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"check": "node --check src/index.js && node --check src/bizinfo.js && node --check src/policyfund-live-baseline.js",
+		"test": "node --test"
+	},
+	"devDependencies": {
+		"wrangler": "4.129.0"
+	}
+}
+
