@@ -8,7 +8,7 @@
 
   C:\Users\wlstj\Desktop\국가정책자금\
     policy-fund-site.html   ← 웹사이트 본체 (깃 O)
-    bizinfo-proxy.js        ← Cloudflare Workers 서버 코드 (깃 X)
+    worker\                 ← policyfund-api 운영 소스 (깃 O, 비밀값 제외)
     필수_행동강령_cli.txt    (깃 X)
     계획서_아키텍쳐.txt      (깃 X)
     맥락노트.txt             (깃 X)
@@ -238,57 +238,55 @@ FUNDS 배열 필드 목록
         JSON.stringify({ phone: document.getElementById('f-phone').value, time: Date.now() }));
 
 ════════════════════════════════════════
-5단계 — Cloudflare Workers API 연동
+5단계 — policyfund-api 기업마당 연동
 ════════════════════════════════════════
 
-  번호 30. 기업마당 API 키 발급
+  번호 30. 기업마당 API 키 관리
   ─────────────────────────────────────────
   할 일:
     1. https://www.data.go.kr → 로그인
     2. "중소기업지원사업목록" 검색 → 활용신청
     3. 1~2시간 후 마이페이지 → 오픈API → 인증키(Encoding) 복사
+    4. 키는 policyfund-api의 BIZINFO_API_KEY secret으로만 저장
+    5. 소스·HTML·문서·Git에는 키 값을 기록하지 않음
 
-  번호 31-A. Cloudflare 계정 만들기
+  번호 31-A. 기존 policyfund-api 사용
   ─────────────────────────────────────────
-  할 일: https://workers.cloudflare.com → 무료 계정 생성
+  할 일: 별도 공개 Worker를 만들지 않고 policyfund-api에 통합
 
-  번호 31-B. Workers 프로젝트 생성
-  ─────────────────────────────────────────
-  할 일:
-    Dashboard → Workers & Pages → Create application → Create Worker
-    이름 입력 (예: bizinfo-proxy) → Create 클릭
-
-  번호 31-C. 코드 붙여넣기 및 배포
+  번호 31-B. 운영 소스 확인
   ─────────────────────────────────────────
   할 일:
-    편집기에서 기존 코드 전체 선택 후 삭제
-    bizinfo-proxy.js 파일 내용 전체 복사 → 붙여넣기
-    Deploy 버튼 클릭
-    배포 완료 후 표시되는 주소 메모
-    (예: https://bizinfo-proxy.내아이디.workers.dev)
+    worker/src/index.js      → /api/bizinfo만 새 모듈로 전달
+    worker/src/bizinfo.js    → 입력 제한·캐시·속도 제한·상류 검증
+    그 외 경로              → 기존 policyfund-api 기준선에 그대로 위임
 
-  번호 31-D. 환경 변수에 API 키 입력
+  번호 31-C. 검사 후 버전 배포
   ─────────────────────────────────────────
   할 일:
-    Workers 프로젝트 → Settings → Variables and Secrets
-    Add variable 클릭
-    Variable name: BIZINFO_API_KEY
-    Value: 30번에서 복사한 API 키
-    Save 클릭
+    worker에서 npm test와 npm run check 실행
+    새 Worker 버전을 0%로 올려 기존 경로와 응답 동일성 검사
+    /api/bizinfo 정상·경계·장애 응답 검사 후 검증 버전만 승격
 
-  번호 32. HTML에 Workers 주소 입력
+  번호 31-D. 비밀값과 바인딩 확인
   ─────────────────────────────────────────
-  할 일: HTML 상단 script 안 아래 줄 찾기:
-    const PROXY_URL = 'YOUR_PROXY_URL';
-  31-C에서 메모한 주소로 교체:
-    const PROXY_URL = 'https://bizinfo-proxy.내아이디.workers.dev';
+  할 일:
+    BIZINFO_API_KEY secret, DB, BIZINFO_RATE_LIMIT readback 확인
+    API 키가 로그·응답·workers.dev에 노출되지 않는지 확인
+
+  번호 32. HTML은 동일 출처만 사용
+  ─────────────────────────────────────────
+  고정값:
+    const PROXY_URL = '/api/bizinfo';
+  별도 workers.dev 주소를 입력하거나 다시 만들지 않음
 
   번호 33. 최신 공고 탭 동작 확인
   ─────────────────────────────────────────
-  할 일: 32번 완료 후 확인:
+  할 일:
     - "📢 최신 공고" 탭 클릭 → 공고 목록 표시 여부
-    - 분야 필터 버튼 작동 여부
     - 마감일 배지 표시 여부
     - 페이지 이동 버튼 작동 여부
+    - 상류 장애 때 최근 정상 캐시 또는 안전한 오류 표시 여부
+    - 공식 분류 API가 준비되기 전에는 분야 필터를 표시하지 않음
     오류 시 체크리스트 오류 로그에 기록
 

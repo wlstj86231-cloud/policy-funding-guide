@@ -51,7 +51,7 @@
     - 계획서_아키텍쳐.txt
     - 맥락노트.txt
     - 체크리스트_업데이트로그.txt
-    - bizinfo-proxy.js  ← API 키 포함, 절대 금지
+    - BIZINFO_API_KEY 값 및 기타 운영 비밀  ← 절대 금지
 
 ════════════════════════════════════════
 [규칙 6] 언어
@@ -72,7 +72,7 @@
   프로젝트 이름 : 정책자금 백과
   파일 목록:
     policy-fund-site.html   ← 웹사이트 본체 (깃 푸시 O)
-    bizinfo-proxy.js        ← Cloudflare Workers 서버 코드 (깃 푸시 X)
+    worker\                 ← policyfund-api 운영 소스 (비밀값 없이 깃 푸시 O)
   파일 위치: C:\Users\wlstj\Desktop\국가정책자금\
 
   이 사이트는 무엇인가?

@@ -8,4 +8,3 @@
 - 운영 비밀 `BIZINFO_API_KEY`는 Cloudflare secret binding으로만 주입합니다. 파일이나 Git에는 저장하지 않습니다.
 
 검증은 `npm test`와 `npm run check`로 수행합니다. 배포 전에는 현재 운영 D1 바인딩과 route가 바뀌지 않았는지 readback하고, 새 버전을 preview에서 검사한 뒤 점진적으로 전환합니다.
-

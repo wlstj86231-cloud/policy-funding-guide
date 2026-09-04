@@ -76,7 +76,7 @@ export function parseRequest(request) {
 		throw new RequestError(400, "분야별 조회는 공식 분류 연동 후 제공됩니다.");
 	}
 	return {
-		pageNo: readInteger(url, "pageNo", 1, 1, 100),
+		pageNo: readInteger(url, "pageNo", 1, 1, 1000),
 		numOfRows: readInteger(url, "numOfRows", 15, 1, 30),
 	};
 }
@@ -177,6 +177,46 @@ async function responseFromCache(response, state) {
 	});
 }
 
+export async function readLimitedBody(response, maxBytes = MAX_UPSTREAM_BYTES) {
+	const rawLength = response.headers.get("content-length");
+	if (rawLength !== null) {
+		const declaredLength = Number(rawLength);
+		if (!Number.isSafeInteger(declaredLength) || declaredLength < 0 || declaredLength > maxBytes) {
+			throw new UpstreamError("upstream body too large");
+		}
+	}
+	if (!response.body) return new Uint8Array();
+
+	const reader = response.body.getReader();
+	const chunks = [];
+	let total = 0;
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			const chunk = value instanceof Uint8Array ? value : new Uint8Array(value);
+			total += chunk.byteLength;
+			if (total > maxBytes) {
+				try { await reader.cancel(); } catch {}
+				throw new UpstreamError("upstream body too large");
+			}
+			chunks.push(chunk);
+		}
+	} catch (error) {
+		try { await reader.cancel(); } catch {}
+		if (error instanceof UpstreamError) throw error;
+		throw new UpstreamError("upstream body read failed");
+	}
+
+	const bytes = new Uint8Array(total);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return bytes;
+}
+
 async function fetchUpstream(params, env, fetchImpl) {
 	if (!env.BIZINFO_API_KEY) throw new RequestError(503, ERROR_MESSAGES.configuration);
 	if (!env.BIZINFO_RATE_LIMIT?.limit) throw new RequestError(503, ERROR_MESSAGES.configuration);
@@ -196,10 +236,7 @@ async function fetchUpstream(params, env, fetchImpl) {
 		throw new UpstreamError("upstream request failed");
 	}
 	if (!response.ok) throw new UpstreamError("upstream status");
-	const declaredLength = Number(response.headers.get("content-length") || 0);
-	if (declaredLength > MAX_UPSTREAM_BYTES) throw new UpstreamError("upstream body too large");
-	const bytes = await response.arrayBuffer();
-	if (bytes.byteLength > MAX_UPSTREAM_BYTES) throw new UpstreamError("upstream body too large");
+	const bytes = await readLimitedBody(response);
 	return parseBizinfoXml(new TextDecoder().decode(bytes));
 }
 

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { cleanText, handleBizinfo, parseBizinfoXml, parseRequest } from "../src/bizinfo.js";
+import { cleanText, handleBizinfo, parseBizinfoXml, parseRequest, readLimitedBody } from "../src/bizinfo.js";
 
 const XML = `<?xml version="1.0" encoding="UTF-8"?>
 <response><header><resultCode>00</resultCode></header><body><totalCount>1</totalCount><items><item>
@@ -33,7 +33,9 @@ class MemoryCache {
 
 test("request contract is narrow and bounded", () => {
 	assert.deepEqual(parseRequest(new Request("https://policyfundpedia.com/api/bizinfo?pageNo=2&numOfRows=30")), { pageNo: 2, numOfRows: 30 });
+	assert.deepEqual(parseRequest(new Request("https://policyfundpedia.com/api/bizinfo?pageNo=101")), { pageNo: 101, numOfRows: 15 });
 	assert.throws(() => parseRequest(new Request("https://policyfundpedia.com/api/bizinfo?pageNo=1&pageNo=2")));
+	assert.throws(() => parseRequest(new Request("https://policyfundpedia.com/api/bizinfo?pageNo=1001")));
 	assert.throws(() => parseRequest(new Request("https://policyfundpedia.com/api/bizinfo?numOfRows=31")));
 	assert.throws(() => parseRequest(new Request("https://policyfundpedia.com/api/bizinfo?region=충북")));
 	assert.throws(() => parseRequest(new Request("https://policyfund-api.example.workers.dev/api/bizinfo")));
@@ -65,6 +67,17 @@ test("malformed and failed upstream payloads are rejected", () => {
 	assert.throws(() => parseBizinfoXml("<html>maintenance</html>"));
 	assert.throws(() => parseBizinfoXml(XML.replace("<resultCode>00</resultCode>", "<resultCode>20</resultCode>")));
 	assert.doesNotThrow(() => cleanText("&#999999999; 설명"));
+});
+
+test("a body without content-length is cancelled as soon as it exceeds the limit", async () => {
+	let cancelled = false;
+	const chunk = new Uint8Array(8);
+	const body = new ReadableStream({
+		pull(controller) { controller.enqueue(chunk); },
+		cancel() { cancelled = true; },
+	});
+	await assert.rejects(() => readLimitedBody(new Response(body), 16));
+	assert.equal(cancelled, true);
 });
 
 test("successful responses are cached and a cache hit skips upstream", async () => {

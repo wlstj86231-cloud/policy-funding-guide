@@ -10,4 +10,3 @@ export default {
 		return policyfund.fetch(request, env, ctx);
 	},
 };
-
