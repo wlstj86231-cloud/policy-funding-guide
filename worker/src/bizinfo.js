@@ -88,21 +88,29 @@ function decodeEntities(value) {
 			? String.fromCodePoint(number)
 			: "";
 	};
-	return value
-		.replace(/&#x([0-9a-f]+);/gi, (_, hex) => codePoint(hex, 16))
-		.replace(/&#(\d+);/g, (_, decimal) => codePoint(decimal, 10))
-		.replace(/&lt;/gi, "<")
-		.replace(/&gt;/gi, ">")
-		.replace(/&quot;/gi, '"')
-		.replace(/&#39;|&apos;/gi, "'")
-		.replace(/&amp;/gi, "&");
+	const named = {
+		amp: "&", apos: "'", gt: ">", hellip: "…", ldquo: "“", lsquo: "‘",
+		lt: "<", mdash: "—", middot: "·", nbsp: " ", ndash: "–", quot: '"',
+		rdquo: "”", rsquo: "’", sim: "∼",
+	};
+	let decoded = String(value);
+	for (let pass = 0; pass < 2; pass += 1) {
+		const next = decoded
+			.replace(/&#x([0-9a-f]+);/gi, (_, hex) => codePoint(hex, 16))
+			.replace(/&#(\d+);/g, (_, decimal) => codePoint(decimal, 10))
+			.replace(/&([a-z]+);/gi, (entity, name) => named[name.toLowerCase()] ?? entity);
+		if (next === decoded) break;
+		decoded = next;
+	}
+	return decoded;
 }
 
 export function cleanText(value, maxLength = 2000) {
-	const plain = decodeEntities(String(value ?? "")
-		.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+	const decoded = decodeEntities(String(value ?? "")
+		.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1"));
+	const plain = decoded
 		.replace(/<br\s*\/?\s*>/gi, " ")
-		.replace(/<[^>]*>/g, " "))
+		.replace(/<[^>]*>/g, " ")
 		.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
 		.replace(/\s+/g, " ")
 		.trim();

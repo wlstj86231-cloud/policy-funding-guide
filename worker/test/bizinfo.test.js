@@ -67,6 +67,8 @@ test("malformed and failed upstream payloads are rejected", () => {
 	assert.throws(() => parseBizinfoXml("<html>maintenance</html>"));
 	assert.throws(() => parseBizinfoXml(XML.replace("<resultCode>00</resultCode>", "<resultCode>20</resultCode>")));
 	assert.doesNotThrow(() => cleanText("&#999999999; 설명"));
+	assert.equal(cleanText("A&nbsp;&middot;&amp;nbsp;B"), "A · B");
+	assert.equal(cleanText("&lt;b&gt;안내&lt;/b&gt;"), "안내");
 });
 
 test("a body without content-length is cancelled as soon as it exceeds the limit", async () => {
