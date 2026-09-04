@@ -4,6 +4,7 @@ const ALLOWED_PARAMS = new Set(["pageNo", "numOfRows", "cate"]);
 const FRESH_MS = 5 * 60 * 1000;
 const STALE_MS = 60 * 60 * 1000;
 const MAX_UPSTREAM_BYTES = 2 * 1024 * 1024;
+const CACHE_SCHEMA = 2;
 
 const ERROR_MESSAGES = {
 	badRequest: "요청값이 올바르지 않습니다.",
@@ -89,9 +90,9 @@ function decodeEntities(value) {
 			: "";
 	};
 	const named = {
-		amp: "&", apos: "'", gt: ">", hellip: "…", ldquo: "“", lsquo: "‘",
+		amp: "&", apos: "'", diams: "♦", gt: ">", hellip: "…", ldquo: "“", lsquo: "‘",
 		lt: "<", mdash: "—", middot: "·", nbsp: " ", ndash: "–", quot: '"',
-		rdquo: "”", rsquo: "’", sim: "∼",
+		rarr: "→", rdquo: "”", rsquo: "’", sim: "∼",
 	};
 	let decoded = String(value);
 	for (let pass = 0; pass < 2; pass += 1) {
@@ -168,7 +169,7 @@ function cacheFor(env) {
 }
 
 function cacheRequest({ pageNo, numOfRows }) {
-	return new Request(`https://policyfundpedia.com/__worker-cache/bizinfo?pageNo=${pageNo}&numOfRows=${numOfRows}`);
+	return new Request(`https://policyfundpedia.com/__worker-cache/bizinfo/v${CACHE_SCHEMA}?pageNo=${pageNo}&numOfRows=${numOfRows}`);
 }
 
 async function responseFromCache(response, state) {
