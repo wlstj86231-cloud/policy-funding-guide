@@ -397,6 +397,10 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
   .d-summary{grid-template-columns:1fr 1fr}
 }
 @media(max-width:600px){
+  .fcard-link{grid-template-columns:minmax(0,1fr)}
+  .fc-right{text-align:left}
+  .fc-right .fc-limit,.fc-right .fc-rate{display:none}
+  .fc-badge{margin-top:0}
   .h-search{display:none}
   .ham-btn{display:flex}
   .h-nav{display:none;position:absolute;top:60px;right:16px;flex-direction:column;background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:8px;min-width:160px;z-index:300;box-shadow:0 4px 16px rgba(0,0,0,.12)}
@@ -437,6 +441,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <a onclick="filterCat(null,'소상공인')" id="nav-소상공인">소상공인</a>
       <a onclick="filterCat(null,'창업')" id="nav-창업">창업</a>
       <a onclick="filterCat(null,'고용')" id="nav-고용">고용</a>
+      <a onclick="filterCat(null,'농업인')" id="nav-농업인">농업인</a>
       <a onclick="showSaved()">♥ 찜한 정보</a>
       <a class="goatool-nav" href="/editorial-policy/">검증 원칙</a>
     </nav>
@@ -461,6 +466,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <span class="ctab" id="tab-고용" onclick="filterCat(null,'고용')">고용 · 일자리</span>
       <span class="ctab" id="tab-비사업자" onclick="filterCat(null,'비사업자')">비사업자</span>
       <span class="ctab" id="tab-서민금융" onclick="filterCat(null,'서민금융')">서민금융</span>
+      <span class="ctab" id="tab-농업인" onclick="filterCat(null,'농업인')">농업인</span>
       <span class="ctab" id="tab-보증" onclick="filterCat(null,'보증')">보증 제도</span>
       <span class="ctab" id="tab-저장" onclick="showSaved()" style="color:var(--ink3)">♥ 저장한 정보</span>
       <span class="ctab" id="tab-live" onclick="showLive()" style="color:var(--blue);font-weight:600">📢 최신 공고</span>
@@ -821,7 +827,7 @@ async function loadFunds() {
 // 아래는 더미 — API 로드 전 빈 배열 유지용
 const _FUNDS_PLACEHOLDER = []; // 로컬 검증 데이터 로드 실패 시 빈 목록
 
-const CATS = ['소상공인','창업','중소기업','고용','비사업자','서민금융'];
+const CATS = ['소상공인','창업','중소기업','고용','비사업자','서민금융','농업인'];
 let activeCat  = '전체';
 let activeChip = null;
 let searchTmr  = null;
@@ -912,7 +918,9 @@ function renderSections(funds) {
 
 function renderCard(f) {
   const saved  = getSaved().includes(f.id);
-  const badge  = makeBadge(f.deadline);
+  const badge  = f.slug === '2026-후계농-농기계-구입자금'
+    ? '<span class="fc-badge badge-amber">신규 선정 마감</span>'
+    : makeBadge(f.deadline);
   const href = fundPath(f);
   return `<div class="fcard">
     <a class="fcard-link" href="${href}" data-prefetch-fund onclick="return openDetailPath(event,'${href}')" onmouseenter="prefetchFundPage('${href}')" ontouchstart="prefetchFundPage('${href}')" aria-label="${f.title} 문서 열기">
@@ -1155,6 +1163,10 @@ async function openDetailPath(event, href, options = {}) {
   }
 
   const fund = findFundByPath(url.pathname);
+  if (fund?.slug === '2026-후계농-농기계-구입자금') {
+    window.location.href = url.href;
+    return false;
+  }
   if (fund) {
     openInlineDetail(fund, url.pathname, {push: shouldPush, scroll: options.scroll !== false, instant: options.instant === true, anchorElement});
     return false;
@@ -1227,7 +1239,7 @@ function filterCat(e, cat) {
   if (tabEl) tabEl.classList.add('on');
   // 헤더 메뉴 동기화
   document.querySelectorAll('.h-nav a').forEach(a=>a.classList.remove('on'));
-  const navMap = {'전체':'nav-all','소상공인':'nav-소상공인','창업':'nav-창업','고용':'nav-고용'};
+  const navMap = {'전체':'nav-all','소상공인':'nav-소상공인','창업':'nav-창업','고용':'nav-고용','농업인':'nav-농업인'};
   if (navMap[cat]) {
     const el = document.getElementById(navMap[cat]);
     if (el) el.classList.add('on');

@@ -158,6 +158,11 @@ function pageHtml(fund, related) {
   const documentItems = listItems(fund.documents);
   const cautionItems = listItems(fund.cautions);
   const faqItems = fund.faq.map((item) => `<details class="faq-item"><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details>`).join("");
+  const machineryChecklist = fund.slug === "2026-후계농-농기계-구입자금" ? `
+        <div class="d-stitle">중고 트랙터를 검토한다면</div>
+        <div class="info-panel"><h3>자금 대상 확인과 기계 점검은 각각 필요합니다</h3>
+          <p>중고 기계의 융자 대상 여부는 구매 전에 관할 시군구와 대출취급기관에 확인하세요. 자금 적합성을 확인한 뒤에는 명판, 사용시간, 누유와 PTO를 현장에서 따로 점검할 수 있습니다. 보리장터의 <a href="https://boribay.com/guides/used-tractor-buying-checklist" rel="noopener">중고 트랙터 구매 점검 항목</a>은 거래 판단을 돕는 참고자료이며 자금 승인이나 융자 대상 확인을 대신하지 않습니다.</p>
+        </div>` : "";
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -234,7 +239,7 @@ function pageHtml(fund, related) {
         <div class="d-tags">${tagItems}</div>
         <h1 class="d-title">${escapeHtml(fund.title)}</h1>
         <p class="d-desc">${escapeHtml(fund.detail)}</p>
-        <div class="review-meta"><span class="status">${escapeHtml(fund.status)}</span><span>검수일 ${escapeHtml(fund.reviewedAt)}</span><span>출처 ${escapeHtml(fund.sourceAuthority)}</span></div>
+        <div class="review-meta"><span class="status"${/마감|종료/.test(fund.status) ? ' style="color:#92400e!important;background:#fffbeb!important;border-color:#fde68a!important"' : ""}>${escapeHtml(fund.status)}</span><span>검수일 ${escapeHtml(fund.reviewedAt)}</span><span>출처 ${escapeHtml(fund.sourceAuthority)}</span></div>
       </section>
       <section class="d-summary">
         <div class="d-si"><div class="d-sl">지원 한도</div><div class="d-sv">${escapeHtml(fund.limit)}</div></div>
@@ -269,7 +274,7 @@ function pageHtml(fund, related) {
         <div class="d-stitle">자주 묻는 질문</div>
         <div>${faqItems}</div>
         <div class="d-stitle">편집자 해설</div>
-        <div class="editor-note">${escapeHtml(fund.editorNote)}</div>
+        <div class="editor-note">${escapeHtml(fund.editorNote)}</div>${machineryChecklist}
         <div class="note">최종 신청 가능 여부, 접수 기간, 한도와 금리는 반드시 각 기관의 최신 공식 공고를 기준으로 다시 확인하세요.</div>
       </section>
     </main>
@@ -404,18 +409,18 @@ function agricultureHubHtml(funds) {
         <article class="next-card">
           <h3>농산물을 판매하려는 경우</h3>
           <p>시세만 따라 적지 말고 선별 기준, 포장 단위, 택배비, 수수료를 포함한 실제 판매가를 정합니다.</p>
-          <a href="https://boribay.com/guides/produce-direct-sale-pricing-packaging?utm_source=policyfundpedia&amp;utm_medium=owned_referral&amp;utm_campaign=policyfund_agri_startup_bridge" target="_blank" rel="noopener"><span>농산물 직거래 가격·포장 준비</span><span>↗</span></a>
+          <a href="https://boribay.com/guides/produce-direct-sale-pricing-packaging" target="_blank" rel="noopener"><span>농산물 직거래 가격·포장 준비</span><span>↗</span></a>
         </article>
         <article class="next-card">
           <h3>도매시장 경매로 출하하는 경우</h3>
           <p>경락 단가에서 실제 수수료, 운송비, 선별·포장비를 빼 예상 수취금액을 먼저 비교합니다.</p>
-          <a href="https://boribay.com/guides/agricultural-auction-net-calculator?utm_source=policyfundpedia&amp;utm_medium=owned_referral&amp;utm_campaign=policyfund_agri_startup_bridge" target="_blank" rel="noopener"><span>경매 예상 수취금액 계산</span><span>↗</span></a>
+          <a href="https://boribay.com/guides/agricultural-auction-net-calculator" target="_blank" rel="noopener"><span>경매 예상 수취금액 계산</span><span>↗</span></a>
         </article>
         <article class="next-card">
           <h3>농기계를 사거나 팔려는 경우</h3>
           <p>기종과 가격보다 먼저 소유 관계, 작동 상태, 정비 기록, 운송 조건을 확인해 거래 실패를 줄입니다.</p>
-          <a href="https://boribay.com/guides/used-machinery-selling-checklist?utm_source=policyfundpedia&amp;utm_medium=owned_referral&amp;utm_campaign=policyfund_machinery_bridge" target="_blank" rel="noopener"><span>중고 농기계 거래 점검표</span><span>↗</span></a>
-          <a href="https://boribay.com/guides/farm-machinery-transport-checklist?utm_source=policyfundpedia&amp;utm_medium=owned_referral&amp;utm_campaign=policyfund_machinery_bridge" target="_blank" rel="noopener"><span>농기계 운송 준비</span><span>↗</span></a>
+          <a href="https://boribay.com/guides/used-machinery-selling-checklist" target="_blank" rel="noopener"><span>중고 농기계 거래 점검표</span><span>↗</span></a>
+          <a href="https://boribay.com/guides/farm-machinery-transport-checklist" target="_blank" rel="noopener"><span>농기계 운송 준비</span><span>↗</span></a>
         </article>
       </div>
     </section>
@@ -463,8 +468,8 @@ async function main() {
 
   const urls = [
     `<url><loc>${siteUrl}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
-    ...["about", "editorial-policy", "privacy", "terms", "corrections", "contact"].map((slug) => `<url><loc>${siteUrl}/${slug}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>`),
-    ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
+    ...["about", "editorial-policy", "privacy", "terms", "corrections", "contact"].map((slug) => `<url><loc>${siteUrl}/${slug}/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>`),
+    ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${fund.reviewedAt}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
   ];
 
   await fs.writeFile(

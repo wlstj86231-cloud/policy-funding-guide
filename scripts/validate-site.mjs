@@ -81,8 +81,16 @@ for (const page of publicPages) {
   assert(/<title>[^<]{8,}<\/title>/.test(html), `${page.relative}: 고유 title 누락`);
   assert(/<meta name="description" content="[^\"]{40,}">/.test(html), `${page.relative}: description이 너무 짧거나 없습니다.`);
   assert(html.includes("ca-pub-7217591196020054"), `${page.relative}: AdSense 게시자 ID 누락`);
-  for (const forbidden of ["https://boribay.com", "https://goatool", "emailjs"]) {
+  for (const forbidden of ["https://goatool", "emailjs"]) {
     assert(!html.toLowerCase().includes(forbidden), `${page.relative}: 심사 전 제거해야 할 외부 유도·상담 코드가 있습니다: ${forbidden}`);
+  }
+  const boribayLinks = [...html.matchAll(/href="(https:\/\/boribay\.com[^\"]*)"/g)];
+  if (page.fund?.slug === "2026-후계농-농기계-구입자금") {
+    const expected = "https://boribay.com/guides/used-tractor-buying-checklist";
+    assert(boribayLinks.length === 1 && boribayLinks[0][1] === expected,
+      `${page.relative}: 검수된 거래 점검 자료 링크 한 개만 허용합니다.`);
+  } else {
+    assert(boribayLinks.length === 0, `${page.relative}: 보리장터 링크는 검수된 농기계 문서에만 허용합니다.`);
   }
 
   for (const match of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
