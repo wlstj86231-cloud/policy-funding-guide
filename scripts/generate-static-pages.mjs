@@ -159,6 +159,10 @@ function pageHtml(fund, related) {
   const cautionItems = listItems(fund.cautions);
   const faqItems = fund.faq.map((item) => `<details class="faq-item"><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details>`).join("");
   const machineryChecklist = fund.slug === "2026-후계농-농기계-구입자금" ? `
+        <div class="d-stitle">자금 실행 서류를 준비한다면</div>
+        <div class="info-panel"><h3>선정 이후에도 배정과 대출 심사가 남습니다</h3>
+          <p>계약 전에 자금 배정, 취급기관 상담, 사업추진확인서의 순서를 확인하세요. <a href="/guides/farmer-machinery-loan-execution-2026/">후계농 농기계 자금 실행 순서·서류 확인표</a>는 사전·사후 대출에 필요한 증빙을 나누어 정리합니다.</p>
+        </div>
         <div class="d-stitle">중고 트랙터를 검토한다면</div>
         <div class="info-panel"><h3>자금 대상 확인과 기계 점검은 각각 필요합니다</h3>
           <p>중고 기계의 융자 대상 여부는 구매 전에 관할 시군구와 대출취급기관에 확인하세요. 자금 적합성을 확인한 뒤에는 명판, 사용시간, 누유와 PTO를 현장에서 따로 점검할 수 있습니다. 보리장터의 <a href="https://boribay.com/guides/used-tractor-buying-checklist" rel="noopener">중고 트랙터 구매 점검 항목</a>은 거래 판단을 돕는 참고자료이며 자금 승인이나 융자 대상 확인을 대신하지 않습니다.</p>
@@ -470,6 +474,7 @@ async function main() {
   const urls = [
     `<url><loc>${siteUrl}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
     ...["about", "editorial-policy", "privacy", "terms", "corrections", "contact"].map((slug) => `<url><loc>${siteUrl}/${slug}/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>`),
+    `<url><loc>${siteUrl}/guides/farmer-machinery-loan-execution-2026/</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
     ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${fund.reviewedAt}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
   ];
 

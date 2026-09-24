@@ -65,6 +65,7 @@ assert(indexHtml.includes("const _FUNDS_PLACEHOLDER = [];"), "홈의 대량 레�
 const publicPages = [
   { relative: "index.html", canonical: `${siteUrl}/` },
   ...trustSlugs.map((slug) => ({ relative: `${slug}/index.html`, canonical: `${siteUrl}/${slug}/` })),
+  { relative: "guides/farmer-machinery-loan-execution-2026/index.html", canonical: `${siteUrl}/guides/farmer-machinery-loan-execution-2026/`, guide: true },
   ...funds.map((fund) => ({ relative: `${fund.slug}/index.html`, canonical: `${siteUrl}/${encodeURIComponent(fund.slug)}/`, fund }))
 ];
 
@@ -85,7 +86,11 @@ for (const page of publicPages) {
     assert(!html.toLowerCase().includes(forbidden), `${page.relative}: 심사 전 제거해야 할 외부 유도·상담 코드가 있습니다: ${forbidden}`);
   }
   const boribayLinks = [...html.matchAll(/href="(https:\/\/boribay\.com[^\"]*)"/g)];
-  if (page.fund?.slug === "2026-후계농-농기계-구입자금") {
+  if (page.guide) {
+    const expected = "https://boribay.com/guides/farm-machinery-transport-checklist";
+    assert(boribayLinks.length === 1 && boribayLinks[0][1] === expected,
+      `${page.relative}: 운송 준비 자료 링크 한 개만 허용합니다.`);
+  } else if (page.fund?.slug === "2026-후계농-농기계-구입자금") {
     const expected = "https://boribay.com/guides/used-tractor-buying-checklist";
     assert(boribayLinks.length === 1 && boribayLinks[0][1] === expected,
       `${page.relative}: 검수된 거래 점검 자료 링크 한 개만 허용합니다.`);
