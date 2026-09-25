@@ -171,6 +171,15 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 .chip:hover{border-color:var(--blue);color:var(--blue)}
 .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
 
+/* 농업인에게 바로 필요한 검증 자료 */
+.agri-feature{background:var(--white);border:1px solid var(--line2);border-radius:var(--r2);padding:20px;margin-bottom:22px}
+.agri-feature[hidden]{display:none}
+.agri-feature h2{font-size:17px;line-height:1.5;margin-bottom:7px}
+.agri-feature p{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:14px}
+.agri-feature-links{display:flex;flex-wrap:wrap;gap:8px}
+.agri-feature-links a{display:inline-flex;align-items:center;border:1px solid var(--line2);border-radius:var(--r);padding:8px 12px;font-size:13px;font-weight:700;color:var(--blue);background:var(--blue-bg)}
+.agri-feature-links a:hover{border-color:var(--blue)}
+
 /* 섹션 헤드 */
 .sec-head{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
 .sec-name{font-size:15px;font-weight:700;color:var(--ink2)}
@@ -479,6 +488,14 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
   <main>
     <!-- 목록 -->
     <div id="list-view">
+      <section class="agri-feature" id="farmer-guides-feature" aria-labelledby="farmer-guides-title">
+        <h2 id="farmer-guides-title">2026 후계농 농기계 구입자금 확인 자료</h2>
+        <p>2026년 신규 후계농 선발 접수는 마감됐습니다. 이미 선정된 농업인은 구매 계약 전에 자금 용도·개인별 배정액과 대출 심사를 각각 확인하세요. 농림축산식품부 시행지침을 대조한 두 자료에서 조건과 실행 순서를 나누어 볼 수 있습니다.</p>
+        <div class="agri-feature-links">
+          <a href="/2026-%ED%9B%84%EA%B3%84%EB%86%8D-%EB%86%8D%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88/">지원 대상·한도 확인 →</a>
+          <a href="/guides/farmer-machinery-loan-execution-2026/">계약 전 실행 순서·서류 확인 →</a>
+        </div>
+      </section>
       <div class="chip-strip">
         <span class="chip-label">내 상황</span>
         <button class="chip" onclick="chipFilter(this,'사업자')">사업자</button>
@@ -898,6 +915,8 @@ function renderSideCats() {
 
 function renderSections(funds) {
   parkInlineDetail();
+  document.getElementById('farmer-guides-feature').hidden =
+    !['전체', '농업인'].includes(activeCat) || !!activeChip;
   const cats = activeCat === '전체' ? CATS : [activeCat];
   let html = '';
   cats.forEach(cat => {
@@ -1302,6 +1321,7 @@ function showSaved() {
   document.querySelectorAll('.h-nav a').forEach(a=>a.classList.remove('on'));
   activeCat = '저장';
   showView('list');
+  document.getElementById('farmer-guides-feature').hidden = true;
   document.getElementById('post-sections').innerHTML = funds.length
     ? `<div class="fund-sec"><div class="sec-head"><span class="sec-name">저장한 정보</span><span class="sec-cnt">${funds.length}건</span></div><div class="card-stack">${funds.map(renderCard).join('')}</div></div>`
     : '<p style="color:var(--ink4);text-align:center;padding:48px 0;font-size:14px">아직 저장한 정보가 없습니다.<br>카드의 ♡ 버튼을 눌러 저장해보세요.</p>';
