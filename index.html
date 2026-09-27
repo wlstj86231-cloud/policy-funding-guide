@@ -11,9 +11,9 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="alternate icon" href="/favicon.svg">
 <meta name="theme-color" content="#0f172a">
-<title>정책자금 백과 | 소상공인·창업·중소기업 정부지원금 한눈에 보기</title>
-<meta name="description" content="2026년 공식 기관의 1차 출처를 직접 확인해 소상공인·창업·고용·서민금융 정책정보의 대상, 한도, 신청 절차와 검수일을 정리합니다.">
-<meta name="keywords" content="정책자금,소상공인 대출,창업지원금,중소기업 지원,정부보조금,고용지원금,서민금융,정책금융,소진공,창업패키지,비사업자 대출,정부 지원금 종류,정책자금 신청방법">
+<title>농업 정책자금 공고 확인과 실행 준비 | 정책자금 백과</title>
+<meta name="description" content="농업인이 자금 공고의 대상·용도·배정·대출 심사를 따로 확인하는 기록 도구와 2026 후계농 농기계 자금 원문 해설. 기존 일반 정책자료도 제공합니다.">
+<meta name="keywords" content="농업 정책자금,후계농 농기계 자금,농업인 융자 실행,정책자금 공고 확인,정책자금 백과">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 <meta name="google-site-verification" content="tSlD6MvlQAUKN3XASMGLU-vJTeaoUxCSFg-tn3JMmvk">
 <meta name="author" content="정책자금 백과">
@@ -22,15 +22,15 @@
 <!-- ── Open Graph ── -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="정책자금 백과">
-<meta property="og:title" content="정책자금 백과 | 소상공인·창업·중소기업 정부지원금 한눈에 보기">
-<meta property="og:description" content="2026년 공식 기관의 1차 출처를 직접 확인한 정책자금 정보와 검수일을 제공합니다.">
+<meta property="og:title" content="농업 정책자금 공고 확인과 실행 준비 | 정책자금 백과">
+<meta property="og:description" content="농업 정책자금의 공식 공고, 대상 비용, 자금 배정과 대출 심사를 구분해 기록합니다.">
 <meta property="og:url" content="https://policyfundpedia.com/">
 <meta property="og:locale" content="ko_KR">
 
 <!-- ── Twitter Card ── -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="정책자금 백과 | 정부지원금 정보 모음">
-<meta name="twitter:description" content="소상공인·창업자·중소기업을 위한 정부 정책자금 정보를 한눈에 확인하세요.">
+<meta name="twitter:title" content="농업 정책자금 공고 확인 | 정책자금 백과">
+<meta name="twitter:description" content="공고 원문과 기관 답변을 기록하고 계약 전 확인할 질문을 정리하세요.">
 
 <!-- ── Schema.org 구조화 데이터 ── -->
 <script type="application/ld+json">
@@ -40,7 +40,7 @@
   "name": "정책자금 백과",
   "alternateName": "Policy Fund Pedia",
   "url": "https://policyfundpedia.com/",
-  "description": "공식 기관의 1차 출처를 기준으로 검수한 정책자금 정보 모음.",
+  "description": "농업 정책자금 공고 확인 도구와 공식 자료 해설. 기존 일반 정책자료도 제공합니다.",
   "inLanguage": "ko-KR",
   "publisher": {
     "@type": "Organization",
@@ -174,7 +174,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdr
 /* 농업인에게 바로 필요한 검증 자료 */
 .agri-feature{background:var(--white);border:1px solid var(--line2);border-radius:var(--r2);padding:20px;margin-bottom:22px}
 .agri-feature[hidden]{display:none}
-.agri-feature h2{font-size:17px;line-height:1.5;margin-bottom:7px}
+.agri-feature h1{font-size:clamp(21px,3.3vw,30px);line-height:1.35;margin-bottom:9px}
 .agri-feature p{font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:14px}
 .agri-feature-links{display:flex;flex-wrap:wrap;gap:8px}
 .agri-feature-links a{display:inline-flex;align-items:center;border:1px solid var(--line2);border-radius:var(--r);padding:8px 12px;font-size:13px;font-weight:700;color:var(--blue);background:var(--blue-bg)}
@@ -446,7 +446,8 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
     </div>
     <button class="ham-btn" id="ham-btn" onclick="toggleHam()" aria-label="메뉴">☰</button>
     <nav class="h-nav" id="h-nav">
-      <a onclick="filterCat(null,'전체')" class="on" id="nav-all">전체</a>
+      <a href="/agri/">농업 자금 확인 도구</a>
+      <a onclick="filterCat(null,'전체')" id="nav-all">기존 자료 전체</a>
       <a onclick="filterCat(null,'소상공인')" id="nav-소상공인">소상공인</a>
       <a onclick="filterCat(null,'창업')" id="nav-창업">창업</a>
       <a onclick="filterCat(null,'고용')" id="nav-고용">고용</a>
@@ -460,7 +461,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <div class="c-strip-label">
         <span class="c-dot"></span>
         <strong>공식 출처 검증</strong>
-        <span>2026년 최신 공고를 기준으로 직접 확인한 정보만 제공합니다</span>
+        <span>공식 원문과 문서별 검수일을 함께 표시합니다</span>
         <span class="ad-label" style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.5px;flex-shrink:0">안내</span>
       </div>
       <a class="btn-strip" href="/editorial-policy/" style="text-decoration:none">검증 기준 →</a>
@@ -468,14 +469,15 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
   </div>
   <div class="cat-bar">
     <div class="cat-bar-in">
-      <span class="ctab on" id="tab-전체" onclick="filterCat(null,'전체')">전체 <span id="total-cnt" style="font-size:12px;color:var(--ink4)"></span></span>
+      <a class="ctab" href="/agri/" style="color:#176047;font-weight:700">농업 자금 확인 도구</a>
+      <span class="ctab" id="tab-전체" onclick="filterCat(null,'전체')">기존 자료 전체 <span id="total-cnt" style="font-size:12px;color:var(--ink4)"></span></span>
       <span class="ctab" id="tab-소상공인" onclick="filterCat(null,'소상공인')">소상공인</span>
       <span class="ctab" id="tab-창업" onclick="filterCat(null,'창업')">창업 · 스타트업</span>
       <span class="ctab" id="tab-중소기업" onclick="filterCat(null,'중소기업')">중소기업</span>
       <span class="ctab" id="tab-고용" onclick="filterCat(null,'고용')">고용 · 일자리</span>
       <span class="ctab" id="tab-비사업자" onclick="filterCat(null,'비사업자')">비사업자</span>
       <span class="ctab" id="tab-서민금융" onclick="filterCat(null,'서민금융')">서민금융</span>
-      <span class="ctab" id="tab-농업인" onclick="filterCat(null,'농업인')">농업인</span>
+      <span class="ctab on" id="tab-농업인" onclick="filterCat(null,'농업인')">농업인</span>
       <span class="ctab" id="tab-보증" onclick="filterCat(null,'보증')">보증 제도</span>
       <span class="ctab" id="tab-저장" onclick="showSaved()" style="color:var(--ink3)">♥ 저장한 정보</span>
       <span class="ctab" id="tab-live" onclick="showLive()" style="color:var(--blue);font-weight:600">📢 최신 공고</span>
@@ -489,9 +491,10 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
     <!-- 목록 -->
     <div id="list-view">
       <section class="agri-feature" id="farmer-guides-feature" aria-labelledby="farmer-guides-title">
-        <h2 id="farmer-guides-title">2026 후계농 농기계 구입자금 확인 자료</h2>
-        <p>2026년 신규 후계농 선발 접수는 마감됐습니다. 이미 선정된 농업인은 구매 계약 전에 자금 용도·개인별 배정액과 대출 심사를 각각 확인하세요. 농림축산식품부 시행지침을 대조한 두 자료에서 조건과 실행 순서를 나누어 볼 수 있습니다.</p>
+        <h1 id="farmer-guides-title">농업 정책자금, 공고부터 계약까지 확인하세요</h1>
+        <p>사업의 지원 대상, 구입비 인정 범위, 개인별 배정과 금융기관 심사는 별개입니다. 공식 공고와 기관 답변을 기록하는 워크시트로 확인 순서를 정리하고, 2026 후계농 농기계 자금 사례를 원문과 대조해 보세요.</p>
         <div class="agri-feature-links">
+          <a href="/agri/">농업 자금 공고 확인 워크시트 →</a>
           <a href="/2026-%ED%9B%84%EA%B3%84%EB%86%8D-%EB%86%8D%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88/">지원 대상·한도 확인 →</a>
           <a href="/guides/farmer-machinery-loan-execution-2026/">계약 전 실행 순서·서류 확인 →</a>
         </div>
@@ -532,8 +535,9 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <a href="/editorial-policy/">검증 원칙 보기 <span>→</span></a>
     </div>
     <div class="sb-box">
-      <div class="sb-title">공식 신청 기관</div>
+      <div class="sb-title">공식 자료·신청 기관</div>
       <div class="sb-links">
+        <a class="sb-link" href="https://www.mafra.go.kr" target="_blank">농림축산식품부<span class="sb-link-arr">↗</span></a>
         <a class="sb-link" href="https://www.semas.or.kr" target="_blank">소상공인시장진흥공단<span class="sb-link-arr">↗</span></a>
         <a class="sb-link" href="https://www.bizinfo.go.kr" target="_blank">기업마당 (통합 검색)<span class="sb-link-arr">↗</span></a>
         <a class="sb-link" href="https://www.sbc.or.kr" target="_blank">중소벤처기업진흥공단<span class="sb-link-arr">↗</span></a>
@@ -547,10 +551,10 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
     <div class="sb-box">
       <div class="sb-title">알아두면 좋은 점</div>
       <div class="sb-tips">
-        <div class="sb-tip">정책자금은 예산 소진 시 조기 마감됩니다. 공고 후 빠르게 확인하세요.</div>
-        <div class="sb-tip">신용이 낮아도 신보·기보 보증서를 활용하면 대출이 가능할 수 있습니다.</div>
-        <div class="sb-tip">목적이 다른 자금은 동시에 신청할 수 있습니다. 중복 여부는 각 기관에 문의하세요.</div>
-        <div class="sb-tip">정부24의 '나의 보조금 서비스'에서 본인 맞춤 지원 목록을 확인할 수 있습니다.</div>
+        <div class="sb-tip">사업명과 시행 연도, 관할 지역을 원문에서 먼저 확인하세요.</div>
+        <div class="sb-tip">지원 대상에 해당해도 개인별 배정과 대출 심사는 별도입니다.</div>
+        <div class="sb-tip">농기계·시설 비용의 인정 범위를 구입 계약 전에 확인하세요.</div>
+        <div class="sb-tip">공고 해석이 불명확하면 담당 시군구와 취급기관의 답변일을 기록하세요.</div>
       </div>
     </div>
   </aside>
@@ -560,9 +564,9 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
 <!-- SEO 콘텐츠 섹션 -->
 <section style="background:var(--white);border-top:1px solid var(--line);padding:48px 24px">
   <div style="max-width:1080px;margin:0 auto">
-    <h1 style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;letter-spacing:-.3px">정책자금 백과 — 소상공인·창업·중소기업 정부지원금 정보 모음</h1>
+    <h2 style="font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px;letter-spacing:-.3px">농업 자금 외 기존 정책자료</h2>
     <p style="font-size:14px;color:var(--ink3);line-height:1.8;max-width:760px;margin-bottom:36px">
-      정책자금 백과는 소상공인, 예비창업자, 중소기업, 고용주, 개인을 위한 정책정보를 정리하는 독립 정보 사이트입니다.
+      농업 자금 확인 도구와 후계농 농기계 자금 자료를 우선 제공합니다. 아래 일반 정책자료는 기존 주소에서 계속 볼 수 있습니다.
       공개 문서는 공식 기관의 개별 공고·상품 안내를 직접 확인하고 검수일과 1차 출처를 함께 표시합니다.
     </p>
 
@@ -637,7 +641,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <a href="https://www.kinfa.or.kr" target="_blank">서민금융진흥원</a>
     </div>
     <div class="foot-copy">© 2026 정책자금 백과</div>
-    <div class="foot-notice">정책자금 백과는 정부 기관이 아닌 독립 정보 사이트이며 신청 대행, 금융상품 중개 또는 승인 보장을 하지 않습니다. 모든 조건은 신청 전 담당 기관의 최신 공식 공고에서 다시 확인하세요.</div>
+    <div class="foot-notice">정부 기관의 공식 사이트가 아닙니다. 신청 대행, 금융상품 중개 또는 승인 보장을 하지 않습니다. 모든 조건은 신청 전 담당 기관의 최신 공식 공고에서 다시 확인하세요.</div>
   </div>
 </footer>
 
@@ -844,8 +848,8 @@ async function loadFunds() {
 // 아래는 더미 — API 로드 전 빈 배열 유지용
 const _FUNDS_PLACEHOLDER = []; // 로컬 검증 데이터 로드 실패 시 빈 목록
 
-const CATS = ['소상공인','창업','중소기업','고용','비사업자','서민금융','농업인'];
-let activeCat  = '전체';
+const CATS = ['농업인','소상공인','창업','중소기업','고용','비사업자','서민금융'];
+let activeCat  = '농업인';
 let activeChip = null;
 let searchTmr  = null;
 let softDetailController = null;

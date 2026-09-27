@@ -64,6 +64,7 @@ assert(indexHtml.includes("const _FUNDS_PLACEHOLDER = [];"), "홈의 대량 레�
 
 const publicPages = [
   { relative: "index.html", canonical: `${siteUrl}/` },
+  { relative: "agri/index.html", canonical: `${siteUrl}/agri/` },
   ...trustSlugs.map((slug) => ({ relative: `${slug}/index.html`, canonical: `${siteUrl}/${slug}/` })),
   { relative: "guides/farmer-machinery-loan-execution-2026/index.html", canonical: `${siteUrl}/guides/farmer-machinery-loan-execution-2026/`, guide: true },
   ...funds.map((fund) => ({ relative: `${fund.slug}/index.html`, canonical: `${siteUrl}/${encodeURIComponent(fund.slug)}/`, fund }))

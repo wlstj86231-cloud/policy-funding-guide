@@ -473,6 +473,7 @@ async function main() {
 
   const urls = [
     `<url><loc>${siteUrl}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
+    `<url><loc>${siteUrl}/agri/</loc><lastmod>2026-09-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
     ...["about", "editorial-policy", "privacy", "terms", "corrections", "contact"].map((slug) => `<url><loc>${siteUrl}/${slug}/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>`),
     `<url><loc>${siteUrl}/guides/farmer-machinery-loan-execution-2026/</loc><lastmod>2026-09-24</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
     ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${fund.reviewedAt}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
