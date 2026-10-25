@@ -95,6 +95,9 @@ for (const page of publicPages) {
     const expected = "https://boribay.com/guides/used-tractor-buying-checklist";
     assert(boribayLinks.length === 1 && boribayLinks[0][1] === expected,
       `${page.relative}: 검수된 거래 점검 자료 링크 한 개만 허용합니다.`);
+  } else if (page.relative === "about/index.html") {
+    assert(boribayLinks.length === 1 && boribayLinks[0][1] === "https://boribay.com/" && html.includes("보리장터(boribay.com)</a> 운영사"),
+      `${page.relative}: 운영 관계를 밝힌 보리장터 홈 링크 한 개만 허용합니다.`);
   } else {
     assert(boribayLinks.length === 0, `${page.relative}: 보리장터 링크는 검수된 농기계 문서에만 허용합니다.`);
   }
