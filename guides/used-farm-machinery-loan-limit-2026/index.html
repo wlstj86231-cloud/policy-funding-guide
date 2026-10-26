@@ -84,7 +84,7 @@
       <div class="field" id="limitField" hidden>
         <label class="lbl" for="newLimit">2. 같은 기종·규격 새 기계의 융자지원한도액</label>
         <div class="unit"><input id="newLimit" type="number" inputmode="numeric" min="0" step="1" placeholder="예: 2209"><span>만원</span></div>
-        <p class="help">지침 [별표 2]에 기종·규격별로 정해진 금액입니다. 거래할 농협이나 한국농기계공업협동조합(kamico.or.kr) 자료실의 정부지원(융자) 모델 목록에서 확인하세요.</p>
+        <p class="help">지침 [별표 2]에 기종·규격별로 정해진 금액입니다. 거래할 농협이나 한국농기계공업협동조합(kamico.or.kr) 자료실의 정부지원(융자) 모델 목록에서 확인하세요. <strong>[별표 2] 표는 천원 단위</strong>이므로 표에 22,090으로 적혀 있으면 2209(만원)를 넣습니다.</p>
         <label class="check" id="bigRiceWrap"><input type="checkbox" id="bigRice"> <span>6조 이상 이앙기 또는 5조 이상 콤바인입니다</span></label>
       </div>
 
@@ -197,8 +197,9 @@
 
   function won(manwon) {
     var w = Math.round(manwon * 10000);
-    var man = Math.floor(w / 10000), rest = Math.floor((w % 10000) / 1000);
-    return (man ? man.toLocaleString("ko-KR") + "만" : "") + (rest ? " " + rest + "천" : "") + "원";
+    var man = Math.floor(w / 10000), rest = w % 10000;
+    if (!man) return rest.toLocaleString("ko-KR") + "원";
+    return man.toLocaleString("ko-KR") + "만" + (rest ? " " + rest.toLocaleString("ko-KR") : "") + "원";
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function fail(msg, extra) {
@@ -219,7 +220,7 @@
       if (k === "rice" && document.getElementById("bigRice").checked) return fail("6조 이상 이앙기·5조 이상 콤바인은 별도 기준입니다.", "지침 [별표 3] 주③에 따라 같은 제조사의 같거나 낮은 규격 모델 가격을 기준으로 하므로 농협에 확인하세요.");
       newLimit = parseFloat(document.getElementById("newLimit").value);
       if (!(newLimit > 0)) return fail("새 기계 융자지원한도액을 만원 단위로 넣어 주세요.", "모르면 거래할 농협이나 한국농기계공업협동조합 정부지원(융자) 모델 목록에서 같은 기종·규격의 금액을 확인하세요.");
-      if (newLimit > 100000) return fail("새 기계 한도가 너무 큽니다. 만원 단위로 넣었는지 확인해 주세요.", "예: 2,209만원이면 2209를 넣습니다.");
+      if (newLimit > 9000) return fail("새 기계 한도가 2026년 [별표 2]의 가장 큰 금액(9,000만원)보다 큽니다.", "[별표 2] 표는 천원 단위입니다. 표에 22,090(천원)으로 적혀 있으면 만원 단위인 2209를 넣어 주세요.");
     }
     if (!yv) return fail("처음 산 연도를 골라 주세요.");
     if (yv === "old") return fail("2010년 이전에 산 기계는 계산 기준이 다릅니다.", "새 기계 한도 대신 최초 구입가격에 기준율을 곱하는데, 지침 표는 2011년에 산 기계(사용연수 15년)까지만 기준율을 정해 두었습니다. 농협에 지원 가능 여부부터 확인하세요.");
