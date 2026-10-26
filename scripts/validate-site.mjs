@@ -88,6 +88,7 @@ function checkCommon(relative, html) {
   // 수정 기록의 "'정책자금 백과'에서 … 바꿨습니다"처럼 따옴표로 인용한 옛 이름은 허용한다.
   assert(!/(?<!농업 |')정책자금 백과/.test(html.replace(/농업 정책자금 <span>백과<\/span>/g, "")), `${relative}: 옛 이름 '정책자금 백과'가 남았습니다.`);
   assert(!/localStorage\s*[.[]/.test(html), `${relative}: 브라우저 저장소를 쓰지 않는다는 개인정보 안내와 다릅니다.`);
+  for (const match of html.matchAll(/<a href="mailto:[^"]+">[^<]*<\/a>/g)) assert(html.slice(Math.max(0, match.index - 16), match.index) === "<!--email_off-->", `${relative}: 이메일 주소를 <!--email_off-->로 감싸야 Cloudflare가 가리지 않습니다.`);
   assert(!html.includes("/api/bizinfo"), `${relative}: 농업과 무관한 기업마당 공고 API를 부르지 않습니다.`);
   for (const match of html.matchAll(/href="(\/[^"#]*)"/g)) {
     const pathname = new URL(match[1], siteUrl).pathname;

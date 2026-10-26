@@ -107,11 +107,12 @@ export function headerHtml(pathname = "/") {
   return `<header class="sh"><div class="sh-in"><a class="sh-logo" href="/">농업 정책자금 <span>백과</span></a><nav class="sh-nav" aria-label="주요 메뉴">${links}</nav></div></header>`;
 }
 
+// Cloudflare 이메일 난독화가 주소를 [email protected]으로 바꾸지 않도록 email_off 주석으로 감싼다.
 export function footerHtml() {
   return `<footer class="sf"><div class="sf-in">
     <nav class="sf-links" aria-label="사이트 정보"><a href="/about/">소개</a><a href="/contact/">문의</a><a href="/editorial-policy/">편집 원칙</a><a href="/corrections/">정정·수정 기록</a><a href="/privacy/">개인정보처리방침</a><a href="/terms/">이용약관·면책</a></nav>
     <p><span class="nw">운영: ${OPERATOR.name}</span> · <span class="nw">대표 ${OPERATOR.representative}</span> · <span class="nw">사업자등록번호 ${OPERATOR.businessNumber}</span> · <span class="nw">고객센터 <a href="tel:${OPERATOR.phone}">${OPERATOR.phone}</a></span></p>
-    <p>${OPERATOR.address} · <a href="mailto:${OPERATOR.email}">${OPERATOR.email}</a></p>
+    <p>${OPERATOR.address} · <!--email_off--><a href="mailto:${OPERATOR.email}">${OPERATOR.email}</a><!--/email_off--></p>
     <p>농업 정책자금 백과는 정부기관이 아닌 민간 정보 사이트입니다. 지원 대상 선정과 대출 승인은 시군·농협 등 담당 기관이 결정하며, 이 사이트는 신청 대행·대출 중개·승인 보장을 하지 않습니다.</p>
     <p>© 2026 ${OPERATOR.name} · 농업 정책자금 백과</p>
   </div></footer>`;
