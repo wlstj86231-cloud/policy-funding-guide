@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
 Sitemap: https://policyfundpedia.com/sitemap.xml
 #DaumWebMasterTool:97b3411415ff48ba13f014e909396f8d4a786d9314c43be4e851a207e4ca46c7:dSlZXvWuL7UAVoESNn1QCg==
