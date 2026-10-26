@@ -82,7 +82,7 @@ for (const page of publicPages) {
   assert(/<meta name="robots" content="index, follow/.test(html), `${page.relative}: 공개 페이지 robots 오류`);
   assert(/<title>[^<]{8,}<\/title>/.test(html), `${page.relative}: 고유 title 누락`);
   assert(/<meta name="description" content="[^\"]{40,}">/.test(html), `${page.relative}: description이 너무 짧거나 없습니다.`);
-  assert(html.includes("ca-pub-7217591196020054"), `${page.relative}: AdSense 게시자 ID 누락`);
+  assert(html.includes("ca-pub-5877883031077615"), `${page.relative}: AdSense 게시자 ID 누락`);
   for (const forbidden of ["https://goatool", "emailjs"]) {
     assert(!html.toLowerCase().includes(forbidden), `${page.relative}: 심사 전 제거해야 할 외부 유도·상담 코드가 있습니다: ${forbidden}`);
   }
@@ -124,7 +124,7 @@ for (const page of publicPages) {
 
 const notFound = await read("404.html");
 assert(notFound.includes('name="robots" content="noindex, nofollow"'), "404 페이지는 noindex여야 합니다.");
-assert(!notFound.includes("adsbygoogle"), "404 페이지에는 광고 로더를 두지 않습니다.");
+assert(notFound.includes("adsbygoogle.js?client=ca-pub-5877883031077615"), "404 페이지에도 AdSense 로더가 있어야 합니다.");
 assert(!notFound.includes('rel="canonical"'), "404 페이지에는 canonical을 두지 않습니다.");
 
 const sitemap = await read("sitemap.xml");
@@ -136,7 +136,7 @@ for (const url of sitemapUrls) assert(expectedUrls.has(url), `sitemap의 예상 
 for (const url of expectedUrls) assert(sitemapUrls.includes(url), `sitemap 누락 URL: ${url}`);
 
 const ads = (await read("ads.txt")).trim();
-assert(ads === "google.com, pub-7217591196020054, DIRECT, f08c47fec0942fa0", "ads.txt 게시자 선언이 변경되었습니다.");
+assert(ads === "google.com, pub-5877883031077615, DIRECT, f08c47fec0942fa0", "ads.txt 게시자 선언이 변경되었습니다.");
 const robots = await read("robots.txt");
 assert(robots.includes("Sitemap: https://policyfundpedia.com/sitemap.xml"), "robots.txt sitemap 선언 누락");
 

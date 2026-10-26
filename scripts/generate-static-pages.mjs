@@ -208,8 +208,8 @@ function pageHtml(fund, related) {
   <meta name="author" content="정책자금 백과">
   <link rel="canonical" href="${canonical}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <meta name="google-adsense-account" content="ca-pub-7217591196020054">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7217591196020054" crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-5877883031077615">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615" crossorigin="anonymous"></script>
   <style>
     :root{--ink:#0f172a;--ink2:#334155;--ink3:#64748b;--ink4:#94a3b8;--sur:#f8f7f5;--white:#fff;--line:rgba(15,23,42,.08);--line2:rgba(15,23,42,.14);--blue:#1a56db;--blue-bg:#eff5ff;--r:8px;--r2:14px;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
@@ -371,8 +371,8 @@ function agricultureHubHtml(funds) {
   <meta name="keywords" content="농업인 정책자금, 농업인 대출, 농식품 창업 지원, 농기계 지원사업, 농산물 직거래, 중고 농기계">
   <link rel="canonical" href="${canonical}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <meta name="google-adsense-account" content="ca-pub-7217591196020054">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7217591196020054" crossorigin="anonymous"></script>
+  <meta name="google-adsense-account" content="ca-pub-5877883031077615">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615" crossorigin="anonymous"></script>
   <style>
     :root{--ink:#0f172a;--ink2:#334155;--ink3:#64748b;--line:#e2e8f0;--soft:#f8fafc;--green:#3d6842;--green2:#edf5e8;--blue:#1a56db;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
