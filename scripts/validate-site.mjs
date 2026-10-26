@@ -138,7 +138,9 @@ for (const page of publicPages) {
     assert(/<div class="pmeta" role="note">[\s\S]*작성·관리[\s\S]*게시일[\s\S]*최종 확인일[\s\S]*출처/.test(html), `${page.relative}: 작성·관리/게시일/최종 확인일/출처 수 블록 누락`);
     assert(html.includes('id="sources"') && /<ol class="src-list">[\s\S]*?확인일 \d{4}-\d{2}-\d{2}/.test(html), `${page.relative}: 출처 목록(기관·확인일) 누락`);
     assert(html.includes("범위와 한계"), `${page.relative}: 범위와 한계 안내 누락`);
-    assert(/2027년 (사업시행)?지침[^<]{0,40}12월/.test(html), `${page.relative}: 2027년 지침이 12월에 나온다는 안내 누락`);
+    // 지침마다 다음 해 지침 공개 시기가 다르다(후계농·농업기계는 전년도 12월, 농지매입은 1~2월, 귀농은 명시 없음).
+    // 날짜를 일괄 단정하지 않고, 2027년 조건을 언제·어떻게 다시 확인할지 적었는지만 본다.
+    assert(/다음 확인[\s\S]{0,400}2027/.test(html), `${page.relative}: 2027년 조건 재확인 계획(다음 확인) 누락`);
   }
 
   if (page.fund) {

@@ -118,6 +118,12 @@ function normalizeFund(raw, index) {
     timeline: Array.isArray(raw.timeline) ? raw.timeline.map((item) => ({ when: clean(item?.when, ""), what: clean(item?.what, "") })).filter((item) => item.when && item.what) : [],
     rejections: parseArray(raw.rejections).map((item) => clean(item, "")).filter(Boolean),
     sourceExtra: Array.isArray(raw.sourceExtra) ? raw.sourceExtra.filter((item) => /^https:\/\//.test(String(item?.url || ""))).map((item) => ({ title: clean(item.title, ""), authority: clean(item.authority, ""), url: String(item.url), note: clean(item.note, "") })).filter((item) => item.title && item.authority) : [],
+    // 같은 상황(창업·농기계·경영위기·노후)의 문서를 관련 목록 앞쪽에 둔다.
+    group: clean(raw.group || "", ""),
+    // 함께 볼 자금: [{ slug, why }]. 존재하지 않는 slug는 normalizeFunds에서 막는다.
+    see: Array.isArray(raw.see) ? raw.see.map((item) => ({ slug: clean(item?.slug, ""), why: clean(item?.why, "") })).filter((item) => item.slug && item.why) : [],
+    // 범위와 한계 문단. 담당 기관이 시군·농협이 아닌 자금(한국농어촌공사 등)은 데이터에서 따로 적는다.
+    scope: clean(raw.scope || "", ""),
     slug: slugify(raw.slug || raw.title || raw.id || `policy-fund-${index + 1}`)
   };
 }
@@ -154,6 +160,11 @@ function normalizeFunds(rawFunds) {
     return fund;
   });
   funds.forEach(assertPublishable);
+  for (const fund of funds) {
+    for (const item of fund.see) {
+      if (!seen.has(item.slug) || item.slug === fund.slug) throw new Error(`${fund.title}: 함께 볼 자금 slug가 없습니다 - ${item.slug}`);
+    }
+  }
   return funds;
 }
 
@@ -176,10 +187,12 @@ function breadcrumbNode(items) {
 }
 
 function relatedFor(fund, funds) {
-  return funds.filter((item) => item.slug !== fund.slug && item.cat === fund.cat).slice(0, 5);
+  const others = funds.filter((item) => item.slug !== fund.slug && item.cat === fund.cat);
+  const sameGroup = others.filter((item) => fund.group && item.group === fund.group);
+  return [...sameGroup, ...others.filter((item) => !sameGroup.includes(item))].slice(0, 6);
 }
 
-function pageHtml(fund, related) {
+function pageHtml(fund, related, allFunds) {
   const pathname = fundPath(fund);
   const canonical = `${siteUrl}${pathname}`;
   const title = `${fund.title} | 농업 정책자금 백과`;
@@ -217,6 +230,14 @@ function pageHtml(fund, related) {
         <div class="info-panel"><h3>융자 확인과 기계 점검을 나눠서 하세요</h3>
           <p>농협 상담 전에 후보 기계의 형식표지판·제조번호·최초 구입 시기를 매도인에게 받아 두면 상담이 빨라집니다. 같은 운영사(제이 미디어)가 운영하는 <a href="https://boribay.com/?category=MACHINERY&amp;${boribayUtm}" rel="noopener">보리장터 중고 농기계 매물</a>과 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>을 참고할 수 있습니다. 보리장터 매물이라고 융자 대상이 되는 것은 아닙니다.</p>
         </div>` : "";
+  const seeItems = fund.see.map((item) => {
+    const target = allFunds.find((other) => other.slug === item.slug);
+    return `<li><a href="${fundPath(target)}">${escapeHtml(target.title.split("—")[0].trim())}</a> — ${escapeHtml(item.why)}</li>`;
+  }).join("");
+  const seeSection = seeItems ? `
+        <h2 class="d-stitle">함께 확인할 자금</h2>
+        <div class="info-panel"><ul class="plain-list">${seeItems}</ul></div>` : "";
+  const scopeText = fund.scope || "이 문서는 농림축산식품부 지침과 농업e지 사업 안내에 적힌 대상·한도·금리·절차를 요약합니다. 개인별 자격 판정, 선정 가능성, 실제 대출 가능액과 적용 금리는 다루지 않으며 시군 평가와 농협·농신보 심사로 정해집니다. 시군 자체 추가 지원, 세금·법률 문제는 포함하지 않았습니다. 판단이 필요하면 신청할 시군 농정부서(농업기술센터)와 거래할 농협에 문의하세요.";
   const schema = jsonLdScript([
     {
       "@type": "Article",
@@ -311,17 +332,17 @@ ${timelineSection}
         <h2 class="d-stitle">자주 묻는 질문</h2>
         <div>${faqItems}</div>
         <h2 class="d-stitle">이 문서를 확인한 방법</h2>
-        <div class="editor-note">${escapeHtml(fund.editorNote)}</div>${machineryChecklist}
+        <div class="editor-note">${escapeHtml(fund.editorNote)}</div>${machineryChecklist}${seeSection}
         <h2 class="d-stitle">다른 농업 정책자금과 비교하기</h2>
         <div class="info-panel"><h3>나이·경력·목적별로 맞는 자금이 다릅니다</h3>
           <p><a href="/agri/">농업 정책자금 한눈에 보기</a>에서 대상·금리·상환기간·신청처를 한 표로 비교하고, 공고 원문과 기관 답변을 적는 기록표를 쓰세요.</p>
         </div>
         <h2 class="d-stitle" id="sources">출처</h2>
         ${sourceListHtml(sources, fund.reviewedAt)}
-        <p class="small-note">쪽수는 각 지침 PDF 기준입니다. 이 문서와 원문이 다르면 원문과 담당 기관의 안내가 우선합니다.</p>
+        <p class="small-note">쪽수는 각 지침·업무처리요령 PDF 기준입니다. 이 문서와 원문이 다르면 원문과 담당 기관의 안내가 우선합니다.</p>
         <h2 class="d-stitle">범위와 한계</h2>
         <div class="scope">
-          <p>이 문서는 농림축산식품부 지침과 농업e지 사업 안내에 적힌 대상·한도·금리·절차를 요약합니다. 개인별 자격 판정, 선정 가능성, 실제 대출 가능액과 적용 금리는 다루지 않으며 시군 평가와 농협·농신보 심사로 정해집니다. 시군 자체 추가 지원, 세금·법률 문제는 포함하지 않았습니다. 판단이 필요하면 신청할 시군 농정부서(농업기술센터)와 거래할 농협에 문의하세요.</p>
+          <p>${escapeHtml(scopeText)}</p>
           <p><b>다음 확인:</b> ${escapeHtml(fund.nextCheck)}</p>
         </div>
         <div class="note">선정과 대출 승인은 담당 기관이 결정합니다. 최종 신청 가능 여부, 접수 기간, 한도와 금리는 반드시 각 기관의 최신 공식 공고로 다시 확인하세요.</div>
@@ -501,7 +522,7 @@ async function main() {
   for (const fund of funds) {
     const dir = path.join(root, fund.slug);
     await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(path.join(dir, "index.html"), pageHtml(fund, relatedFor(fund, funds)), "utf8");
+    await fs.writeFile(path.join(dir, "index.html"), pageHtml(fund, relatedFor(fund, funds), funds), "utf8");
   }
   for (const page of STATIC_PAGES) await applyStaticPage(page, funds);
 
