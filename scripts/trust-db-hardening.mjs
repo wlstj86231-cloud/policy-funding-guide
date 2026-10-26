@@ -45,7 +45,7 @@ function trustSection(fund) {
   const updated = fund.updated || lastmod;
   return `    <section class="card trust-source-card">
       <h2>출처·검수 기준</h2>
-      <p>정책자금 백과는 ${escapeHtml(fund.title)}을 단순 소개글이 아니라 신청 전 확인용 DB 문서로 다룹니다. 아래 기준은 사용자가 공식 공고로 이동하기 전에 무엇을 먼저 봐야 하는지 빠르게 정리하기 위한 검수 기록입니다.</p>
+      <p>농업 정책자금 백과는 ${escapeHtml(fund.title)}을 단순 소개글이 아니라 신청 전 확인용 DB 문서로 다룹니다. 아래 기준은 사용자가 공식 공고로 이동하기 전에 무엇을 먼저 봐야 하는지 빠르게 정리하기 위한 검수 기록입니다.</p>
       <div class="rows">
         <div class="row"><b>우선 출처</b><span>${escapeHtml(agencyName)} 공식 공고·접수 안내</span></div>
         <div class="row"><b>검수 항목</b><span>지원 대상, 한도, 금리·지원 방식, 필요 서류, 신청 절차, 공식 신청 경로</span></div>
@@ -68,13 +68,13 @@ function trustDatasetJsonLd(funds) {
     "@context": "https://schema.org",
     "@type": "Dataset",
     "@id": `${siteUrl}/#policy-trust-db`,
-    "name": "정책자금 백과 공식 공고 검수 DB",
+    "name": "농업 정책자금 백과 공식 공고 검수 DB",
     "description": "소상공인, 창업, 중소기업, 고용, 서민금융 정책자금의 지원 대상, 한도, 금리, 서류, 신청 경로를 공식 공고 기준으로 정리한 정책자금 정보 데이터베이스입니다.",
     "url": `${siteUrl}/`,
     "inLanguage": "ko-KR",
     "creator": {
       "@type": "Organization",
-      "name": "정책자금 백과",
+      "name": "농업 정책자금 백과",
       "url": `${siteUrl}/`
     },
     "dateModified": lastmod,

@@ -127,10 +127,10 @@ function segmentUrl(slug) {
 }
 
 function readPageMeta(html, slug) {
-  const title = match(html, /<title>([\s\S]*?)<\/title>/i, `${slug} | 정책자금 백과`);
+  const title = match(html, /<title>([\s\S]*?)<\/title>/i, `${slug} | 농업 정책자금 백과`);
   const description = match(html, /<meta\s+name="description"\s+content="([^"]*)"/i, `${title} 정보를 정리했습니다.`);
   const canonical = match(html, /<link\s+rel="canonical"\s+href="([^"]*)"/i, segmentUrl(slug));
-  const h1 = stripTags(match(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i, title.replace(/\s*\|\s*정책자금 백과$/, "")));
+  const h1 = stripTags(match(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i, title.replace(/\s*\|\s*농업 정책자금 백과$/, "")));
   const crumb = stripTags(match(html, /<div\s+class="crumb">([\s\S]*?)<\/div>/i, "홈 / 정책자금 / 공식 기관"));
   const crumbParts = crumb.split("/").map((part) => part.trim()).filter(Boolean);
   const category = crumbParts[1] || inferCategory(slug);
@@ -174,14 +174,14 @@ function buildDetailGraph(meta) {
       {
         "@type": "Organization",
         "@id": `${siteUrl}/#organization`,
-        "name": "정책자금 백과",
+        "name": "농업 정책자금 백과",
         "url": siteUrl,
         "description": "정부 정책자금과 지원사업 공고를 신청 전 점검 관점으로 정리하는 정보 사이트입니다."
       },
       {
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
-        "name": "정책자금 백과",
+        "name": "농업 정책자금 백과",
         "url": siteUrl,
         "inLanguage": "ko-KR",
         "publisher": { "@id": `${siteUrl}/#organization` }
@@ -190,7 +190,7 @@ function buildDetailGraph(meta) {
         "@type": "BreadcrumbList",
         "@id": `${meta.canonical}#breadcrumb`,
         "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "정책자금 백과", "item": `${siteUrl}/` },
+          { "@type": "ListItem", "position": 1, "name": "농업 정책자금 백과", "item": `${siteUrl}/` },
           { "@type": "ListItem", "position": 2, "name": meta.category, "item": segmentUrl(hubSlug) },
           { "@type": "ListItem", "position": 3, "name": meta.h1, "item": meta.canonical }
         ]
@@ -218,7 +218,7 @@ function buildDetailGraph(meta) {
         "isAccessibleForFree": true,
         "datePublished": meta.updated,
         "dateModified": meta.updated,
-        "author": { "@type": "Organization", "name": "정책자금 백과 편집팀", "url": siteUrl },
+        "author": { "@type": "Organization", "name": "농업 정책자금 백과 편집팀", "url": siteUrl },
         "publisher": { "@id": `${siteUrl}/#organization` },
         "about": keywords.slice(0, 6).map((name) => ({ "@type": "Thing", name })),
         "keywords": keywords.join(", "),
@@ -244,7 +244,7 @@ function buildDetailGraph(meta) {
 function buildTrustMeta(meta) {
   const keywords = [...new Set(keywordSet(meta))].join(", ");
   return `  <!-- SEO trust metadata -->
-  <meta name="author" content="정책자금 백과 편집팀">
+  <meta name="author" content="농업 정책자금 백과 편집팀">
   <meta name="keywords" content="${escapeHtml(keywords)}">
   <meta property="og:type" content="article">
   <meta property="og:title" content="${escapeHtml(meta.title)}">
@@ -311,7 +311,7 @@ function hubDepthSections(page) {
     <section class="card">
       <h2>편집자가 먼저 확인하는 기준</h2>
       <p>정책자금 공고를 정리하다 보면 이름은 비슷하지만 실제 판단 기준은 다른 경우가 많습니다. 같은 ${escapeHtml(page.category)} 영역이라도 업력, 매출 규모, 고용 인원, 신용 상태, 사업장 소재지, 이전 지원 이력에 따라 신청 가능성이 갈립니다. 제목만 보고 바로 신청하기보다 이 기준을 먼저 나누면 헛걸음을 줄일 수 있습니다.</p>
-      <p>특히 공고문에는 지원 대상, 제외 대상, 접수 방식, 예산 소진 여부가 따로 적혀 있는 경우가 많습니다. 정책자금 백과는 이 흐름을 기준으로 문서를 정리해 사용자가 공식 사이트로 이동하기 전에 스스로 맞는 제도를 추릴 수 있도록 돕습니다.</p>
+      <p>특히 공고문에는 지원 대상, 제외 대상, 접수 방식, 예산 소진 여부가 따로 적혀 있는 경우가 많습니다. 농업 정책자금 백과는 이 흐름을 기준으로 문서를 정리해 사용자가 공식 사이트로 이동하기 전에 스스로 맞는 제도를 추릴 수 있도록 돕습니다.</p>
     </section>
     <section class="card">
       <h2>세부 문서로 넘어가기 전 체크</h2>
@@ -344,13 +344,13 @@ function hubGraph(page, canonical) {
       {
         "@type": "Organization",
         "@id": `${siteUrl}/#organization`,
-        "name": "정책자금 백과",
+        "name": "농업 정책자금 백과",
         "url": siteUrl
       },
       {
         "@type": "WebSite",
         "@id": `${siteUrl}/#website`,
-        "name": "정책자금 백과",
+        "name": "농업 정책자금 백과",
         "url": siteUrl,
         "inLanguage": "ko-KR",
         "publisher": { "@id": `${siteUrl}/#organization` }
@@ -359,7 +359,7 @@ function hubGraph(page, canonical) {
         "@type": "BreadcrumbList",
         "@id": `${canonical}#breadcrumb`,
         "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "정책자금 백과", "item": `${siteUrl}/` },
+          { "@type": "ListItem", "position": 1, "name": "농업 정책자금 백과", "item": `${siteUrl}/` },
           { "@type": "ListItem", "position": 2, "name": page.h1, "item": canonical }
         ]
       },
@@ -391,11 +391,11 @@ function hubHtml(page) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(page.title)} | 정책자금 백과</title>
+  <title>${escapeHtml(page.title)} | 농업 정책자금 백과</title>
   <meta name="description" content="${escapeHtml(page.desc)}">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="google-site-verification" content="${searchConsoleVerification}">
-  <meta name="author" content="정책자금 백과 편집팀">
+  <meta name="author" content="농업 정책자금 백과 편집팀">
   <meta name="keywords" content="${escapeHtml(keywords)}">
   <link rel="canonical" href="${canonical}">
   <style>
@@ -422,7 +422,7 @@ function hubHtml(page) {
 <body>
   <header>
     <nav class="nav">
-      <a class="logo" href="/">정책자금 <span>백과</span></a>
+      <a class="logo" href="/">농업 정책자금 <span>백과</span></a>
       <a href="/">전체 자금 보기</a>
     </nav>
   </header>
@@ -436,7 +436,7 @@ function hubHtml(page) {
     <section class="card">
       <h2>먼저 확인할 기준</h2>
       <p>${escapeHtml(page.h1)}은 제목만 보고 고르면 안 됩니다. 신청 가능성은 대상, 업력, 매출 규모, 고용 상태, 기존 채무, 세금 체납 여부, 공식 접수 기간을 함께 보아야 판단할 수 있습니다.</p>
-      <p>정책자금 백과는 이 허브 페이지에서 중형 키워드를 먼저 정리하고, 아래 개별 문서에서 지원 대상·한도·금리·필요 서류·공식 신청처를 세부적으로 확인하도록 구성했습니다.</p>
+      <p>농업 정책자금 백과는 이 허브 페이지에서 중형 키워드를 먼저 정리하고, 아래 개별 문서에서 지원 대상·한도·금리·필요 서류·공식 신청처를 세부적으로 확인하도록 구성했습니다.</p>
       <div class="note">최종 신청 가능 여부와 접수 마감은 각 기관의 최신 공식 공고가 우선합니다.</div>
     </section>
     <section class="card">
@@ -504,7 +504,7 @@ async function hardenHome() {
         "@type": "CollectionPage",
         "@id": `${siteUrl}/#collection`,
         "url": `${siteUrl}/`,
-        "name": "정책자금 백과",
+        "name": "농업 정책자금 백과",
         "description": "소상공인, 창업자, 중소기업, 사업주, 서민금융 이용자를 위한 정책자금 정보 모음입니다.",
         "inLanguage": "ko-KR",
         "dateModified": lastmod,

@@ -146,7 +146,7 @@ function relatedFor(fund, funds) {
 
 function pageHtml(fund, related) {
   const canonical = `${siteUrl}/${encodeURIComponent(fund.slug)}/`;
-  const title = `${fund.title} | 정책자금 백과`;
+  const title = `${fund.title} | 농업 정책자금 백과`;
   const desc = `${fund.title}의 지원 대상, 한도, 금리, 신청 절차와 필요 서류를 공식 공고 확인 흐름에 맞춰 정리했습니다.`;
   const categoryHref = `/?cat=${encodeURIComponent(fund.cat)}`;
   const tagItems = fund.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
@@ -176,8 +176,8 @@ function pageHtml(fund, related) {
         description: desc,
         inLanguage: "ko-KR",
         dateModified: fund.reviewedAt,
-        author: { "@type": "Organization", name: "정책자금 백과 편집부", url: `${siteUrl}/editorial-policy/` },
-        publisher: { "@type": "Organization", name: "정책자금 백과", url: siteUrl },
+        author: { "@type": "Organization", name: "농업 정책자금 백과 편집부", url: `${siteUrl}/editorial-policy/` },
+        publisher: { "@type": "Organization", name: "농업 정책자금 백과", url: siteUrl },
         citation: fund.sourceUrl,
         mainEntityOfPage: canonical
       },
@@ -205,7 +205,7 @@ function pageHtml(fund, related) {
   <meta name="description" content="${escapeHtml(desc)}">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="google-site-verification" content="${searchConsoleVerification}">
-  <meta name="author" content="정책자금 백과">
+  <meta name="author" content="농업 정책자금 백과">
   <link rel="canonical" href="${canonical}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta name="google-adsense-account" content="ca-pub-5877883031077615">
@@ -227,7 +227,7 @@ function pageHtml(fund, related) {
   <header>
     <div class="h-top">
       <a class="logo" href="/">
-        <span class="logo-main">정책자금 <span>백과</span></span>
+        <span class="logo-main">농업 정책자금 <span>백과</span></span>
         <span class="logo-sub">Government Fund Guide</span>
       </a>
       <div class="nav-actions">
@@ -299,7 +299,7 @@ function pageHtml(fund, related) {
       </div>
     </aside>
   </div>
-  <footer class="site-footer"><div class="footer-in"><div class="footer-links"><a href="/about/">사이트 소개</a><a href="/editorial-policy/">편집 원칙</a><a href="/corrections/">정정 정책</a><a href="/privacy/">개인정보 처리 안내</a><a href="/terms/">이용 안내</a><a href="/contact/">문의</a></div><div class="footer-note">정책자금 백과는 정부 기관이 아닌 독립 정보 사이트이며 신청 대행, 금융상품 중개 또는 승인을 보장하지 않습니다.</div></div></footer>
+  <footer class="site-footer"><div class="footer-in"><div class="footer-links"><a href="/about/">사이트 소개</a><a href="/editorial-policy/">편집 원칙</a><a href="/corrections/">정정 정책</a><a href="/privacy/">개인정보 처리 안내</a><a href="/terms/">이용 안내</a><a href="/contact/">문의</a></div><div class="footer-note">농업 정책자금 백과는 정부 기관이 아닌 독립 정보 사이트이며 신청 대행, 금융상품 중개 또는 승인을 보장하지 않습니다.</div></div></footer>
   <script>
     const seen = new Set();
     function prefetch(href) {
@@ -343,7 +343,7 @@ function agricultureHubHtml(funds) {
         description,
         inLanguage: "ko-KR",
         dateModified: sitemapLastmod,
-        publisher: { "@type": "Organization", name: "정책자금 백과", url: siteUrl },
+        publisher: { "@type": "Organization", name: "농업 정책자금 백과", url: siteUrl },
         mainEntity: {
           "@type": "ItemList",
           name: "농업·농식품·농기계 관련 정책자금",
@@ -363,11 +363,11 @@ function agricultureHubHtml(funds) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(title)} | 정책자금 백과</title>
+  <title>${escapeHtml(title)} | 농업 정책자금 백과</title>
   <meta name="description" content="${escapeHtml(description)}">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="google-site-verification" content="${searchConsoleVerification}">
-  <meta name="author" content="정책자금 백과">
+  <meta name="author" content="농업 정책자금 백과">
   <meta name="keywords" content="농업인 정책자금, 농업인 대출, 농식품 창업 지원, 농기계 지원사업, 농산물 직거래, 중고 농기계">
   <link rel="canonical" href="${canonical}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -386,7 +386,7 @@ function agricultureHubHtml(funds) {
   <script type="application/ld+json">${JSON.stringify(schema)}</script>
 </head>
 <body data-generated="policyfundpedia-agriculture-hub">
-  <header><nav class="nav"><a class="logo" href="/">정책자금 <span>백과</span></a><a class="home" href="/">전체 자금 보기</a></nav></header>
+  <header><nav class="nav"><a class="logo" href="/">농업 정책자금 <span>백과</span></a><a class="home" href="/">전체 자금 보기</a></nav></header>
   <main>
     <section class="hero">
       <div class="crumb"><a href="/">홈</a> / 농업인 정책자금·거래 준비</div>
@@ -437,7 +437,7 @@ function agricultureHubHtml(funds) {
         <div><b>3. 지출 계획</b><span>지원금을 받는다는 가정이 아니라 실제 필요한 장비·포장·운송 비용을 먼저 계산합니다.</span></div>
         <div><b>4. 거래 준비</b><span>판매 가격과 포장 조건 또는 농기계 상태와 운송 조건을 기록한 뒤 거래를 시작합니다.</span></div>
       </div>
-      <div class="notice">정책자금 백과는 지원사업을 찾는 안내 페이지이며 대출 승인이나 지원금 선정을 보장하지 않습니다. 보리장터 연결 페이지는 매물을 요구하지 않고 거래 전에 필요한 준비 기준을 제공합니다.</div>
+      <div class="notice">농업 정책자금 백과는 지원사업을 찾는 안내 페이지이며 대출 승인이나 지원금 선정을 보장하지 않습니다. 보리장터 연결 페이지는 매물을 요구하지 않고 거래 전에 필요한 준비 기준을 제공합니다.</div>
     </section>
   </main>
 </body>
