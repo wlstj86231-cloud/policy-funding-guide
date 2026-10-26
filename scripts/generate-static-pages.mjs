@@ -159,17 +159,17 @@ function pageHtml(fund, related) {
   const categoryHref = `/?cat=${encodeURIComponent(fund.cat)}`;
   const timelineItems = fund.timeline.map((item) => `<li><b>${escapeHtml(item.when)}</b><span>${escapeHtml(item.what)}</span></li>`).join("");
   const timelineSection = timelineItems ? `
-        <div class="d-stitle">일정</div>
+        <h2 class="d-stitle">일정</h2>
         <ol class="timeline">${timelineItems}</ol>
         <p class="small-note">지난 날짜는 기록용입니다. 다음 해 일정은 새 지침·공고가 나온 뒤 다시 확인하세요.</p>` : "";
   const rejectionSection = fund.rejections.length ? `
-        <div class="d-stitle">선정·대출에서 막히는 사유</div>
+        <h2 class="d-stitle">선정·대출에서 막히는 사유</h2>
         <section class="info-panel warn"><h3>지침 원문에 적힌 제외·거절 사유</h3><ul class="plain-list">${fund.rejections.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>` : "";
   const extraSources = fund.sourceExtra.map((item) => `<li><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.title)} ↗</a>${item.note ? ` <span>${escapeHtml(item.note)}</span>` : ""}</li>`).join("");
   const legacyNotice = isAgri ? "" : `
         <div class="legacy-note">이 문서는 사이트가 농업 정책자금 중심으로 바뀌기 전부터 제공한 일반 정책자료입니다. 확인일 기준 내용을 유지하며, 농업인 자금은 <a href="/agri/">농업 정책자금 한눈에 보기</a>에서 확인하세요.</div>`;
   const agriNext = isAgri ? `
-        <div class="d-stitle">다음 확인</div>
+        <h2 class="d-stitle">다음 확인</h2>
         <div class="info-panel"><h3>다른 농업 정책자금과 비교하기</h3>
           <p>나이·경력·목적별로 맞는 자금이 다릅니다. <a href="/agri/">농업 정책자금 한눈에 보기</a>에서 대상·금리·상환기간·신청처를 한 표로 비교하고, 공고 원문과 기관 답변을 적는 기록표를 쓰세요.</p>
         </div>` : "";
@@ -183,20 +183,20 @@ function pageHtml(fund, related) {
   const cautionItems = listItems(fund.cautions);
   const faqItems = fund.faq.map((item) => `<details class="faq-item"><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details>`).join("");
   const machineryChecklist = fund.slug === "2026-후계농-농기계-구입자금" ? `
-        <div class="d-stitle">자금 실행 서류를 준비한다면</div>
+        <h2 class="d-stitle">자금 실행 서류를 준비한다면</h2>
         <div class="info-panel"><h3>선정 이후에도 배정과 대출 심사가 남습니다</h3>
           <p>계약 전에 자금 배정, 취급기관 상담, 사업추진확인서의 순서를 확인하세요. <a href="/guides/farmer-machinery-loan-execution-2026/">후계농 농기계 자금 실행 순서·서류 확인표</a>는 사전·사후 대출에 필요한 증빙을 나누어 정리합니다.</p>
         </div>
-        <div class="d-stitle">중고 트랙터를 검토한다면</div>
+        <h2 class="d-stitle">중고 트랙터를 검토한다면</h2>
         <div class="info-panel"><h3>자금 대상 확인과 기계 점검은 각각 필요합니다</h3>
           <p>이 지침은 중고 농기계의 허용 범위를 따로 적지 않으므로 구매 전에 관할 시군구와 대출취급기관에 확인하세요. 중고 구입을 지침에 명시한 별도 사업은 <a href="/2026-%EB%86%8D%EC%97%85%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88-%EC%9C%B5%EC%9E%90/">농업기계 구입자금 융자</a>이며, <a href="/guides/used-farm-machinery-loan-limit-2026/">중고 농기계 융자 한도 계산</a>으로 그 사업의 한도 공식을 미리 적용해 볼 수 있습니다.</p>
           <p>자금 적합성을 확인한 뒤에는 명판, 사용시간, 누유와 PTO를 현장에서 따로 점검하세요. 같은 운영사(J MEDIA)의 보리장터 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>은 거래 판단을 돕는 참고자료이며 자금 승인이나 융자 대상 확인을 대신하지 않습니다.</p>
         </div>` : fund.slug === "2026-농업기계-구입자금-융자" ? `
-        <div class="d-stitle">중고 기계 한도를 미리 계산하려면</div>
+        <h2 class="d-stitle">중고 기계 한도를 미리 계산하려면</h2>
         <div class="info-panel"><h3>지침 [별표 3] 공식을 그대로 적용합니다</h3>
           <p><a href="/guides/used-farm-machinery-loan-limit-2026/">중고 농기계 융자 한도 계산</a>에 기종, 최초 구입 연도, 매매가격을 넣으면 '매매가격×80%'와 '새 기계 한도×융자기준율' 중 낮은 금액과 상환기간 기준을 보여 줍니다. 결과는 검토 기준일 뿐 대출 결정이 아닙니다.</p>
         </div>
-        <div class="d-stitle">매물을 살펴본다면</div>
+        <h2 class="d-stitle">매물을 살펴본다면</h2>
         <div class="info-panel"><h3>융자 확인과 기계 점검을 나눠서 하세요</h3>
           <p>농협 상담 전에 후보 기계의 형식표지판·제조번호·최초 구입 시기를 매도인에게 받아 두면 상담이 빨라집니다. 같은 운영사(J MEDIA)가 운영하는 <a href="https://boribay.com/?category=MACHINERY&amp;${boribayUtm}" rel="noopener">보리장터 중고 농기계 매물</a>과 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>을 참고할 수 있습니다. 보리장터 매물이라고 융자 대상이 되는 것은 아닙니다.</p>
         </div>` : "";
@@ -244,7 +244,7 @@ function pageHtml(fund, related) {
   <meta name="google-adsense-account" content="ca-pub-5877883031077615">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615" crossorigin="anonymous"></script>
   <style>
-    :root{--ink:#0f172a;--ink2:#334155;--ink3:#5b6676;--ink4:#64748b;--sur:#f8f7f5;--white:#fff;--line:rgba(15,23,42,.08);--line2:rgba(15,23,42,.14);--blue:#1a56db;--blue-bg:#eff5ff;--r:8px;--r2:14px;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    :root{--ink:#0f172a;--ink2:#334155;--ink3:#5b6676;--ink4:#566173;--sur:#f8f7f5;--white:#fff;--line:rgba(15,23,42,.08);--line2:rgba(15,23,42,.14);--blue:#1a56db;--blue-bg:#eff5ff;--r:8px;--r2:14px;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
     @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
     *{box-sizing:border-box}body{margin:0;background:var(--sur);color:var(--ink);font-family:var(--f);line-height:1.72;word-break:keep-all}a{color:inherit}header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
@@ -253,7 +253,7 @@ function pageHtml(fund, related) {
     .review-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.review-meta span{font-size:11px;color:var(--ink3);background:#f8fafc;border:1px solid var(--line);border-radius:999px;padding:5px 9px}.status{color:#166534!important;background:#f0fdf4!important;border-color:#bbf7d0!important}.plain-list{margin:0;padding-left:20px}.plain-list li{font-size:13px;color:var(--ink2);margin:7px 0}.split-info{display:grid;grid-template-columns:1fr 1fr;gap:12px}.info-panel{border:1px solid var(--line);border-radius:var(--r);padding:15px;background:#f8fafc}.info-panel h3{font-size:14px;margin:0 0 8px}.info-panel.warn{background:#fff7ed;border-color:#fed7aa}.source-box{margin-top:18px;border:1px solid rgba(26,86,219,.18);background:var(--blue-bg);border-radius:var(--r);padding:15px}.source-box b{display:block;font-size:13px;color:#1e429f}.source-box p{font-size:12px;color:var(--ink3);margin:5px 0 10px}.source-box a{font-size:13px;font-weight:800;color:var(--blue)}.faq-item{border-bottom:1px solid var(--line);padding:11px 0}.faq-item summary{font-size:13px;font-weight:700;cursor:pointer}.faq-item p{font-size:13px;color:var(--ink3);margin:8px 0 0}.editor-note{font-size:13px;color:var(--ink2);background:#f8fafc;border-left:3px solid var(--blue);padding:13px 15px}.site-footer{max-width:1080px;margin:0 auto 42px;padding:0 24px}.footer-in{border-top:1px solid var(--line);padding-top:20px}.footer-links{display:flex;flex-wrap:wrap;gap:12px}.footer-links a{font-size:12px;color:var(--ink3);text-decoration:none}.footer-note{font-size:11px;color:var(--ink4);margin-top:10px}.side-card{padding:18px}.side-title{font-size:11px;font-weight:800;color:var(--ink4);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px}.boribay-side{margin-bottom:14px;background:#f3f8ed;border-color:#d5e3c8}.boribay-side .side-title{color:#50783a}.boribay-side strong{display:block;font-size:15px;line-height:1.45;color:#173f25}.boribay-side p{font-size:12px;line-height:1.65;color:#52645a;margin:8px 0 13px}.boribay-side a{display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:var(--r);padding:10px 12px;font-size:13px;font-weight:800;text-decoration:none}.boribay-side .boribay-primary{background:#3d6842;color:#fff}.boribay-side .boribay-secondary,.boribay-side .agriculture-hub-link{margin-top:8px;background:#fff;color:#31543a;border:1px solid #d5e3c8}.tool-side{margin-bottom:14px;padding:18px;background:linear-gradient(150deg,#0f172a,#163f55);border-color:rgba(20,184,166,.24);color:#fff}.tool-side .side-title{color:#9ee9dd}.tool-side p{font-size:12px;line-height:1.65;color:rgba(248,250,252,.75);margin:0 0 13px}.tool-side a{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#b9f2e8;color:#0f172a;border-radius:var(--r);padding:10px 12px;font-size:13px;font-weight:800;text-decoration:none}.related-list{display:flex;flex-direction:column;gap:7px}.related-item{display:grid;gap:3px;text-decoration:none;background:#f8fafc;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}.related-item:hover{border-color:var(--blue)}.related-item span{font-size:13px;font-weight:700;color:var(--ink)}.related-item small{font-size:11px;color:var(--ink4)}.back-box{margin-top:14px;display:grid;gap:8px}.back-box a{text-decoration:none;text-align:center;border:1px solid var(--line2);background:#fff;border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--ink2)}
     @media(max-width:840px){.page{grid-template-columns:1fr;padding:18px 16px 60px}.h-top{padding:0 16px}.nav-actions a{font-size:12px;padding:7px 10px}.d-summary,.split-info{grid-template-columns:1fr}.d-si{border-right:none;border-bottom:1px solid var(--line)}.info-row{display:grid;grid-template-columns:1fr}.d-top,.d-body{padding-left:20px;padding-right:20px}}
     @media(max-width:600px){.h-top{height:auto;min-height:60px;flex-wrap:wrap;row-gap:8px;padding:10px 16px}.nav-actions{width:100%;gap:6px}.nav-actions a{flex:1;text-align:center;white-space:nowrap;font-size:14px;padding:8px 4px}}
-    .d-desc{font-size:17px;color:var(--ink2)}.info-k{font-size:15px}.info-v,.step-t,.plain-list li,.faq-item summary,.faq-item p,.editor-note,.info-panel p{font-size:16px}.info-panel h3{font-size:16px}.d-stitle{font-size:14px}.d-sl{font-size:13px}.review-meta span{font-size:13px}.tag{font-size:13px}.breadcrumb{font-size:14px}.step-n{width:26px;height:26px;font-size:13px}.official-btn strong{font-size:16px}.official-btn span{font-size:14px}.source-box b{font-size:15px}.source-box p{font-size:14px}.source-box a{font-size:16px}.note{font-size:15px}.related-item span{font-size:15px}.related-item small{font-size:13px}.side-title{font-size:13px}.tool-side p{font-size:14px}.nav-actions a,.back-box a,.tool-side a{min-height:44px;display:flex;align-items:center;justify-content:center;font-size:15px}.footer-links a{font-size:14px;padding:6px 0}.footer-note{font-size:13px}.info-panel a,.legacy-note a,.source-list a{color:var(--blue);font-weight:700}
+    .d-desc{font-size:17px;color:var(--ink2)}.info-k{font-size:15px}.info-v,.step-t,.plain-list li,.faq-item summary,.faq-item p,.editor-note,.info-panel p{font-size:16px}.info-panel h3{font-size:16px}.d-stitle{font-size:14px}.d-sl{font-size:13px}.review-meta span{font-size:13px}.tag{font-size:13px}.breadcrumb{font-size:14px}.step-n{width:26px;height:26px;font-size:13px}.official-btn strong{font-size:16px}.official-btn span{font-size:14px}.source-box b{font-size:15px}.source-box p{font-size:14px}.source-box a{font-size:16px}.note{font-size:15px}.related-item span{font-size:15px}.related-item small{font-size:13px}.side-title{font-size:13px}.tool-side p{font-size:14px}.nav-actions a,.back-box a,.tool-side a{min-height:44px;display:flex;align-items:center;justify-content:center;font-size:15px}.footer-links a{font-size:14px;padding:6px 0}.footer-note{font-size:13px;color:var(--ink3)}.info-panel a,.legacy-note a,.source-list a{color:var(--blue);font-weight:700}
     .timeline{list-style:none;margin:0;padding:0;border-left:3px solid #c7d7f5}.timeline li{position:relative;margin:0 0 12px;padding:0 0 0 16px;font-size:16px;color:var(--ink2)}.timeline li:before{content:"";position:absolute;left:-8px;top:8px;width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid var(--blue)}.timeline b{display:block;font-size:15px;color:var(--ink)}.small-note{font-size:14px;color:var(--ink3);margin:6px 0 0}.legacy-note{margin:0 0 18px;background:#f3f8ed;border:1px solid #d5e3c8;border-radius:var(--r);padding:13px 15px;font-size:15px;color:#31543a}.source-list{margin:10px 0 0;padding-left:18px}.source-list li{font-size:14px;color:var(--ink3);margin:6px 0}
     @media(max-width:600px){.nav-actions a{font-size:14px}.d-si{padding:14px 20px}}
   </style>
@@ -288,7 +288,7 @@ function pageHtml(fund, related) {
         <div class="d-si"><div class="d-sl">담당 기관</div><div class="d-sv ink">${escapeHtml(fund.org)}</div></div>
       </section>
       <section class="d-body">${legacyNotice}
-        <div class="d-stitle">지원 내용</div>
+        <h2 class="d-stitle">지원 내용</h2>
         <div class="info-rows">
           <div class="info-row"><span class="info-k">지원 대상</span><span class="info-v">${escapeHtml(fund.targetDesc)}</span></div>
           <div class="info-row"><span class="info-k">지원 금액</span><span class="info-v">${escapeHtml(fund.amountDesc)}</span></div>
@@ -296,26 +296,26 @@ function pageHtml(fund, related) {
           <div class="info-row"><span class="info-k">지원 기간</span><span class="info-v">${escapeHtml(fund.periodDesc)}</span></div>
           <div class="info-row"><span class="info-k">필요 서류</span><span class="info-v">${escapeHtml(fund.docs)}</span></div>
         </div>
-        <div class="d-stitle">대상 확인</div>
+        <h2 class="d-stitle">대상 확인</h2>
         <div class="split-info">
           <section class="info-panel"><h3>확인할 자격 요건</h3><ul class="plain-list">${eligibilityItems}</ul></section>
           <section class="info-panel warn"><h3>제외·제한 가능성</h3><ul class="plain-list">${exclusionItems || "<li>공식 공고의 제외 요건을 확인하세요.</li>"}</ul></section>
         </div>
-        <div class="d-stitle">준비 서류와 주의사항</div>
+        <h2 class="d-stitle">준비 서류와 주의사항</h2>
         <div class="split-info">
           <section class="info-panel"><h3>미리 준비할 자료</h3><ul class="plain-list">${documentItems}</ul></section>
           <section class="info-panel warn"><h3>신청 전 주의</h3><ul class="plain-list">${cautionItems}</ul></section>
         </div>
 ${timelineSection}
-        <div class="d-stitle">신청 절차</div>
+        <h2 class="d-stitle">신청 절차</h2>
         <div class="step-list">${stepItems}</div>
         <a class="official-btn" href="${escapeHtml(fund.agency)}" target="_blank" rel="noopener">
           <span><strong>${escapeHtml(fund.agencyName)} 공식 사이트에서 확인하기</strong><span>${escapeHtml(fund.agencyNote)}</span></span>
         </a>
         <div class="source-box"><b>검증에 사용한 1차 출처</b><p>${escapeHtml(fund.sourceAuthority)} · ${escapeHtml(fund.sourceTitle)}${fund.sourceDate ? ` · ${escapeHtml(fund.sourceDate)}` : ""}</p><a href="${escapeHtml(fund.sourceUrl)}" target="_blank" rel="noopener">공식 공고 원문 확인하기 ↗</a>${extraSources ? `<ul class="source-list">${extraSources}</ul>` : ""}</div>${rejectionSection}
-        <div class="d-stitle">자주 묻는 질문</div>
+        <h2 class="d-stitle">자주 묻는 질문</h2>
         <div>${faqItems}</div>
-        <div class="d-stitle">편집자 해설</div>
+        <h2 class="d-stitle">편집자 해설</h2>
         <div class="editor-note">${escapeHtml(fund.editorNote)}</div>${machineryChecklist}${agriNext}
         <div class="note">최종 신청 가능 여부, 접수 기간, 한도와 금리는 반드시 각 기관의 최신 공식 공고를 기준으로 다시 확인하세요.</div>
       </section>

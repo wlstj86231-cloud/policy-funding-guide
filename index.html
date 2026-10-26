@@ -100,7 +100,7 @@
 
 /* ── TOKENS ── */
 :root{
-  --ink:#0f172a; --ink2:#334155; --ink3:#5b6676; --ink4:#64748b;
+  --ink:#0f172a; --ink2:#334155; --ink3:#5b6676; --ink4:#566173;
   --sur:#f8f7f5; --sur2:#f1efe9; --white:#ffffff;
   --line:rgba(15,23,42,.07); --line2:rgba(15,23,42,.13);
   --blue:#1a56db; --blue-bg:#eff5ff; --blue-t:#1e429f;
@@ -437,6 +437,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
 .foot-links a{font-size:14px;display:inline-block;padding:6px 0}.foot-copy{font-size:13px}.foot-notice{font-size:13px}
 .home-faq{background:var(--white);border-top:1px solid var(--line);padding:44px 24px 8px}.home-faq-in{max-width:1080px;margin:0 auto}.home-faq h2{font-size:22px;margin-bottom:14px}.home-faq details{border-bottom:1px solid var(--line);padding:14px 0}.home-faq summary{font-size:17px;font-weight:700;cursor:pointer}.home-faq details p{font-size:16px;color:var(--ink2);line-height:1.8;margin-top:8px}.home-faq .faq-more{display:inline-flex;align-items:center;min-height:44px;margin-top:14px;font-size:16px;font-weight:700;color:var(--blue)}
 @media(max-width:600px){.home-faq{padding:32px 16px 4px}}
+.card-heart{min-width:44px;min-height:44px;font-size:20px;display:flex;align-items:center;justify-content:center;right:8px;bottom:6px}
 </style>
   <meta name="google-adsense-account" content="ca-pub-5877883031077615">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615"
@@ -471,7 +472,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
         <span class="c-dot"></span>
         <strong>공식 출처 검증</strong>
         <span>공식 원문과 문서별 검수일을 함께 표시합니다</span>
-        <span class="ad-label" style="font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.5px;flex-shrink:0">안내</span>
+        <span class="ad-label" style="font-size:11px;color:rgba(255,255,255,.75);letter-spacing:.5px;flex-shrink:0">안내</span>
       </div>
       <a class="btn-strip" href="/editorial-policy/" style="text-decoration:none">검증 기준 →</a>
     </div>
@@ -973,7 +974,7 @@ function renderCard(f) {
     : makeBadge(f.deadline);
   const href = fundPath(f);
   return `<div class="fcard">
-    <a class="fcard-link" href="${href}" data-prefetch-fund onclick="return openDetailPath(event,'${href}')" onmouseenter="prefetchFundPage('${href}')" ontouchstart="prefetchFundPage('${href}')" aria-label="${f.title} 문서 열기">
+    <a class="fcard-link" href="${href}" data-prefetch-fund onclick="return openDetailPath(event,'${href}')" onmouseenter="prefetchFundPage('${href}')" ontouchstart="prefetchFundPage('${href}')">
       <div>
         <div class="fc-tags">
           ${(f.tags||[]).map(t=>`<span class="tag ${t.c}">${t.t}</span>`).join('')}
