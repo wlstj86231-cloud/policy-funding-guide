@@ -3,67 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>편집·검수 원칙 | 농업 정책자금 백과</title>
-  <meta name="description" content="농업 정책자금 백과가 공식 공고를 선택하고 사실을 검증하며 문서를 수정·종료 처리하는 편집 원칙을 공개합니다.">
+  <title>편집 원칙·콘텐츠 작성 방법 | 농업 정책자금 백과</title>
+  <meta name="description" content="농업 정책자금 백과가 누구의 책임으로, 어떤 공식 자료를 근거로, 어떤 방법(AI 도구 활용 포함)으로 문서를 만들고 날짜를 표기하며, 무엇을 하지 않는지 공개합니다.">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta name="author" content="농업 정책자금 백과">
+  <meta name="author" content="제이 미디어">
   <link rel="canonical" href="https://policyfundpedia.com/editorial-policy/">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta name="google-adsense-account" content="ca-pub-5877883031077615">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615" crossorigin="anonymous"></script>
   <style>
-    :root{--ink:#0f172a;--ink2:#334155;--ink3:#64748b;--ink4:#94a3b8;--sur:#f8f7f5;--white:#fff;--line:rgba(15,23,42,.09);--blue:#1a56db;--blue-bg:#eff5ff;--amber:#9a3412;--amber-bg:#fff7ed;--r:8px;--r2:14px;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}@font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
-    *{box-sizing:border-box}body{margin:0;background:var(--sur);color:var(--ink);font-family:var(--f);line-height:1.75;word-break:keep-all}a{color:inherit}header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.h-top{min-height:60px;max-width:980px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.05}.logo-main{font-size:20px;font-weight:800}.logo-main span{color:var(--blue)}.logo-sub{font-size:10px;color:var(--ink4);text-transform:uppercase}.nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.nav a{font-size:13px;text-decoration:none;color:var(--ink3);background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px}.nav a[aria-current="page"]{color:var(--blue);background:var(--blue-bg);border-color:rgba(26,86,219,.3)}
-    main{max-width:980px;margin:0 auto;padding:28px 24px 72px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:var(--r2)}.hero{padding:30px;margin-bottom:18px}.crumb{font-size:12px;color:var(--ink4);margin-bottom:12px}.crumb a{color:var(--blue);text-decoration:none}h1{font-size:clamp(27px,5vw,38px);line-height:1.3;margin:0 0 12px}h2{font-size:20px;margin:0 0 13px}h3{font-size:15px;margin:0 0 5px}p{margin:0 0 14px;color:var(--ink2)}p:last-child{margin-bottom:0}.lead{font-size:16px;color:var(--ink3);max-width:760px}.card{padding:26px;margin-bottom:16px}.principles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.principle{border:1px solid var(--line);background:#f8fafc;border-radius:var(--r);padding:15px}.principle p{font-size:13px;color:var(--ink3)}.rows{border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:155px 1fr;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}.row b{font-size:13px;color:var(--ink3)}.row span{font-size:14px;color:var(--ink2)}.note{background:var(--amber-bg);border:1px solid #fed7aa;color:var(--amber);border-radius:var(--r);padding:15px 17px;font-size:14px}footer{background:#fff;border-top:1px solid var(--line);padding:30px 24px}.foot{max-width:980px;margin:0 auto}.foot-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:13px}.foot-links a{font-size:12px;color:var(--ink3)}.foot-copy{font-size:12px;color:var(--ink4);margin-bottom:8px}.foot-note{font-size:12px;color:var(--ink3);line-height:1.7}
-    @media(max-width:720px){.h-top{align-items:flex-start;padding:13px 16px;flex-direction:column}.nav{justify-content:flex-start}.nav a:nth-child(n+4){display:none}main{padding:20px 16px 56px}.hero,.card{padding:20px}.principles{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:5px}}
+    :root{--ink:#14213a;--ink2:#334155;--ink3:#4f5d6e;--line:#dbe4dc;--green:#1f5f45;--green2:#e9f4ed;font-family:"Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;color:var(--ink);background:#f4f7f5}
+    *{box-sizing:border-box}body{margin:0;font-size:16px;line-height:1.75;word-break:keep-all}a{color:#155d47}
+    main{max-width:880px;margin:0 auto;padding:18px 16px 40px}.crumb{font-size:14px;color:var(--ink3);margin:6px 0 0}
+    .hero,.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:24px;margin:16px 0}
+    h1{font-size:clamp(1.65rem,5vw,2.25rem);line-height:1.32;margin:0 0 10px}h2{font-size:1.25rem;line-height:1.4;margin:0 0 12px}h3{font-size:1.05rem;margin:14px 0 6px}
+    p{margin:0 0 12px}ul,ol{padding-left:22px;margin:0 0 12px}li{margin:6px 0}.lead{font-size:17px;color:var(--ink2)}.muted{font-size:15px;color:var(--ink3)}
+    .rows{border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line)}.row b{color:var(--ink3);font-size:15px}.row span{color:var(--ink2)}
+    .ok{background:var(--green2);border-left:4px solid var(--green);border-radius:0 10px 10px 0;padding:12px 15px}
+    .note{background:#fff7ed;border:1px solid #f5c99b;border-radius:12px;padding:14px 16px;color:#7c2d12}
+    a:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
+    @media(max-width:640px){.hero,.card{padding:18px 16px}.row{grid-template-columns:1fr;gap:2px}}
   </style>
+  <!-- site-chrome-css:start --><style>
+    header.sh{position:static;background:#fff;border:0;border-bottom:1px solid #dfe6e1;border-radius:0;margin:0;padding:0;backdrop-filter:none;-webkit-backdrop-filter:none}
+    .sh-in{max-width:1080px;margin:0 auto;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between}
+    .sh-logo{display:inline-block;padding:9px 0;line-height:26px;font-size:20px;font-weight:800;letter-spacing:-.3px;color:#0f172a;text-decoration:none}.sh-logo span{color:#1a56db}
+    .sh-nav{display:flex;flex-wrap:wrap;gap:6px}.sh-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 13px;border:1px solid #d5dfd8;border-radius:9px;background:#fff;color:#1f2d3d;font-size:15px;font-weight:600;text-decoration:none}
+    .sh-nav a[aria-current="page"]{border-color:#1f5f45;background:#eaf4ee;color:#174a36}
+    footer.sf{display:block;max-width:none;background:#fff;border:0;border-top:1px solid #dfe6e1;border-radius:0;margin:32px 0 0;padding:20px 16px 34px;font-size:14px;color:#475467;text-align:left}
+    .sf-in{max-width:1080px;margin:0 auto}.sf-links{display:flex;flex-wrap:wrap;gap:0 18px;margin:0 0 8px}.sf-links a{display:inline-flex;align-items:center;min-height:44px;padding:0;color:#1f2d3d;font-size:15px;font-weight:600;text-decoration:none}
+    .sf p{margin:4px 0;font-size:14px;line-height:1.7;color:#475467}.sf p a{color:#1f2d3d}.sf .nw{white-space:nowrap}
+    .pmeta{display:flex;flex-wrap:wrap;gap:4px 16px;margin:14px 0 0;padding:10px 13px;border:1px solid #dfe6e1;border-radius:10px;background:#f8faf9;font-size:14px;line-height:1.65;color:#3b4858}.pmeta b{color:#1f2d3d}.pmeta a{color:#1a56db;font-weight:700}
+    .src-list{margin:0;padding-left:20px}.src-list li{margin:9px 0;font-size:15px;line-height:1.65;color:#334155}.src-list a{color:#1a56db;font-weight:700;overflow-wrap:break-word}.src-meta{display:block;font-size:14px;color:#475467}
+    .scope{margin:14px 0 0;border-left:4px solid #8a99ab;background:#f8fafc;border-radius:0 10px 10px 0;padding:12px 15px;font-size:15px;line-height:1.7;color:#334155}.scope p{margin:0 0 8px}.scope p:last-child{margin:0}
+    @media(max-width:640px){.sh-nav{width:100%;display:grid;grid-template-columns:repeat(4,1fr)}.sh-nav a{padding:0 4px;font-size:14px}}
+    @media print{header.sh,footer.sf{display:none}}
+  </style><!-- site-chrome-css:end -->
+  <!-- jsonld:start --><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://jnewmedia.com/#organization","name":"제이 미디어","legalName":"제이 미디어(Media)","alternateName":["J MEDIA","제이미디어","제이 미디어(Media)"],"url":"https://jnewmedia.com/","logo":{"@type":"ImageObject","url":"https://jnewmedia.com/assets/mark.svg"},"address":{"@type":"PostalAddress","streetAddress":"의료원로 80-8, 301호(지곡동)","addressLocality":"군산시","addressRegion":"전북특별자치도","addressCountry":"KR"},"telephone":"+82-10-2846-2011","email":"consultingjinjeong@gmail.com","identifier":{"@type":"PropertyValue","name":"사업자등록번호","value":"456-33-01705"},"sameAs":["https://www.instagram.com/boribaydotcom/","https://blog.naver.com/plannerset","https://jnewmedia.com/","https://boribay.com/"]},{"@type":"WebSite","@id":"https://policyfundpedia.com/#website","url":"https://policyfundpedia.com/","name":"농업 정책자금 백과","alternateName":"policyfundpedia.com","inLanguage":"ko-KR","publisher":{"@id":"https://jnewmedia.com/#organization"}},{"@type":"WebPage","@id":"https://policyfundpedia.com/editorial-policy/#webpage","url":"https://policyfundpedia.com/editorial-policy/","name":"편집 원칙·콘텐츠 작성 방법","description":"농업 정책자금 백과가 누구의 책임으로, 어떤 공식 자료를 근거로, 어떤 방법(AI 도구 활용 포함)으로 문서를 만들고 날짜를 표기하며, 무엇을 하지 않는지 공개합니다.","inLanguage":"ko-KR","datePublished":"2026-09-04","dateModified":"2026-10-26","isPartOf":{"@id":"https://policyfundpedia.com/#website"},"publisher":{"@id":"https://jnewmedia.com/#organization"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://policyfundpedia.com/"},{"@type":"ListItem","position":2,"name":"편집 원칙","item":"https://policyfundpedia.com/editorial-policy/"}]}]}</script><!-- jsonld:end -->
 </head>
 <body>
-  <header><div class="h-top"><a class="logo" href="/"><span class="logo-main">농업 정책자금 <span>백과</span></span><span class="logo-sub">Government Fund Guide</span></a><nav class="nav" aria-label="주요 메뉴"><a href="/about/">사이트 소개</a><a href="/editorial-policy/" aria-current="page">편집 원칙</a><a href="/corrections/">정정 정책</a><a href="/contact/">문의 안내</a></nav></div></header>
-  <main>
-    <section class="hero"><div class="crumb"><a href="/">홈</a> / 편집·검수 원칙</div><h1>편집·검수 원칙</h1><p class="lead">농업 자금 공고는 대상, 자금 용도, 선정·배정과 금융기관 심사를 각각 원문과 대조합니다. 검색 노출을 위한 문서 수보다 다음 행동을 결정하는 데 필요한 품질을 우선합니다.</p></section>
-    <section class="card">
-      <h2>핵심 원칙</h2>
-      <div class="principles">
-        <div class="principle"><h3>공식 1차 자료 우선</h3><p>담당 부처·공공기관의 공고문, 사업 지침, 첨부파일과 공식 보도자료를 우선 출처로 사용합니다.</p></div>
-        <div class="principle"><h3>공고별로 구분</h3><p>이름이 같은 사업도 연도·유형·지역이 다르면 조건을 섞지 않고 서로 다른 공고로 구분합니다.</p></div>
-        <div class="principle"><h3>확인되지 않은 값 금지</h3><p>출처에서 확인되지 않은 금액·금리·마감일을 추정하지 않으며 빈칸을 그럴듯한 값으로 채우지 않습니다.</p></div>
-        <div class="principle"><h3>종료 상태 명시</h3><p>신규 신청이 중단되거나 다른 상품으로 통합된 제도는 현재 신청 가능 정보처럼 안내하지 않습니다.</p></div>
-        <div class="principle"><h3>이해를 돕는 해설</h3><p>공식 문구를 반복하기보다 제외 대상, 준비 순서, 서로 헷갈리는 조건과 확인 지점을 설명합니다.</p></div>
-        <div class="principle"><h3>광고와 편집 분리</h3><p>광고 또는 외부 서비스 연결 여부가 사업의 선정, 순위, 평가나 설명 내용에 영향을 주지 않습니다.</p></div>
-      </div>
-    </section>
-    <section class="card">
-      <h2>문서 공개 전 확인 항목</h2>
-      <div class="rows">
-        <div class="row"><b>출처 식별</b><span>담당 기관, 정확한 공고명, 공고문 또는 상세 안내의 직접 주소를 확인합니다.</span></div>
-        <div class="row"><b>현재 상태</b><span>접수 예정·접수 중·마감·상시·종료 중 하나로 구분하고 기준일을 적습니다.</span></div>
-        <div class="row"><b>신청 대상</b><span>업력, 지역, 소득·신용, 업종, 고용 조건과 주요 제외 조건을 함께 확인합니다.</span></div>
-        <div class="row"><b>지원 조건</b><span>최대값과 일반적인 지원액을 혼동하지 않고 자부담, 보증료, 상환 조건을 구분합니다.</span></div>
-        <div class="row"><b>접수 절차</b><span>실제 접수처, 제출 서류, 문의처와 공고 첨부파일의 지침을 대조합니다.</span></div>
-        <div class="row"><b>중복 점검</b><span>같은 검색 의도와 제도를 다루는 기존 문서가 있으면 새 문서 대신 통합·갱신합니다.</span></div>
-        <div class="row"><b>검수 기록</b><span>실제로 확인한 날짜와 변경 내용을 기록하며 자동으로 현재 날짜만 갱신하지 않습니다.</span></div>
-        <div class="row"><b>농업 자금 구분</b><span>지원 대상, 기계·시설의 자금 용도, 개인별 배정, 융자 심사, 계약 시점을 한 가지 승인 판단으로 합치지 않습니다. 지역·연도별 차이를 확인합니다.</span></div>
-      </div>
-    </section>
-    <section class="card">
-      <h2>출처 우선순위</h2>
-      <div class="rows">
-        <div class="row"><b>1순위</b><span>담당 부처·공공기관이 게시한 해당 연도 공고문, 지침, 첨부파일</span></div>
-        <div class="row"><b>2순위</b><span>정부 정책포털·기업마당·고용24 등에서 제공하는 원문 연결형 공식 안내</span></div>
-        <div class="row"><b>3순위</b><span>담당 기관의 보도자료, 자주 묻는 질문, 공식 상담 안내</span></div>
-        <div class="row"><b>보조 자료</b><span>법령·통계·다른 공공기관 설명은 맥락 확인에만 쓰며 공고의 조건을 대신하지 않습니다.</span></div>
-        <div class="row"><b>사용하지 않음</b><span>출처를 추적할 수 없는 블로그·홍보성 상담 글·복제 문서만으로 금융 조건을 확정하지 않습니다.</span></div>
-      </div>
-    </section>
-    <section class="card">
-      <h2>광고와 이해관계</h2>
-      <p>사이트에는 Google AdSense 광고가 표시될 수 있습니다. 광고의 내용과 노출은 편집 문서의 선정이나 평가와 분리됩니다. 외부 링크가 있다는 이유로 해당 기관·상품을 추천하거나 승인 가능성이 높다고 판단하지 않습니다.</p>
-      <p>농업 정책자금 백과는 지원사업 신청 대행, 대출 중개 또는 민간 컨설턴트 상담 접수를 제공하지 않습니다. 개별 자격 판단은 공고문에 적힌 담당 기관에 문의해야 합니다.</p>
-    </section>
-    <div class="note"><strong>검수의 한계:</strong> 공개 후에도 기관의 지침이 바뀔 수 있습니다. 문서와 공식 공고가 다르면 공식 공고가 우선하며, 확인된 오류는 <a href="/corrections/">정정 정책</a>에 따라 수정합니다.</div>
-  </main>
-  <footer><div class="foot"><div class="foot-links"><a href="/about/">사이트 소개</a><a href="/editorial-policy/">편집 원칙</a><a href="/privacy/">개인정보처리방침</a><a href="/terms/">이용약관</a><a href="/corrections/">정정 정책</a><a href="/contact/">문의 안내</a></div><div class="foot-copy">© 2026 농업 정책자금 백과</div><div class="foot-note">정부기관 비소속 민간 정보 사이트입니다. 신청 대행을 제공하지 않으며 승인·선정·한도를 보장하지 않습니다. 최신 조건은 담당 기관의 공식 공고를 확인하세요.</div></div></footer>
+<!-- site-header:start --><header class="sh"><div class="sh-in"><a class="sh-logo" href="/">농업 정책자금 <span>백과</span></a><nav class="sh-nav" aria-label="주요 메뉴"><a href="/agri/">자금 비교</a><a href="/guides/used-farm-machinery-loan-limit-2026/">한도 계산</a><a href="/about/">소개</a><a href="/contact/">문의</a></nav></div></header><!-- site-header:end -->
+<main>
+  <nav class="crumb" aria-label="위치"><a href="/">홈</a> / 편집 원칙</nav>
+  <section class="hero">
+    <h1>편집 원칙과 콘텐츠 작성 방법</h1>
+    <p class="lead">정책자금 정보는 신청 기회와 빚에 직접 영향을 줍니다. 그래서 누가 쓰는지, 무엇을 근거로 하는지, 어떻게 만드는지, 언제 확인했는지를 문서마다 공개합니다.</p>
+    <p class="muted">게시 2026-09-04 · 최종 수정 2026-10-26</p>
+  </section>
+
+  <section class="card">
+    <h2>누가 만들고 책임지나요</h2>
+    <p>모든 문서의 작성·관리는 <b>제이 미디어 편집팀 (운영 책임: 대표 이정우)</b>으로 표시합니다. 게시 내용의 책임은 운영자 제이 미디어에게 있습니다. 운영자 정보와 연락처는 <a href="/about/">소개</a>와 <a href="/contact/">문의</a>에 있습니다.</p>
+    <p>세무사·법무사·금융 전문가 등 외부 전문가의 감수는 받지 않았습니다. 앞으로 감수를 받으면 그 사람과 범위, 날짜를 해당 문서에 밝히고, 받지 않은 감수나 하지 않은 현장 취재를 표시하지 않습니다.</p>
+  </section>
+
+  <section class="card">
+    <h2>어떻게 만드나요</h2>
+    <ol>
+      <li><b>공식 1차 자료 수집:</b> 해당 연도 농림축산식품부 시행지침 PDF, 농업e지 사업 상세(신청 기간·지원 자격), 농식품부 보도자료와 공지(모집 개시, 농업정책자금 변동금리)를 내려받습니다.</li>
+      <li><b>쪽수 단위 대조:</b> 대상·제외 조건, 한도·금리·상환, 자금 용도, 신청·선정 일정, 제출서류를 원문의 쪽수와 함께 확인하고, 자료끼리 다르면 지침 원문을 기준으로 삼아 차이를 적습니다.</li>
+      <li><b>AI 도구 활용:</b> 초안 작성과 자료 대조에 AI 도구를 활용합니다. 문서에 남기는 숫자·날짜·조건은 위 공식 자료에서 확인한 것만 쓰고, 확인하지 못한 값은 추정해 채우지 않습니다.</li>
+      <li><b>출처와 확인일 표기:</b> 문서마다 출처 목록(자료명·기관·주소·확인일)과 게시일·최종 확인일을 적습니다.</li>
+      <li><b>정정과 기록:</b> 오류 제보를 받으면 원문과 다시 대조해 고치고, <a href="/corrections/">수정 기록</a>에 날짜와 내용을 남깁니다.</li>
+    </ol>
+    <p class="ok">이 과정의 목적은 농업인이 신청이나 계약 전에 무엇을 누구에게 확인해야 하는지 빠르게 알도록 돕는 것입니다. 검색 노출을 위해 문서 수를 늘리지 않으며, 같은 사업은 한 문서로 관리합니다.</p>
+  </section>
+
+  <section class="card">
+    <h2>출처 우선순위</h2>
+    <div class="rows">
+      <div class="row"><b>1순위</b><span>그해 농림축산식품부 시행지침(PDF)과 농업e지 사업 상세</span></div>
+      <div class="row"><b>2순위</b><span>농식품부 보도자료·공지(모집 개시, 변동금리 알림)</span></div>
+      <div class="row"><b>3순위</b><span>시군·농업기술센터의 고시·공고 — 시군마다 다른 접수 날짜는 이 자료가 최종 기준입니다</span></div>
+      <div class="row"><b>보조</b><span>국가법령정보센터의 법령, 농협·귀농귀촌종합센터 등 공식 안내 — 맥락 확인에만 쓰고 지침의 조건을 대신하지 않습니다</span></div>
+      <div class="row"><b>쓰지 않음</b><span>출처를 확인할 수 없는 블로그, 상담업체 홍보 글, 다른 사이트의 요약만으로 조건을 확정하지 않습니다</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>날짜 표기 기준</h2>
+    <div class="rows">
+      <div class="row"><b>게시일</b><span>그 문서를 이 사이트에 처음 공개한 날</span></div>
+      <div class="row"><b>최종 확인일</b><span>출처의 원문을 실제로 다시 열어 대조한 날. 내용을 확인하지 않고 날짜만 바꾸지 않습니다.</span></div>
+      <div class="row"><b>원문 날짜</b><span>지침 발행·배포일이나 보도자료 게시일은 출처 목록에 따로 적습니다.</span></div>
+    </div>
+    <p style="margin-top:12px">농식품부 지침은 다음 해 사업 지침을 전년도 12월에 시달합니다(2026년 후계농 지침 2025년 12월, 농업기계 구입지원 지침 2025-12-26 배포). 2027년 지침은 2026년 12월에 나올 예정이며, 공개되면 각 문서를 새 지침과 다시 대조해 고치고 수정 기록에 남깁니다. 그 전까지 문서의 숫자는 2026년 지침 기준임을 제목과 본문에 표시합니다.</p>
+  </section>
+
+  <section class="card">
+    <h2>도구를 만드는 원칙</h2>
+    <p>중고 농기계 융자 한도 계산은 지침 [별표 3]의 공식을 그대로 적용하고, 계산 방법·기준표·한계를 같은 페이지에 공개합니다. 계산기와 점검표, 기록표에 넣은 값은 이용자의 브라우저 안에서만 쓰이며 서버로 보내거나 저장하지 않습니다. 결과는 검토 기준일 뿐 대출 결정이 아닙니다.</p>
+  </section>
+
+  <section class="card">
+    <h2>하지 않는 일</h2>
+    <ul>
+      <li>선정·승인·한도·금리를 보장하거나 "누구나 받을 수 있다"처럼 과장하지 않습니다.</li>
+      <li>개인별 법률·세무·금융 자문이나 자격 판정을 하지 않습니다. 이런 판단은 시군, 농협, 농림수산업자신용보증기금 등 담당 기관이 합니다.</li>
+      <li>신청 대행, 대출 중개, 유료 상담을 하지 않고, 이를 하는 업체를 추천하지 않습니다.</li>
+      <li>종료된 사업이나 지난 모집을 신청 가능한 것처럼 표시하지 않습니다.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>이해관계와 광고</h2>
+    <p>운영자 제이 미디어는 농산물·중고 농기계 거래 서비스 보리장터를 운영합니다. 문서 안의 보리장터 링크는 운영자 자신의 서비스이며, 링크 옆에 같은 운영사임을 밝힙니다. 보리장터 매물이나 이용 여부는 정책자금 대상 여부와 관계가 없습니다.</p>
+    <p>사이트에는 Google AdSense 광고가 표시됩니다. 광고 내용은 Google이 정하며, 광고·외부 링크 여부가 어떤 사업을 소개하거나 설명하는 방식에 영향을 주지 않습니다. 유료 게재와 협찬 콘텐츠는 없습니다.</p>
+  </section>
+
+  <div class="note"><strong>검수의 한계:</strong> 확인일 이후에도 지침과 공고는 바뀔 수 있습니다. 이 사이트의 문서와 공식 원문이 다르면 공식 원문이 우선합니다. 틀린 내용을 발견하면 <a href="/contact/">문의</a>로 알려 주세요.</div>
+</main>
+<!-- site-footer:start --><footer class="sf"><div class="sf-in">
+    <nav class="sf-links" aria-label="사이트 정보"><a href="/about/">소개</a><a href="/contact/">문의</a><a href="/editorial-policy/">편집 원칙</a><a href="/corrections/">정정·수정 기록</a><a href="/privacy/">개인정보처리방침</a><a href="/terms/">이용약관·면책</a></nav>
+    <p><span class="nw">운영: 제이 미디어</span> · <span class="nw">대표 이정우</span> · <span class="nw">사업자등록번호 456-33-01705</span> · <span class="nw">고객센터 <a href="tel:010-2846-2011">010-2846-2011</a></span></p>
+    <p>전북특별자치도 군산시 의료원로 80-8, 301호(지곡동) · <a href="mailto:consultingjinjeong@gmail.com">consultingjinjeong@gmail.com</a></p>
+    <p>농업 정책자금 백과는 정부기관이 아닌 민간 정보 사이트입니다. 지원 대상 선정과 대출 승인은 시군·농협 등 담당 기관이 결정하며, 이 사이트는 신청 대행·대출 중개·승인 보장을 하지 않습니다.</p>
+    <p>© 2026 제이 미디어 · 농업 정책자금 백과</p>
+  </div></footer><!-- site-footer:end -->
 </body>
 </html>

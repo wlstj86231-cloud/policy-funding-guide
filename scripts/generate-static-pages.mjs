@@ -1,27 +1,37 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import {
+  SITE_URL as siteUrl, ORG_ID, WEBSITE_ID, CHROME_CSS, escapeHtml, headerHtml, footerHtml,
+  metaBlockHtml, sourceListHtml, jsonLdScript, replaceBlock, hasBlock
+} from "./site-chrome.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
-const siteUrl = "https://policyfundpedia.com";
 const verifiedDataPath = path.join(root, "data", "verified-funds.json");
 const searchConsoleVerification = "tSlD6MvlQAUKN3XASMGLU-vJTeaoUxCSFg-tn3JMmvk";
-const sitemapLastmod = process.env.SITEMAP_LASTMOD || new Intl.DateTimeFormat("sv-SE", {
-  timeZone: "Asia/Seoul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit"
-}).format(new Date());
+// 손으로 쓴 페이지의 공식 원문을 실제로 다시 대조한 날. 자동으로 오늘 날짜를 넣지 않는다.
+const CHECKED_AT = "2026-10-26";
 const generatedMarker = "policyfundpedia-static-detail";
 // 보리장터 연결은 HTML 속성 안에 쓰므로 &를 미리 이스케이프한다.
 const boribayUtm = "utm_source=policyfundpedia.com&amp;utm_medium=referral&amp;utm_campaign=support";
+const HUB_NAME = "농업 정책자금 한눈에";
 
-function escapeHtml(value = "") {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+// 손으로 관리하는 페이지. 머리글·바닥글·작성 정보·JSON-LD·사이트맵은 여기서 일괄 적용한다.
+// published = 그 페이지를 처음 공개한 커밋 날짜(git log --diff-filter=A).
+// checked = 원문을 마지막으로 대조한 날(없으면 CHECKED_AT). modified = 페이지를 마지막으로 고친 날.
+const STATIC_PAGES = [
+  { file: "index.html", path: "/", type: "WebPage", published: "2026-09-04", modified: CHECKED_AT, meta: true, faq: true, changefreq: "weekly", priority: "1.0" },
+  { file: "agri/index.html", path: "/agri/", type: "CollectionPage", published: "2026-09-27", modified: CHECKED_AT, meta: true, itemList: true, crumbs: [[HUB_NAME, "/agri/"]], changefreq: "monthly", priority: "0.9" },
+  { file: "guides/used-farm-machinery-loan-limit-2026/index.html", path: "/guides/used-farm-machinery-loan-limit-2026/", type: "Article", published: "2026-10-26", modified: CHECKED_AT, meta: true, crumbs: [[HUB_NAME, "/agri/"], ["중고 농기계 융자 한도 계산", "/guides/used-farm-machinery-loan-limit-2026/"]], changefreq: "monthly", priority: "0.8" },
+  { file: "guides/farmer-machinery-loan-execution-2026/index.html", path: "/guides/farmer-machinery-loan-execution-2026/", type: "Article", published: "2026-09-24", modified: CHECKED_AT, checked: "2026-10-15", meta: true, crumbs: [[HUB_NAME, "/agri/"], ["후계농 농기계 구입 전 확인", `/${encodeURIComponent("2026-후계농-농기계-구입자금")}/`], ["자금 실행 순서와 서류", "/guides/farmer-machinery-loan-execution-2026/"]], changefreq: "monthly", priority: "0.6" },
+  { file: "about/index.html", path: "/about/", type: "AboutPage", published: "2026-09-04", modified: CHECKED_AT, crumbs: [["소개", "/about/"]], changefreq: "monthly", priority: "0.5" },
+  { file: "contact/index.html", path: "/contact/", type: "ContactPage", published: "2026-09-04", modified: CHECKED_AT, crumbs: [["문의", "/contact/"]], changefreq: "monthly", priority: "0.5" },
+  { file: "editorial-policy/index.html", path: "/editorial-policy/", type: "WebPage", published: "2026-09-04", modified: CHECKED_AT, crumbs: [["편집 원칙", "/editorial-policy/"]], changefreq: "monthly", priority: "0.5" },
+  { file: "corrections/index.html", path: "/corrections/", type: "WebPage", published: "2026-09-04", modified: CHECKED_AT, crumbs: [["정정·수정 기록", "/corrections/"]], changefreq: "monthly", priority: "0.5" },
+  { file: "privacy/index.html", path: "/privacy/", type: "WebPage", published: "2026-09-04", modified: CHECKED_AT, crumbs: [["개인정보처리방침", "/privacy/"]], changefreq: "yearly", priority: "0.3" },
+  { file: "terms/index.html", path: "/terms/", type: "WebPage", published: "2026-09-04", modified: CHECKED_AT, crumbs: [["이용약관·면책", "/terms/"]], changefreq: "yearly", priority: "0.3" },
+  { file: "retired/index.html", path: "/retired/", noindex: true },
+  { file: "404.html", path: null, noindex: true }
+];
 
 function escapeXml(value = "") {
   return escapeHtml(value).replace(/'/g, "&apos;");
@@ -68,67 +78,69 @@ async function fetchFunds() {
 function normalizeFund(raw, index) {
   const tags = parseArray(raw.tags).map(tagText).filter(Boolean);
   const steps = parseArray(raw.steps).map((item) => clean(item)).filter(Boolean);
-  const target = parseArray(raw.target).map((item) => clean(item)).filter(Boolean);
   const limit = clean(raw.lim || raw.limit || raw.amount_desc);
   const rate = clean(raw.rate || raw.rate_desc);
   return {
     id: raw.id ?? index + 1,
-    cat: clean(raw.cat, "정책자금"),
-    title: clean(raw.title, "정책자금 안내"),
-    excerpt: clean(raw.excerpt || raw.detail, "정책자금 핵심 정보를 정리했습니다."),
-    detail: clean(raw.detail || raw.excerpt, "공식 공고 기준으로 신청 대상과 절차를 확인해야 합니다."),
+    cat: clean(raw.cat, "농업인"),
+    title: clean(raw.title, "농업 정책자금 안내"),
+    excerpt: clean(raw.excerpt || raw.detail, "농업 정책자금 핵심 정보를 정리했습니다."),
+    detail: clean(raw.detail || raw.excerpt, "공식 지침 기준으로 신청 대상과 절차를 확인해야 합니다."),
     limit,
     rate,
-    org: clean(raw.org || raw.agency_name || raw.agencyName || "공식 기관"),
-    deadline: clean(raw.deadline || "상시"),
-    targetDesc: clean(raw.target_desc || target.join(", "), "공식 공고의 대상 요건 확인"),
+    org: clean(raw.org || raw.agency_name || "공식 기관"),
+    deadline: clean(raw.deadline || "공식 공고 확인"),
+    targetDesc: clean(raw.target_desc, "공식 공고의 대상 요건 확인"),
     amountDesc: clean(raw.amount_desc || raw.lim || raw.limit),
     rateDesc: clean(raw.rate_desc || raw.rate),
     periodDesc: clean(raw.period_desc || "공식 공고 확인"),
-    docs: clean(raw.docs || "사업자등록증, 신분증, 매출 증빙, 공식 공고별 추가 서류"),
+    docs: clean(raw.docs || "공식 지침의 제출서류 목록 확인"),
     agency: /^https?:\/\//.test(String(raw.agency || "")) ? raw.agency : siteUrl,
-    agencyName: clean(raw.agency_name || raw.agencyName || raw.org || "공식 기관"),
-    agencyNote: clean(raw.agency_note || raw.agencyNote || "신청 전 공식 사이트에서 최신 공고와 세부 요건을 확인하세요."),
-    tags: tags.length ? tags : [clean(raw.cat || "정책자금")],
-    steps: steps.length ? steps : ["공식 공고 확인", "지원 대상 검토", "필요 서류 준비", "온라인 또는 방문 신청"],
-    target,
+    agencyName: clean(raw.agency_name || raw.org || "공식 기관"),
+    agencyNote: clean(raw.agency_note || "신청 전 공식 사이트에서 최신 공고와 세부 요건을 확인하세요."),
+    tags: tags.length ? tags : [clean(raw.cat || "농업인")],
+    steps: steps.length ? steps : ["공식 공고 확인", "지원 대상 검토", "필요 서류 준비", "신청"],
     updated: clean(raw.updated || raw.reviewedAt || "", ""),
     reviewedAt: clean(raw.reviewedAt || raw.updated || "", ""),
+    published: clean(raw.published || "", ""),
     status: clean(raw.status || "신청 조건 확인 필요"),
     sourceTitle: clean(raw.sourceTitle || "", ""),
     sourceAuthority: clean(raw.sourceAuthority || raw.agency_name || raw.org || "", ""),
     sourceDate: clean(raw.sourceDate || "", ""),
-    sourceUrl: /^https:\/\//.test(String(raw.sourceUrl || raw.agency || "")) ? String(raw.sourceUrl || raw.agency) : "",
+    sourceUrl: /^https:\/\//.test(String(raw.sourceUrl || "")) ? String(raw.sourceUrl) : "",
     eligibility: parseArray(raw.eligibility).map((item) => clean(item)).filter(Boolean),
     exclusions: parseArray(raw.exclusions).map((item) => clean(item)).filter(Boolean),
     documents: parseArray(raw.documents).map((item) => clean(item)).filter(Boolean),
     cautions: parseArray(raw.cautions).map((item) => clean(item)).filter(Boolean),
     faq: Array.isArray(raw.faq) ? raw.faq.map((item) => ({ q: clean(item?.q, ""), a: clean(item?.a, "") })).filter((item) => item.q && item.a) : [],
     editorNote: clean(raw.editorNote || "", ""),
+    nextCheck: clean(raw.nextCheck || "", ""),
     timeline: Array.isArray(raw.timeline) ? raw.timeline.map((item) => ({ when: clean(item?.when, ""), what: clean(item?.what, "") })).filter((item) => item.when && item.what) : [],
     rejections: parseArray(raw.rejections).map((item) => clean(item, "")).filter(Boolean),
-    sourceExtra: Array.isArray(raw.sourceExtra) ? raw.sourceExtra.filter((item) => /^https:\/\//.test(String(item?.url || ""))).map((item) => ({ title: clean(item.title, ""), url: String(item.url), note: clean(item.note, "") })).filter((item) => item.title) : [],
+    sourceExtra: Array.isArray(raw.sourceExtra) ? raw.sourceExtra.filter((item) => /^https:\/\//.test(String(item?.url || ""))).map((item) => ({ title: clean(item.title, ""), authority: clean(item.authority, ""), url: String(item.url), note: clean(item.note, "") })).filter((item) => item.title && item.authority) : [],
     slug: slugify(raw.slug || raw.title || raw.id || `policy-fund-${index + 1}`)
   };
 }
 
 function assertPublishable(fund) {
   const errors = [];
-  if (!fund.sourceUrl || fund.sourceUrl === siteUrl) errors.push("직접 공식 출처 URL");
+  if (!fund.sourceUrl) errors.push("직접 공식 출처 URL");
   try {
     const source = new URL(fund.sourceUrl);
     if (source.pathname === "/" && !source.search) errors.push("기관 홈이 아닌 상세 출처 URL");
   } catch {
     errors.push("유효한 HTTPS 출처 URL");
   }
-  if (!fund.sourceTitle) errors.push("공식 공고·상품명");
+  if (!fund.sourceTitle) errors.push("공식 공고·지침명");
   if (!fund.sourceAuthority) errors.push("발표 기관");
-  if (!/^2026-\d{2}-\d{2}$/.test(fund.reviewedAt)) errors.push("실제 검수일");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fund.reviewedAt)) errors.push("실제 검수일");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fund.published) || fund.published > fund.reviewedAt) errors.push("게시일(검수일 이전)");
   if (fund.eligibility.length < 2) errors.push("세부 대상 요건");
   if (fund.documents.length < 2) errors.push("준비 서류");
   if (fund.cautions.length < 2) errors.push("주의사항");
   if (fund.faq.length < 2) errors.push("FAQ");
-  if (fund.editorNote.length < 75) errors.push("독자 관점 편집자 해설");
+  if (fund.editorNote.length < 75) errors.push("확인 방법 기록");
+  if (fund.nextCheck.length < 40) errors.push("다음 확인 일정");
   const evidenceLength = [fund.detail, fund.targetDesc, fund.amountDesc, fund.rateDesc, fund.periodDesc, ...fund.eligibility, ...fund.exclusions, ...fund.documents, ...fund.cautions, ...fund.faq.flatMap((item) => [item.q, item.a]), fund.editorNote].join(" ").length;
   if (evidenceLength < 650) errors.push("고유 설명 650자");
   if (errors.length) throw new Error(`${fund.title}: 품질 게이트 누락 - ${errors.join(", ")}`);
@@ -145,18 +157,35 @@ function normalizeFunds(rawFunds) {
   return funds;
 }
 
+function fundPath(fund) {
+  return `/${encodeURIComponent(fund.slug)}/`;
+}
+
+function fundSources(fund) {
+  return [
+    { title: fund.sourceTitle, authority: fund.sourceAuthority, url: fund.sourceUrl, note: fund.sourceDate },
+    ...fund.sourceExtra.map((item) => ({ title: item.title, authority: item.authority, url: item.url, note: item.note }))
+  ];
+}
+
+function breadcrumbNode(items) {
+  return {
+    "@type": "BreadcrumbList",
+    itemListElement: [["홈", "/"], ...items].map(([name, href], index) => ({ "@type": "ListItem", position: index + 1, name, item: `${siteUrl}${href}` }))
+  };
+}
+
 function relatedFor(fund, funds) {
   return funds.filter((item) => item.slug !== fund.slug && item.cat === fund.cat).slice(0, 5);
 }
 
 function pageHtml(fund, related) {
-  const canonical = `${siteUrl}/${encodeURIComponent(fund.slug)}/`;
+  const pathname = fundPath(fund);
+  const canonical = `${siteUrl}${pathname}`;
   const title = `${fund.title} | 농업 정책자금 백과`;
-  const isAgri = fund.cat === "농업인";
-  const desc = isAgri
-    ? clean(fund.excerpt).slice(0, 155)
-    : `${fund.title}의 지원 대상, 한도, 금리, 신청 절차와 필요 서류를 공식 공고 확인 흐름에 맞춰 정리했습니다.`;
-  const categoryHref = `/?cat=${encodeURIComponent(fund.cat)}`;
+  const desc = clean(fund.excerpt).slice(0, 155);
+  const shortTitle = fund.title.split("—")[0].trim();
+  const sources = fundSources(fund);
   const timelineItems = fund.timeline.map((item) => `<li><b>${escapeHtml(item.when)}</b><span>${escapeHtml(item.what)}</span></li>`).join("");
   const timelineSection = timelineItems ? `
         <h2 class="d-stitle">일정</h2>
@@ -165,22 +194,10 @@ function pageHtml(fund, related) {
   const rejectionSection = fund.rejections.length ? `
         <h2 class="d-stitle">선정·대출에서 막히는 사유</h2>
         <section class="info-panel warn"><h3>지침 원문에 적힌 제외·거절 사유</h3><ul class="plain-list">${fund.rejections.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>` : "";
-  const extraSources = fund.sourceExtra.map((item) => `<li><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.title)} ↗</a>${item.note ? ` <span>${escapeHtml(item.note)}</span>` : ""}</li>`).join("");
-  const legacyNotice = isAgri ? "" : `
-        <div class="legacy-note">이 문서는 사이트가 농업 정책자금 중심으로 바뀌기 전부터 제공한 일반 정책자료입니다. 확인일 기준 내용을 유지하며, 농업인 자금은 <a href="/agri/">농업 정책자금 한눈에 보기</a>에서 확인하세요.</div>`;
-  const agriNext = isAgri ? `
-        <h2 class="d-stitle">다음 확인</h2>
-        <div class="info-panel"><h3>다른 농업 정책자금과 비교하기</h3>
-          <p>나이·경력·목적별로 맞는 자금이 다릅니다. <a href="/agri/">농업 정책자금 한눈에 보기</a>에서 대상·금리·상환기간·신청처를 한 표로 비교하고, 공고 원문과 기관 답변을 적는 기록표를 쓰세요.</p>
-        </div>` : "";
   const tagItems = fund.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
   const stepItems = fund.steps.map((step, idx) => `<div class="step-item"><span class="step-n">${idx + 1}</span><span class="step-t">${escapeHtml(step)}</span></div>`).join("");
-  const relatedItems = related.map((item) => `<a class="related-item" href="/${encodeURIComponent(item.slug)}/" data-prefetch><span>${escapeHtml(item.title)}</span><small>${escapeHtml(item.org)}</small></a>`).join("");
+  const relatedItems = related.map((item) => `<a class="related-item" href="${fundPath(item)}" data-prefetch><span>${escapeHtml(item.title)}</span><small>${escapeHtml(item.org)}</small></a>`).join("");
   const listItems = (items) => items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-  const eligibilityItems = listItems(fund.eligibility);
-  const exclusionItems = listItems(fund.exclusions);
-  const documentItems = listItems(fund.documents);
-  const cautionItems = listItems(fund.cautions);
   const faqItems = fund.faq.map((item) => `<details class="faq-item"><summary>${escapeHtml(item.q)}</summary><p>${escapeHtml(item.a)}</p></details>`).join("");
   const machineryChecklist = fund.slug === "2026-후계농-농기계-구입자금" ? `
         <h2 class="d-stitle">자금 실행 서류를 준비한다면</h2>
@@ -190,7 +207,7 @@ function pageHtml(fund, related) {
         <h2 class="d-stitle">중고 트랙터를 검토한다면</h2>
         <div class="info-panel"><h3>자금 대상 확인과 기계 점검은 각각 필요합니다</h3>
           <p>이 지침은 중고 농기계의 허용 범위를 따로 적지 않으므로 구매 전에 관할 시군구와 대출취급기관에 확인하세요. 중고 구입을 지침에 명시한 별도 사업은 <a href="/2026-%EB%86%8D%EC%97%85%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88-%EC%9C%B5%EC%9E%90/">농업기계 구입자금 융자</a>이며, <a href="/guides/used-farm-machinery-loan-limit-2026/">중고 농기계 융자 한도 계산</a>으로 그 사업의 한도 공식을 미리 적용해 볼 수 있습니다.</p>
-          <p>자금 적합성을 확인한 뒤에는 명판, 사용시간, 누유와 PTO를 현장에서 따로 점검하세요. 같은 운영사(J MEDIA)의 보리장터 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>은 거래 판단을 돕는 참고자료이며 자금 승인이나 융자 대상 확인을 대신하지 않습니다.</p>
+          <p>자금 적합성을 확인한 뒤에는 명판, 사용시간, 누유와 PTO를 현장에서 따로 점검하세요. 같은 운영사(제이 미디어)의 보리장터 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>은 거래 판단을 돕는 참고자료이며 자금 승인이나 융자 대상 확인을 대신하지 않습니다.</p>
         </div>` : fund.slug === "2026-농업기계-구입자금-융자" ? `
         <h2 class="d-stitle">중고 기계 한도를 미리 계산하려면</h2>
         <div class="info-panel"><h3>지침 [별표 3] 공식을 그대로 적용합니다</h3>
@@ -198,36 +215,30 @@ function pageHtml(fund, related) {
         </div>
         <h2 class="d-stitle">매물을 살펴본다면</h2>
         <div class="info-panel"><h3>융자 확인과 기계 점검을 나눠서 하세요</h3>
-          <p>농협 상담 전에 후보 기계의 형식표지판·제조번호·최초 구입 시기를 매도인에게 받아 두면 상담이 빨라집니다. 같은 운영사(J MEDIA)가 운영하는 <a href="https://boribay.com/?category=MACHINERY&amp;${boribayUtm}" rel="noopener">보리장터 중고 농기계 매물</a>과 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>을 참고할 수 있습니다. 보리장터 매물이라고 융자 대상이 되는 것은 아닙니다.</p>
+          <p>농협 상담 전에 후보 기계의 형식표지판·제조번호·최초 구입 시기를 매도인에게 받아 두면 상담이 빨라집니다. 같은 운영사(제이 미디어)가 운영하는 <a href="https://boribay.com/?category=MACHINERY&amp;${boribayUtm}" rel="noopener">보리장터 중고 농기계 매물</a>과 <a href="https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}" rel="noopener">중고 트랙터 구매 점검 항목</a>을 참고할 수 있습니다. 보리장터 매물이라고 융자 대상이 되는 것은 아닙니다.</p>
         </div>` : "";
-  const schema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Article",
-        headline: fund.title,
-        description: desc,
-        inLanguage: "ko-KR",
-        dateModified: fund.reviewedAt,
-        author: { "@type": "Organization", name: "농업 정책자금 백과 편집부", url: `${siteUrl}/editorial-policy/` },
-        publisher: { "@type": "Organization", name: "농업 정책자금 백과", url: siteUrl },
-        citation: fund.sourceUrl,
-        mainEntityOfPage: canonical
-      },
-      {
-        "@type": "FAQPage",
-        mainEntity: fund.faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } }))
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "홈", item: `${siteUrl}/` },
-          { "@type": "ListItem", position: 2, name: fund.cat, item: `${siteUrl}/?cat=${encodeURIComponent(fund.cat)}` },
-          { "@type": "ListItem", position: 3, name: fund.title, item: canonical }
-        ]
-      }
-    ]
-  };
+  const schema = jsonLdScript([
+    {
+      "@type": "Article",
+      "@id": `${canonical}#article`,
+      headline: fund.title,
+      description: desc,
+      inLanguage: "ko-KR",
+      datePublished: fund.published,
+      dateModified: fund.reviewedAt,
+      author: { "@id": ORG_ID },
+      publisher: { "@id": ORG_ID },
+      isPartOf: { "@id": WEBSITE_ID },
+      mainEntityOfPage: canonical,
+      citation: sources.map((item) => item.url)
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonical}#faq`,
+      mainEntity: fund.faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } }))
+    },
+    breadcrumbNode([[HUB_NAME, "/agri/"], [shortTitle, pathname]])
+  ]);
 
   return `<!doctype html>
 <html lang="ko">
@@ -238,7 +249,7 @@ function pageHtml(fund, related) {
   <meta name="description" content="${escapeHtml(desc)}">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="google-site-verification" content="${searchConsoleVerification}">
-  <meta name="author" content="농업 정책자금 백과">
+  <meta name="author" content="제이 미디어 편집팀">
   <link rel="canonical" href="${canonical}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta name="google-adsense-account" content="ca-pub-5877883031077615">
@@ -247,47 +258,34 @@ function pageHtml(fund, related) {
     :root{--ink:#0f172a;--ink2:#334155;--ink3:#5b6676;--ink4:#566173;--sur:#f8f7f5;--white:#fff;--line:rgba(15,23,42,.08);--line2:rgba(15,23,42,.14);--blue:#1a56db;--blue-bg:#eff5ff;--r:8px;--r2:14px;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
     @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
-    *{box-sizing:border-box}body{margin:0;background:var(--sur);color:var(--ink);font-family:var(--f);line-height:1.72;word-break:keep-all}a{color:inherit}header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-    .h-top{height:60px;max-width:1080px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1.05}.logo-main{font-size:20px;font-weight:800;letter-spacing:-.5px}.logo-main span{color:var(--blue)}.logo-sub{font-size:10px;color:var(--ink4);letter-spacing:.3px;text-transform:uppercase}.nav-actions{display:flex;align-items:center;gap:8px}.nav-actions a{font-size:13px;text-decoration:none;color:var(--ink3);background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px}.nav-actions a.goatool-link{color:#fff;background:#0f172a;border-color:rgba(20,184,166,.28);font-weight:800}
+    *{box-sizing:border-box}body{margin:0;background:var(--sur);color:var(--ink);font-family:var(--f);line-height:1.72;word-break:keep-all}a{color:inherit}
     .page{max-width:1080px;margin:0 auto;padding:24px;display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px}.d-card,.side-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);overflow:hidden}.d-top{padding:28px 28px 23px;border-bottom:1px solid var(--line)}.breadcrumb{font-size:12px;color:var(--ink4);margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px}.breadcrumb a{color:var(--blue);text-decoration:none}.d-tags{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}.tag{display:inline-flex;align-items:center;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px;background:var(--blue-bg);color:#1e429f}.d-title{font-size:clamp(24px,4vw,34px);font-weight:800;line-height:1.32;margin:0 0 10px;letter-spacing:-.5px}.d-desc{font-size:15px;color:var(--ink3);max-width:720px;margin:0}.d-summary{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}.d-si{padding:18px 22px;border-right:1px solid var(--line)}.d-si:last-child{border-right:none}.d-sl{font-size:11px;color:var(--ink4);letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px}.d-sv{font-size:18px;font-weight:800;color:var(--blue);line-height:1.25}.d-sv.ink{color:var(--ink);font-size:15px}.d-body{padding:24px 28px}.d-stitle{font-size:12px;font-weight:800;color:var(--ink4);letter-spacing:.8px;text-transform:uppercase;margin:24px 0 12px;padding-top:22px;border-top:1px solid var(--line)}.d-stitle:first-child{margin-top:0;padding-top:0;border-top:none}.info-rows{display:flex;flex-direction:column}.info-row{display:flex;border-bottom:1px solid var(--line);padding:11px 0}.info-row:last-child{border-bottom:none}.info-k{width:112px;flex-shrink:0;font-size:13px;color:var(--ink3)}.info-v{flex:1;font-size:13px;color:var(--ink);line-height:1.7}.step-list{display:flex;flex-direction:column;gap:10px}.step-item{display:flex;gap:12px;align-items:flex-start}.step-n{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}.step-t{font-size:13px;color:var(--ink2);line-height:1.65}.official-btn{display:flex;align-items:center;gap:12px;background:var(--blue-bg);border:1px solid rgba(26,86,219,.16);border-radius:var(--r);padding:14px 18px;margin-top:20px;text-decoration:none;transition:background .15s;width:100%;text-align:left}.official-btn:hover{background:#dce9fd}.official-btn strong{display:block;font-size:13px;color:#1e429f}.official-btn span{display:block;font-size:12px;color:var(--ink3);margin-top:2px}.note{margin-top:20px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:var(--r);padding:13px 15px;font-size:13px}
-    .review-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.review-meta span{font-size:11px;color:var(--ink3);background:#f8fafc;border:1px solid var(--line);border-radius:999px;padding:5px 9px}.status{color:#166534!important;background:#f0fdf4!important;border-color:#bbf7d0!important}.plain-list{margin:0;padding-left:20px}.plain-list li{font-size:13px;color:var(--ink2);margin:7px 0}.split-info{display:grid;grid-template-columns:1fr 1fr;gap:12px}.info-panel{border:1px solid var(--line);border-radius:var(--r);padding:15px;background:#f8fafc}.info-panel h3{font-size:14px;margin:0 0 8px}.info-panel.warn{background:#fff7ed;border-color:#fed7aa}.source-box{margin-top:18px;border:1px solid rgba(26,86,219,.18);background:var(--blue-bg);border-radius:var(--r);padding:15px}.source-box b{display:block;font-size:13px;color:#1e429f}.source-box p{font-size:12px;color:var(--ink3);margin:5px 0 10px}.source-box a{font-size:13px;font-weight:800;color:var(--blue)}.faq-item{border-bottom:1px solid var(--line);padding:11px 0}.faq-item summary{font-size:13px;font-weight:700;cursor:pointer}.faq-item p{font-size:13px;color:var(--ink3);margin:8px 0 0}.editor-note{font-size:13px;color:var(--ink2);background:#f8fafc;border-left:3px solid var(--blue);padding:13px 15px}.site-footer{max-width:1080px;margin:0 auto 42px;padding:0 24px}.footer-in{border-top:1px solid var(--line);padding-top:20px}.footer-links{display:flex;flex-wrap:wrap;gap:12px}.footer-links a{font-size:12px;color:var(--ink3);text-decoration:none}.footer-note{font-size:11px;color:var(--ink4);margin-top:10px}.side-card{padding:18px}.side-title{font-size:11px;font-weight:800;color:var(--ink4);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px}.boribay-side{margin-bottom:14px;background:#f3f8ed;border-color:#d5e3c8}.boribay-side .side-title{color:#50783a}.boribay-side strong{display:block;font-size:15px;line-height:1.45;color:#173f25}.boribay-side p{font-size:12px;line-height:1.65;color:#52645a;margin:8px 0 13px}.boribay-side a{display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:var(--r);padding:10px 12px;font-size:13px;font-weight:800;text-decoration:none}.boribay-side .boribay-primary{background:#3d6842;color:#fff}.boribay-side .boribay-secondary,.boribay-side .agriculture-hub-link{margin-top:8px;background:#fff;color:#31543a;border:1px solid #d5e3c8}.tool-side{margin-bottom:14px;padding:18px;background:linear-gradient(150deg,#0f172a,#163f55);border-color:rgba(20,184,166,.24);color:#fff}.tool-side .side-title{color:#9ee9dd}.tool-side p{font-size:12px;line-height:1.65;color:rgba(248,250,252,.75);margin:0 0 13px}.tool-side a{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#b9f2e8;color:#0f172a;border-radius:var(--r);padding:10px 12px;font-size:13px;font-weight:800;text-decoration:none}.related-list{display:flex;flex-direction:column;gap:7px}.related-item{display:grid;gap:3px;text-decoration:none;background:#f8fafc;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}.related-item:hover{border-color:var(--blue)}.related-item span{font-size:13px;font-weight:700;color:var(--ink)}.related-item small{font-size:11px;color:var(--ink4)}.back-box{margin-top:14px;display:grid;gap:8px}.back-box a{text-decoration:none;text-align:center;border:1px solid var(--line2);background:#fff;border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--ink2)}
-    @media(max-width:840px){.page{grid-template-columns:1fr;padding:18px 16px 60px}.h-top{padding:0 16px}.nav-actions a{font-size:12px;padding:7px 10px}.d-summary,.split-info{grid-template-columns:1fr}.d-si{border-right:none;border-bottom:1px solid var(--line)}.info-row{display:grid;grid-template-columns:1fr}.d-top,.d-body{padding-left:20px;padding-right:20px}}
-    @media(max-width:600px){.h-top{height:auto;min-height:60px;flex-wrap:wrap;row-gap:8px;padding:10px 16px}.nav-actions{width:100%;gap:6px}.nav-actions a{flex:1;text-align:center;white-space:nowrap;font-size:14px;padding:8px 4px}}
-    .d-desc{font-size:17px;color:var(--ink2)}.info-k{font-size:15px}.info-v,.step-t,.plain-list li,.faq-item summary,.faq-item p,.editor-note,.info-panel p{font-size:16px}.info-panel h3{font-size:16px}.d-stitle{font-size:14px}.d-sl{font-size:13px}.review-meta span{font-size:13px}.tag{font-size:13px}.breadcrumb{font-size:14px}.step-n{width:26px;height:26px;font-size:13px}.official-btn strong{font-size:16px}.official-btn span{font-size:14px}.source-box b{font-size:15px}.source-box p{font-size:14px}.source-box a{font-size:16px}.note{font-size:15px}.related-item span{font-size:15px}.related-item small{font-size:13px}.side-title{font-size:13px}.tool-side p{font-size:14px}.nav-actions a,.back-box a,.tool-side a{min-height:44px;display:flex;align-items:center;justify-content:center;font-size:15px}.footer-links a{font-size:14px;padding:6px 0}.footer-note{font-size:13px;color:var(--ink3)}.info-panel a,.legacy-note a,.source-list a{color:var(--blue);font-weight:700}
-    .timeline{list-style:none;margin:0;padding:0;border-left:3px solid #c7d7f5}.timeline li{position:relative;margin:0 0 12px;padding:0 0 0 16px;font-size:16px;color:var(--ink2)}.timeline li:before{content:"";position:absolute;left:-8px;top:8px;width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid var(--blue)}.timeline b{display:block;font-size:15px;color:var(--ink)}.small-note{font-size:14px;color:var(--ink3);margin:6px 0 0}.legacy-note{margin:0 0 18px;background:#f3f8ed;border:1px solid #d5e3c8;border-radius:var(--r);padding:13px 15px;font-size:15px;color:#31543a}.source-list{margin:10px 0 0;padding-left:18px}.source-list li{font-size:14px;color:var(--ink3);margin:6px 0}
-    @media(max-width:600px){.nav-actions a{font-size:14px}.d-si{padding:14px 20px}}
+    .review-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}.review-meta span{font-size:11px;color:var(--ink3);background:#f8fafc;border:1px solid var(--line);border-radius:999px;padding:5px 9px}.status{color:#166534!important;background:#f0fdf4!important;border-color:#bbf7d0!important}.plain-list{margin:0;padding-left:20px}.plain-list li{font-size:13px;color:var(--ink2);margin:7px 0}.split-info{display:grid;grid-template-columns:1fr 1fr;gap:12px}.info-panel{border:1px solid var(--line);border-radius:var(--r);padding:15px;background:#f8fafc}.info-panel h3{font-size:14px;margin:0 0 8px}.info-panel.warn{background:#fff7ed;border-color:#fed7aa}.faq-item{border-bottom:1px solid var(--line);padding:11px 0}.faq-item summary{font-size:13px;font-weight:700;cursor:pointer}.faq-item p{font-size:13px;color:var(--ink3);margin:8px 0 0}.editor-note{font-size:13px;color:var(--ink2);background:#f8fafc;border-left:3px solid var(--blue);padding:13px 15px}.side-card{padding:18px}.side-title{font-size:11px;font-weight:800;color:var(--ink4);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px}.tool-side{margin-bottom:14px;padding:18px;background:linear-gradient(150deg,#0f172a,#163f55);border-color:rgba(20,184,166,.24);color:#fff}.tool-side .side-title{color:#9ee9dd}.tool-side p{font-size:12px;line-height:1.65;color:rgba(248,250,252,.82);margin:0 0 13px}.tool-side a{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#b9f2e8;color:#0f172a;border-radius:var(--r);padding:10px 12px;font-size:13px;font-weight:800;text-decoration:none}.related-list{display:flex;flex-direction:column;gap:7px}.related-item{display:grid;gap:3px;text-decoration:none;background:#f8fafc;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}.related-item:hover{border-color:var(--blue)}.related-item span{font-size:13px;font-weight:700;color:var(--ink)}.related-item small{font-size:11px;color:var(--ink4)}.back-box{margin-top:14px;display:grid;gap:8px}.back-box a{text-decoration:none;text-align:center;border:1px solid var(--line2);background:#fff;border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--ink2)}
+    @media(max-width:840px){.page{grid-template-columns:1fr;padding:18px 16px 60px}.d-summary,.split-info{grid-template-columns:1fr}.d-si{border-right:none;border-bottom:1px solid var(--line)}.info-row{display:grid;grid-template-columns:1fr}.d-top,.d-body{padding-left:20px;padding-right:20px}}
+    .d-desc{font-size:17px;color:var(--ink2)}.info-k{font-size:15px}.info-v,.step-t,.plain-list li,.faq-item summary,.faq-item p,.editor-note,.info-panel p{font-size:16px}.info-panel h3{font-size:16px}.d-stitle{font-size:14px}.d-sl{font-size:13px}.review-meta span{font-size:13px}.tag{font-size:13px}.breadcrumb{font-size:14px}.step-n{width:26px;height:26px;font-size:13px}.official-btn strong{font-size:16px}.official-btn span{font-size:14px}.note{font-size:15px}.related-item span{font-size:15px}.related-item small{font-size:13px}.side-title{font-size:13px}.tool-side p{font-size:14px}.back-box a,.tool-side a{min-height:44px;display:flex;align-items:center;justify-content:center;font-size:15px}.info-panel a{color:var(--blue);font-weight:700}
+    .timeline{list-style:none;margin:0;padding:0;border-left:3px solid #c7d7f5}.timeline li{position:relative;margin:0 0 12px;padding:0 0 0 16px;font-size:16px;color:var(--ink2)}.timeline li:before{content:"";position:absolute;left:-8px;top:8px;width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid var(--blue)}.timeline b{display:block;font-size:15px;color:var(--ink)}.small-note{font-size:14px;color:var(--ink3);margin:6px 0 0}
+    @media(max-width:600px){.d-si{padding:14px 20px}}${CHROME_CSS}
   </style>
-  <script type="application/ld+json">${JSON.stringify(schema)}</script>
+  ${schema}
 </head>
 <body data-generated="${generatedMarker}">
-  <header>
-    <div class="h-top">
-      <a class="logo" href="/">
-        <span class="logo-main">농업 정책자금 <span>백과</span></span>
-        <span class="logo-sub">Government Fund Guide</span>
-      </a>
-      <div class="nav-actions">
-        <a class="goatool-link" href="/agri/">농업 자금 한눈에</a>
-        <a href="${categoryHref}">${escapeHtml(fund.cat)} 모아보기</a>
-        <a href="/editorial-policy/">검증 원칙</a>
-      </div>
-    </div>
-  </header>
+  ${headerHtml(pathname)}
   <div class="page">
     <main class="d-card">
       <section class="d-top">
-        <div class="breadcrumb"><a href="/">홈</a><span>/</span><a href="${categoryHref}">${escapeHtml(fund.cat)}</a><span>/</span><span>${escapeHtml(fund.title.split("—")[0].trim())}</span></div>
+        <nav class="breadcrumb" aria-label="위치"><a href="/">홈</a><span>/</span><a href="/agri/">${HUB_NAME}</a><span>/</span><span>${escapeHtml(shortTitle)}</span></nav>
         <div class="d-tags">${tagItems}</div>
         <h1 class="d-title">${escapeHtml(fund.title)}</h1>
         <p class="d-desc">${escapeHtml(fund.detail)}</p>
-        <div class="review-meta"><span class="status"${/마감|종료/.test(fund.status) ? ' style="color:#92400e!important;background:#fffbeb!important;border-color:#fde68a!important"' : ""}>${escapeHtml(fund.status)}</span><span>확인일 ${escapeHtml(fund.reviewedAt)}</span><span>출처 ${escapeHtml(fund.sourceAuthority)}</span></div>
+        <div class="review-meta"><span class="status"${/마감|종료/.test(fund.status) ? ' style="color:#92400e!important;background:#fffbeb!important;border-color:#fde68a!important"' : ""}>${escapeHtml(fund.status)}</span></div>
+        ${metaBlockHtml({ published: fund.published, checked: fund.reviewedAt, sourceCount: sources.length })}
       </section>
       <section class="d-summary">
         <div class="d-si"><div class="d-sl">지원 한도</div><div class="d-sv">${escapeHtml(fund.limit)}</div></div>
         <div class="d-si"><div class="d-sl">금리 / 지원</div><div class="d-sv">${escapeHtml(fund.rate)}</div></div>
         <div class="d-si"><div class="d-sl">담당 기관</div><div class="d-sv ink">${escapeHtml(fund.org)}</div></div>
       </section>
-      <section class="d-body">${legacyNotice}
+      <section class="d-body">
         <h2 class="d-stitle">지원 내용</h2>
         <div class="info-rows">
           <div class="info-row"><span class="info-k">지원 대상</span><span class="info-v">${escapeHtml(fund.targetDesc)}</span></div>
@@ -298,45 +296,56 @@ function pageHtml(fund, related) {
         </div>
         <h2 class="d-stitle">대상 확인</h2>
         <div class="split-info">
-          <section class="info-panel"><h3>확인할 자격 요건</h3><ul class="plain-list">${eligibilityItems}</ul></section>
-          <section class="info-panel warn"><h3>제외·제한 가능성</h3><ul class="plain-list">${exclusionItems || "<li>공식 공고의 제외 요건을 확인하세요.</li>"}</ul></section>
+          <section class="info-panel"><h3>확인할 자격 요건</h3><ul class="plain-list">${listItems(fund.eligibility)}</ul></section>
+          <section class="info-panel warn"><h3>제외·제한 가능성</h3><ul class="plain-list">${listItems(fund.exclusions) || "<li>공식 공고의 제외 요건을 확인하세요.</li>"}</ul></section>
         </div>
         <h2 class="d-stitle">준비 서류와 주의사항</h2>
         <div class="split-info">
-          <section class="info-panel"><h3>미리 준비할 자료</h3><ul class="plain-list">${documentItems}</ul></section>
-          <section class="info-panel warn"><h3>신청 전 주의</h3><ul class="plain-list">${cautionItems}</ul></section>
+          <section class="info-panel"><h3>미리 준비할 자료</h3><ul class="plain-list">${listItems(fund.documents)}</ul></section>
+          <section class="info-panel warn"><h3>신청 전 주의</h3><ul class="plain-list">${listItems(fund.cautions)}</ul></section>
         </div>
 ${timelineSection}
         <h2 class="d-stitle">신청 절차</h2>
         <div class="step-list">${stepItems}</div>
         <a class="official-btn" href="${escapeHtml(fund.agency)}" target="_blank" rel="noopener">
           <span><strong>${escapeHtml(fund.agencyName)} 공식 사이트에서 확인하기</strong><span>${escapeHtml(fund.agencyNote)}</span></span>
-        </a>
-        <div class="source-box"><b>검증에 사용한 1차 출처</b><p>${escapeHtml(fund.sourceAuthority)} · ${escapeHtml(fund.sourceTitle)}${fund.sourceDate ? ` · ${escapeHtml(fund.sourceDate)}` : ""}</p><a href="${escapeHtml(fund.sourceUrl)}" target="_blank" rel="noopener">공식 공고 원문 확인하기 ↗</a>${extraSources ? `<ul class="source-list">${extraSources}</ul>` : ""}</div>${rejectionSection}
+        </a>${rejectionSection}
         <h2 class="d-stitle">자주 묻는 질문</h2>
         <div>${faqItems}</div>
-        <h2 class="d-stitle">편집자 해설</h2>
-        <div class="editor-note">${escapeHtml(fund.editorNote)}</div>${machineryChecklist}${agriNext}
-        <div class="note">최종 신청 가능 여부, 접수 기간, 한도와 금리는 반드시 각 기관의 최신 공식 공고를 기준으로 다시 확인하세요.</div>
+        <h2 class="d-stitle">이 문서를 확인한 방법</h2>
+        <div class="editor-note">${escapeHtml(fund.editorNote)}</div>${machineryChecklist}
+        <h2 class="d-stitle">다른 농업 정책자금과 비교하기</h2>
+        <div class="info-panel"><h3>나이·경력·목적별로 맞는 자금이 다릅니다</h3>
+          <p><a href="/agri/">농업 정책자금 한눈에 보기</a>에서 대상·금리·상환기간·신청처를 한 표로 비교하고, 공고 원문과 기관 답변을 적는 기록표를 쓰세요.</p>
+        </div>
+        <h2 class="d-stitle" id="sources">출처</h2>
+        ${sourceListHtml(sources, fund.reviewedAt)}
+        <p class="small-note">쪽수는 각 지침 PDF 기준입니다. 이 문서와 원문이 다르면 원문과 담당 기관의 안내가 우선합니다.</p>
+        <h2 class="d-stitle">범위와 한계</h2>
+        <div class="scope">
+          <p>이 문서는 농림축산식품부 지침과 농업e지 사업 안내에 적힌 대상·한도·금리·절차를 요약합니다. 개인별 자격 판정, 선정 가능성, 실제 대출 가능액과 적용 금리는 다루지 않으며 시군 평가와 농협·농신보 심사로 정해집니다. 시군 자체 추가 지원, 세금·법률 문제는 포함하지 않았습니다. 판단이 필요하면 신청할 시군 농정부서(농업기술센터)와 거래할 농협에 문의하세요.</p>
+          <p><b>다음 확인:</b> ${escapeHtml(fund.nextCheck)}</p>
+        </div>
+        <div class="note">선정과 대출 승인은 담당 기관이 결정합니다. 최종 신청 가능 여부, 접수 기간, 한도와 금리는 반드시 각 기관의 최신 공식 공고로 다시 확인하세요.</div>
       </section>
     </main>
     <aside>
       <div class="side-card tool-side">
-        <div class="side-title">검증 원칙</div>
-        <p>직접 공식 출처, 검수일, 변경 이력을 공개하고 종료된 사업은 활성 사업처럼 안내하지 않습니다.</p>
+        <div class="side-title">이 문서를 만드는 방법</div>
+        <p>지침 쪽수와 확인일, 수정 기록을 공개합니다. 초안 작성과 자료 대조에 AI 도구를 쓰며, 게시 내용의 책임은 운영자(제이 미디어)에게 있습니다.</p>
         <a href="/editorial-policy/">편집 원칙 보기 <span>→</span></a>
       </div>
       <div class="side-card">
-        <div class="side-title">같은 카테고리 다른 정보</div>
-        <div class="related-list">${relatedItems || "<span style=\"font-size:13px;color:var(--ink4)\">관련 문서가 없습니다.</span>"}</div>
+        <div class="side-title">다른 농업 정책자금</div>
+        <div class="related-list">${relatedItems || "<span style=\"font-size:15px;color:var(--ink3)\">관련 문서가 없습니다.</span>"}</div>
         <div class="back-box">
-          <a href="${categoryHref}">${escapeHtml(fund.cat)}만 모아보기</a>
-          <a href="/">전체 자금 목록</a>
+          <a href="/agri/">${HUB_NAME}</a>
+          <a href="/guides/used-farm-machinery-loan-limit-2026/">중고 농기계 융자 한도 계산</a>
         </div>
       </div>
     </aside>
   </div>
-  <footer class="site-footer"><div class="footer-in"><div class="footer-links"><a href="/about/">사이트 소개</a><a href="/editorial-policy/">편집 원칙</a><a href="/corrections/">정정 정책</a><a href="/privacy/">개인정보 처리 안내</a><a href="/terms/">이용 안내</a><a href="/contact/">문의</a></div><div class="footer-note">농업 정책자금 백과는 정부 기관이 아닌 독립 정보 사이트이며 신청 대행, 금융상품 중개 또는 승인을 보장하지 않습니다.</div></div></footer>
+  ${footerHtml()}
   <script>
     const seen = new Set();
     function prefetch(href) {
@@ -357,128 +366,119 @@ ${timelineSection}
 `;
 }
 
-function agricultureHubHtml(funds) {
-  const agricultureFunds = funds.filter(isAgricultureFund);
-  const canonical = `${siteUrl}${agricultureHubPath}`;
-  const title = "농업인 정책자금 찾기부터 농산물 판매·농기계 거래 준비까지";
-  const description = "농업인 정책자금, 농식품 창업 지원, 농기계 지원사업을 찾은 뒤 농산물 직거래 가격·포장과 중고 농기계 거래를 준비하는 순서를 한 번에 정리했습니다.";
-  const fundCards = agricultureFunds.map((fund) => `
-        <a class="fund-card" href="/${encodeURIComponent(fund.slug)}/">
-          <span class="fund-cat">${escapeHtml(fund.cat)}</span>
+function homeFundCards(funds) {
+  return funds.map((fund) => `
+        <a class="fund-card" href="${fundPath(fund)}">
+          <span class="fc-status${/마감|종료/.test(fund.status) ? " closed" : ""}">${escapeHtml(fund.status)}</span>
           <strong>${escapeHtml(fund.title)}</strong>
-          <p>${escapeHtml(fund.excerpt)}</p>
-          <small>${escapeHtml(fund.org)} · 상세 조건 확인 →</small>
-        </a>`).join("");
-  const schema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "CollectionPage",
-        "@id": `${canonical}#webpage`,
-        url: canonical,
-        name: title,
-        description,
-        inLanguage: "ko-KR",
-        dateModified: sitemapLastmod,
-        publisher: { "@type": "Organization", name: "농업 정책자금 백과", url: siteUrl },
-        mainEntity: {
-          "@type": "ItemList",
-          name: "농업·농식품·농기계 관련 정책자금",
-          itemListElement: agricultureFunds.map((fund, index) => ({
-            "@type": "ListItem",
-            position: index + 1,
-            name: fund.title,
-            url: `${siteUrl}/${encodeURIComponent(fund.slug)}/`
-          }))
-        }
-      }
-    ]
-  };
+          <span class="fc-ex">${escapeHtml(fund.excerpt)}</span>
+          <span class="fc-keys">한도 ${escapeHtml(fund.limit)} · ${escapeHtml(fund.rate)}</span>
+          <span class="fc-date">확인일 ${escapeHtml(fund.reviewedAt)} · ${escapeHtml(fund.org)}</span>
+        </a>`).join("") + "\n      ";
+}
 
-  return `<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(title)} | 농업 정책자금 백과</title>
-  <meta name="description" content="${escapeHtml(description)}">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta name="google-site-verification" content="${searchConsoleVerification}">
-  <meta name="author" content="농업 정책자금 백과">
-  <meta name="keywords" content="농업인 정책자금, 농업인 대출, 농식품 창업 지원, 농기계 지원사업, 농산물 직거래, 중고 농기계">
-  <link rel="canonical" href="${canonical}">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <meta name="google-adsense-account" content="ca-pub-5877883031077615">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615" crossorigin="anonymous"></script>
-  <style>
-    :root{--ink:#0f172a;--ink2:#334155;--ink3:#64748b;--line:#e2e8f0;--soft:#f8fafc;--green:#3d6842;--green2:#edf5e8;--blue:#1a56db;--f:'A2z','Noto Sans KR',-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
-    @font-face{font-family:'A2z';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2601-6@1.0/에이투지체-7Bold.woff2') format('woff2');font-weight:700;font-display:swap}
-    *{box-sizing:border-box}body{margin:0;background:#f8f7f5;color:var(--ink);font-family:var(--f);line-height:1.75;word-break:keep-all}a{color:inherit}header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}.nav{max-width:1040px;height:60px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}.logo{text-decoration:none;font-size:18px;font-weight:800}.logo span{color:var(--blue)}.home{font-size:13px;color:var(--ink3);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:8px 11px;background:#fff}
-    main{max-width:1040px;margin:0 auto;padding:30px 20px 72px}.hero,.section{background:#fff;border:1px solid var(--line);border-radius:15px}.hero{padding:32px;margin-bottom:18px;background:linear-gradient(145deg,#fff,#f3f8ed)}.crumb{font-size:12px;color:var(--ink3);margin-bottom:12px}.crumb a{color:var(--blue);text-decoration:none}h1{font-size:clamp(27px,5vw,42px);line-height:1.28;letter-spacing:-.04em;margin:0 0 14px}.lead{font-size:17px;color:var(--ink2);max-width:780px;margin:0}.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}.tag{font-size:12px;font-weight:700;color:#31543a;background:#fff;border:1px solid #d5e3c8;border-radius:999px;padding:5px 10px}
-    .section{padding:28px;margin-bottom:16px}h2{font-size:22px;line-height:1.4;margin:0 0 12px}p{color:var(--ink2);margin:0 0 14px}.route{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.route-item{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--soft)}.route-item b{display:block;font-size:15px;margin-bottom:6px}.route-item span{font-size:13px;color:var(--ink3)}
-    .fund-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}.fund-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;padding:17px;text-decoration:none;background:#fff}.fund-card:hover{border-color:var(--blue)}.fund-cat{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:7px}.fund-card strong{font-size:16px;line-height:1.5}.fund-card p{font-size:13px;color:var(--ink3);margin:7px 0}.fund-card small{font-size:12px;color:var(--ink3);margin-top:auto}.next-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}.next-card{border:1px solid #d5e3c8;border-radius:13px;padding:20px;background:var(--green2)}.next-card h3{font-size:18px;margin:0 0 8px}.next-card p{font-size:14px}.next-card a{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--green);color:#fff;border-radius:9px;padding:11px 13px;text-decoration:none;font-size:14px;font-weight:800}.next-card a+a{margin-top:8px;background:#fff;color:var(--green);border:1px solid #d5e3c8}.check{display:grid;gap:8px;margin-top:14px}.check div{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.check b{color:var(--ink3)}.notice{border-left:4px solid var(--blue);background:#eff6ff;border-radius:0 10px 10px 0;padding:14px 16px;font-size:13px;color:var(--ink2);margin-top:16px}
-    @media(max-width:720px){main{padding:18px 14px 54px}.hero,.section{padding:21px}.route,.fund-grid,.next-grid{grid-template-columns:1fr}.check div{grid-template-columns:1fr;gap:3px}.nav{padding:0 14px}}
-  </style>
-  <script type="application/ld+json">${JSON.stringify(schema)}</script>
-</head>
-<body data-generated="policyfundpedia-agriculture-hub">
-  <header><nav class="nav"><a class="logo" href="/">농업 정책자금 <span>백과</span></a><a class="home" href="/">전체 자금 보기</a></nav></header>
-  <main>
-    <section class="hero">
-      <div class="crumb"><a href="/">홈</a> / 농업인 정책자금·거래 준비</div>
-      <h1>농업인 정책자금부터<br>판매·농기계 준비까지</h1>
-      <p class="lead">지원사업을 찾는 단계와 실제 지출·판매를 준비하는 단계는 다릅니다. 내 상황에 맞는 정책자금 문서를 먼저 고른 뒤, 농산물 직거래 또는 중고 농기계 거래 점검으로 이어가세요.</p>
-      <div class="tags"><span class="tag">농업인 정책자금</span><span class="tag">농업인 대출</span><span class="tag">농식품 창업 지원</span><span class="tag">농기계 지원사업</span></div>
-    </section>
-    <section class="section">
-      <h2>먼저 목적을 세 갈래로 나눕니다</h2>
-      <p>검색어보다 실제로 돈을 쓸 목적을 먼저 정하면 맞지 않는 공고를 훨씬 빨리 제외할 수 있습니다.</p>
-      <div class="route">
-        <div class="route-item"><b>영농 운영비가 필요함</b><span>농업인 경영 안정 자금과 농업인 대출 문서를 먼저 확인합니다.</span></div>
-        <div class="route-item"><b>가공·포장·판매를 시작함</b><span>농식품 창업 지원과 사업화 지원 문서를 확인합니다.</span></div>
-        <div class="route-item"><b>농기계 도입·사업화가 목적</b><span>농기계 관련 지원사업의 대상 지역·기업 요건부터 확인합니다.</span></div>
-      </div>
-    </section>
-    <section class="section">
-      <h2>현재 연결된 농업 관련 정책자금 문서</h2>
-      <p>금액이나 마감일은 바뀔 수 있으므로 아래 문서에서 지원 대상과 공식 신청처를 확인한 뒤, 최종 조건은 해당 기관의 최신 공고로 다시 확인하세요.</p>
-      <div class="fund-grid">${fundCards || "<p>현재 연결 가능한 농업 관련 문서를 정리 중입니다.</p>"}</div>
-    </section>
-    <section class="section">
-      <h2>자금 검토 다음에는 실제 거래 준비로 넘어갑니다</h2>
-      <div class="next-grid">
-        <article class="next-card">
-          <h3>농산물을 판매하려는 경우</h3>
-          <p>시세만 따라 적지 말고 선별 기준, 포장 단위, 택배비, 수수료를 포함한 실제 판매가를 정합니다.</p>
-          <a href="https://boribay.com/guides/produce-direct-sale-pricing-packaging" target="_blank" rel="noopener"><span>농산물 직거래 가격·포장 준비</span><span>↗</span></a>
-        </article>
-        <article class="next-card">
-          <h3>도매시장 경매로 출하하는 경우</h3>
-          <p>경락 단가에서 실제 수수료, 운송비, 선별·포장비를 빼 예상 수취금액을 먼저 비교합니다.</p>
-          <a href="https://boribay.com/guides/agricultural-auction-net-calculator" target="_blank" rel="noopener"><span>경매 예상 수취금액 계산</span><span>↗</span></a>
-        </article>
-        <article class="next-card">
-          <h3>농기계를 사거나 팔려는 경우</h3>
-          <p>기종과 가격보다 먼저 소유 관계, 작동 상태, 정비 기록, 운송 조건을 확인해 거래 실패를 줄입니다.</p>
-          <a href="https://boribay.com/guides/used-machinery-selling-checklist" target="_blank" rel="noopener"><span>중고 농기계 거래 점검표</span><span>↗</span></a>
-          <a href="https://boribay.com/guides/farm-machinery-transport-checklist" target="_blank" rel="noopener"><span>농기계 운송 준비</span><span>↗</span></a>
-        </article>
-      </div>
-    </section>
-    <section class="section">
-      <h2>이 순서만 지키면 됩니다</h2>
-      <div class="check">
-        <div><b>1. 대상 확인</b><span>농업경영체, 사업자, 예비창업자, 지역·업력 조건 중 어디에 해당하는지 확인합니다.</span></div>
-        <div><b>2. 공식 공고</b><span>접수 기간, 제외 업종, 자부담, 중복 지원 제한을 공식 기관에서 확인합니다.</span></div>
-        <div><b>3. 지출 계획</b><span>지원금을 받는다는 가정이 아니라 실제 필요한 장비·포장·운송 비용을 먼저 계산합니다.</span></div>
-        <div><b>4. 거래 준비</b><span>판매 가격과 포장 조건 또는 농기계 상태와 운송 조건을 기록한 뒤 거래를 시작합니다.</span></div>
-      </div>
-      <div class="notice">농업 정책자금 백과는 지원사업을 찾는 안내 페이지이며 대출 승인이나 지원금 선정을 보장하지 않습니다. 보리장터 연결 페이지는 매물을 요구하지 않고 거래 전에 필요한 준비 기준을 제공합니다.</div>
-    </section>
-  </main>
-</body>
-</html>`;
+function pageTitle(html) {
+  const match = html.match(/<title>([^<]+)<\/title>/);
+  return match ? match[1].replace(/\s*\|\s*농업 정책자금 백과\s*$/, "").trim() : "";
+}
+
+function pageDescription(html) {
+  const match = html.match(/<meta name="description" content="([^"]+)">/);
+  return match ? match[1].replace(/&quot;/g, "\"").replace(/&amp;/g, "&") : "";
+}
+
+function decodeEntities(text) {
+  return text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&amp;/g, "&");
+}
+
+function stripTags(text) {
+  return decodeEntities(text.replace(/<[^>]+>/g, "")).replace(/\s+/g, " ").trim();
+}
+
+function blockContent(html, name) {
+  const start = `<!-- ${name}:start -->`;
+  const from = html.indexOf(start);
+  const to = html.indexOf(`<!-- ${name}:end -->`);
+  return from === -1 || to === -1 ? "" : html.slice(from + start.length, to);
+}
+
+function sourceUrlsIn(html) {
+  return [...blockContent(html, "sources").matchAll(/href="(https:\/\/[^"]+)"/g)].map((match) => decodeEntities(match[1]));
+}
+
+function visibleFaq(html) {
+  return [...blockContent(html, "faq").matchAll(/<details[^>]*><summary>([\s\S]*?)<\/summary><p>([\s\S]*?)<\/p><\/details>/g)]
+    .map((match) => ({ q: stripTags(match[1]), a: stripTags(match[2]) }));
+}
+
+function staticJsonLd(page, html, funds) {
+  const canonical = `${siteUrl}${page.path}`;
+  const name = pageTitle(html);
+  const description = pageDescription(html);
+  const nodes = [];
+  if (page.type === "Article") {
+    nodes.push({
+      "@type": "Article",
+      "@id": `${canonical}#article`,
+      headline: name,
+      description,
+      inLanguage: "ko-KR",
+      datePublished: page.published,
+      dateModified: page.modified,
+      author: { "@id": ORG_ID },
+      publisher: { "@id": ORG_ID },
+      isPartOf: { "@id": WEBSITE_ID },
+      mainEntityOfPage: canonical,
+      citation: sourceUrlsIn(html)
+    });
+  } else {
+    const webPage = {
+      "@type": page.type,
+      "@id": `${canonical}#webpage`,
+      url: canonical,
+      name,
+      description,
+      inLanguage: "ko-KR",
+      datePublished: page.published,
+      dateModified: page.modified,
+      isPartOf: { "@id": WEBSITE_ID },
+      publisher: { "@id": ORG_ID }
+    };
+    if (page.type === "AboutPage" || page.type === "ContactPage") webPage.about = { "@id": ORG_ID };
+    if (page.meta) webPage.author = { "@id": ORG_ID };
+    if (page.itemList) {
+      webPage.mainEntity = {
+        "@type": "ItemList",
+        name: "2026 농업 정책자금 해설",
+        itemListElement: funds.map((fund, index) => ({ "@type": "ListItem", position: index + 1, name: fund.title, url: `${siteUrl}${fundPath(fund)}` }))
+      };
+    }
+    nodes.push(webPage);
+  }
+  if (page.faq) {
+    const faq = visibleFaq(html);
+    if (faq.length < 2) throw new Error(`${page.file}: 화면에 보이는 FAQ 블록을 찾지 못했습니다.`);
+    nodes.push({ "@type": "FAQPage", "@id": `${canonical}#faq`, mainEntity: faq.map((item) => ({ "@type": "Question", name: item.q, acceptedAnswer: { "@type": "Answer", text: item.a } })) });
+  }
+  if (page.crumbs) nodes.push(breadcrumbNode(page.crumbs));
+  return jsonLdScript(nodes);
+}
+
+async function applyStaticPage(page, funds) {
+  const filePath = path.join(root, page.file);
+  let html = await fs.readFile(filePath, "utf8");
+  html = replaceBlock(html, "site-chrome-css", `<style>${CHROME_CSS}\n  </style>`);
+  html = replaceBlock(html, "site-header", headerHtml(page.path || ""));
+  html = replaceBlock(html, "site-footer", footerHtml());
+  if (page.meta) {
+    const sourceCount = sourceUrlsIn(html).length;
+    if (!sourceCount) throw new Error(`${page.file}: 출처 블록이 비어 있습니다.`);
+    html = replaceBlock(html, "page-meta", metaBlockHtml({ published: page.published, checked: page.checked || CHECKED_AT, sourceCount }));
+  }
+  if (page.file === "index.html") html = replaceBlock(html, "fund-cards", homeFundCards(funds));
+  if (!page.noindex) html = replaceBlock(html, "jsonld", staticJsonLd(page, html, funds));
+  else if (hasBlock(html, "jsonld")) throw new Error(`${page.file}: 색인 제외 페이지에는 JSON-LD를 두지 않습니다.`);
+  await fs.writeFile(filePath, html, "utf8");
 }
 
 async function removeOldGeneratedDirs() {
@@ -489,9 +489,7 @@ async function removeOldGeneratedDirs() {
     const htmlPath = path.join(root, entry.name, "index.html");
     try {
       const html = await fs.readFile(htmlPath, "utf8");
-      const isGenerated = html.includes(`data-generated="${generatedMarker}"`)
-        || html.includes('data-generated="policyfundpedia-agriculture-hub"');
-      if (isGenerated) await fs.rm(path.join(root, entry.name), { recursive: true, force: true });
+      if (html.includes(`data-generated="${generatedMarker}"`)) await fs.rm(path.join(root, entry.name), { recursive: true, force: true });
     } catch {
       // Directory has no readable root index.html.
     }
@@ -507,14 +505,11 @@ async function main() {
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(path.join(dir, "index.html"), pageHtml(fund, relatedFor(fund, funds)), "utf8");
   }
+  for (const page of STATIC_PAGES) await applyStaticPage(page, funds);
 
   const urls = [
-    `<url><loc>${siteUrl}/</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
-    `<url><loc>${siteUrl}/agri/</loc><lastmod>2026-10-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>`,
-    ...["about", "editorial-policy", "privacy", "terms", "corrections", "contact"].map((slug) => `<url><loc>${siteUrl}/${slug}/</loc>${["about", "contact"].includes(slug) ? "<lastmod>2026-10-26</lastmod>" : ""}<changefreq>monthly</changefreq><priority>0.5</priority></url>`),
-    `<url><loc>${siteUrl}/guides/farmer-machinery-loan-execution-2026/</loc><lastmod>2026-10-26</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>`,
-    `<url><loc>${siteUrl}/guides/used-farm-machinery-loan-limit-2026/</loc><lastmod>2026-10-26</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`,
-    ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${fund.reviewedAt}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`)
+    ...STATIC_PAGES.filter((page) => !page.noindex).map((page) => `<url><loc>${siteUrl}${page.path}</loc><lastmod>${page.modified}</lastmod><changefreq>${page.changefreq}</changefreq><priority>${page.priority}</priority></url>`),
+    ...funds.map((fund) => `<url><loc>${siteUrl}/${escapeXml(encodeURIComponent(fund.slug))}/</loc><lastmod>${fund.reviewedAt}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`)
   ];
 
   await fs.writeFile(
@@ -522,7 +517,7 @@ async function main() {
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  ${urls.join("\n  ")}\n</urlset>\n`,
     "utf8"
   );
-  console.log(`Generated ${funds.length} verified policy fund detail pages.`);
+  console.log(`Generated ${funds.length} fund pages and applied shared chrome to ${STATIC_PAGES.length} static pages.`);
 }
 
 main().catch((error) => {

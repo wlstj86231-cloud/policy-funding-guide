@@ -13,7 +13,7 @@
   <style>
     :root{font-family:"Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;color:#17243a;background:#f5f8f6;--line:#d9e6dd;--ink2:#334155;--ink3:#536170;--green:#185a42;--green2:#edf6ee}
     *{box-sizing:border-box}body{margin:0;font-size:16px;line-height:1.72;word-break:keep-all}a{color:#155d47}
-    .top{background:#fff;border-bottom:1px solid var(--line)}.top-in{max-width:960px;margin:auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}.logo{font-weight:800;font-size:19px;color:#17243a;text-decoration:none}.logo span{color:#1a56db}.top nav{display:flex;gap:8px;flex-wrap:wrap}.top nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink2);font-size:15px;background:#fff}
+    .jump{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}.jump a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:9px;text-decoration:none;color:var(--ink2);font-size:15px;background:#fff}
     main{max-width:960px;margin:auto;padding:18px 16px 70px}.crumb{font-size:14px;color:var(--ink3)}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:24px;margin:16px 0}
     h1{font-size:clamp(1.75rem,5vw,2.5rem);line-height:1.3;margin:.3em 0}h2{font-size:1.3rem;line-height:1.4;margin:0 0 12px}h3{font-size:1.08rem;margin:0 0 6px}p{margin:0 0 12px}ul,ol{padding-left:22px;margin:0 0 12px}li{margin:6px 0}
     .tag{font-size:15px;color:#27634d;font-weight:700;margin:0}.lead{font-size:17px;color:var(--ink2)}.notice{background:var(--green2);padding:14px 16px;border-left:4px solid #357b58;border-radius:0 10px 10px 0}.meta{font-size:14px;color:var(--ink3)}
@@ -27,21 +27,37 @@
     .rows{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.rows label{font-weight:700;font-size:16px}.rows input,.rows textarea{display:block;width:100%;font:inherit;border:1px solid #aebfb3;border-radius:8px;padding:11px;margin-top:5px;background:#fff;min-height:48px}.rows textarea{min-height:88px;resize:vertical}.wide{grid-column:1/-1}
     button{min-height:50px;border:0;border-radius:10px;background:var(--green);color:#fff;padding:0 20px;font:inherit;font-weight:800;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
     .links a{display:flex;align-items:center;min-height:48px;border-bottom:1px solid #e6eee8;font-weight:700;text-decoration:none}
-    footer{max-width:960px;margin:0 auto 40px;padding:0 16px;font-size:14px;color:var(--ink3)}footer a{color:var(--ink3);display:inline-block;padding:8px 6px 8px 0}
     @media(max-width:650px){.pick,.rows{grid-template-columns:1fr}.hero,.card{padding:18px 16px}}
-    @media print{body{background:#fff}.top,button,.links,.crumb,footer,.pick{display:none}.hero,.card{border:0;padding:4px 0;margin:8px 0}.rows input,.rows textarea{border:0;border-bottom:1px solid #777;border-radius:0}}
+    @media print{body{background:#fff}button,.links,.crumb,.jump,.pick{display:none}.hero,.card{border:0;padding:4px 0;margin:8px 0}.rows input,.rows textarea{border:0;border-bottom:1px solid #777;border-radius:0}}
   </style>
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"CollectionPage","name":"농업 정책자금 종류·대상·신청 시기 비교 (2026)","url":"https://policyfundpedia.com/agri/","inLanguage":"ko-KR","dateModified":"2026-10-26","publisher":{"@type":"Organization","name":"농업 정책자금 백과","url":"https://policyfundpedia.com/"},"mainEntity":{"@type":"ItemList","name":"2026 농업 정책자금 해설","itemListElement":[{"@type":"ListItem","position":1,"name":"2026 후계농업경영인 육성자금","url":"https://policyfundpedia.com/2026-%ED%9B%84%EA%B3%84%EB%86%8D%EC%97%85%EA%B2%BD%EC%98%81%EC%9D%B8-%EC%9C%A1%EC%84%B1%EC%9E%90%EA%B8%88/"},{"@type":"ListItem","position":2,"name":"2026 청년농업인 영농정착지원사업","url":"https://policyfundpedia.com/2026-%EC%B2%AD%EB%85%84%EB%86%8D%EC%97%85%EC%9D%B8-%EC%98%81%EB%86%8D%EC%A0%95%EC%B0%A9%EC%A7%80%EC%9B%90%EC%82%AC%EC%97%85/"},{"@type":"ListItem","position":3,"name":"2026 귀농 농업창업·주택구입 지원","url":"https://policyfundpedia.com/2026-%EA%B7%80%EB%86%8D-%EB%86%8D%EC%97%85%EC%B0%BD%EC%97%85-%EC%A3%BC%ED%83%9D%EA%B5%AC%EC%9E%85-%EC%A7%80%EC%9B%90/"},{"@type":"ListItem","position":4,"name":"2026 농업기계 구입자금 융자","url":"https://policyfundpedia.com/2026-%EB%86%8D%EC%97%85%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88-%EC%9C%B5%EC%9E%90/"},{"@type":"ListItem","position":5,"name":"2026 후계농업경영인 육성자금 — 농기계 구입 전 확인","url":"https://policyfundpedia.com/2026-%ED%9B%84%EA%B3%84%EB%86%8D-%EB%86%8D%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88/"}]}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://policyfundpedia.com/"},{"@type":"ListItem","position":2,"name":"농업 정책자금 한눈에","item":"https://policyfundpedia.com/agri/"}]}]}</script>
+  <!-- site-chrome-css:start --><style>
+    header.sh{position:static;background:#fff;border:0;border-bottom:1px solid #dfe6e1;border-radius:0;margin:0;padding:0;backdrop-filter:none;-webkit-backdrop-filter:none}
+    .sh-in{max-width:1080px;margin:0 auto;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between}
+    .sh-logo{display:inline-block;padding:9px 0;line-height:26px;font-size:20px;font-weight:800;letter-spacing:-.3px;color:#0f172a;text-decoration:none}.sh-logo span{color:#1a56db}
+    .sh-nav{display:flex;flex-wrap:wrap;gap:6px}.sh-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 13px;border:1px solid #d5dfd8;border-radius:9px;background:#fff;color:#1f2d3d;font-size:15px;font-weight:600;text-decoration:none}
+    .sh-nav a[aria-current="page"]{border-color:#1f5f45;background:#eaf4ee;color:#174a36}
+    footer.sf{display:block;max-width:none;background:#fff;border:0;border-top:1px solid #dfe6e1;border-radius:0;margin:32px 0 0;padding:20px 16px 34px;font-size:14px;color:#475467;text-align:left}
+    .sf-in{max-width:1080px;margin:0 auto}.sf-links{display:flex;flex-wrap:wrap;gap:0 18px;margin:0 0 8px}.sf-links a{display:inline-flex;align-items:center;min-height:44px;padding:0;color:#1f2d3d;font-size:15px;font-weight:600;text-decoration:none}
+    .sf p{margin:4px 0;font-size:14px;line-height:1.7;color:#475467}.sf p a{color:#1f2d3d}.sf .nw{white-space:nowrap}
+    .pmeta{display:flex;flex-wrap:wrap;gap:4px 16px;margin:14px 0 0;padding:10px 13px;border:1px solid #dfe6e1;border-radius:10px;background:#f8faf9;font-size:14px;line-height:1.65;color:#3b4858}.pmeta b{color:#1f2d3d}.pmeta a{color:#1a56db;font-weight:700}
+    .src-list{margin:0;padding-left:20px}.src-list li{margin:9px 0;font-size:15px;line-height:1.65;color:#334155}.src-list a{color:#1a56db;font-weight:700;overflow-wrap:break-word}.src-meta{display:block;font-size:14px;color:#475467}
+    .scope{margin:14px 0 0;border-left:4px solid #8a99ab;background:#f8fafc;border-radius:0 10px 10px 0;padding:12px 15px;font-size:15px;line-height:1.7;color:#334155}.scope p{margin:0 0 8px}.scope p:last-child{margin:0}
+    @media(max-width:640px){.sh-nav{width:100%;display:grid;grid-template-columns:repeat(4,1fr)}.sh-nav a{padding:0 4px;font-size:14px}}
+    @media print{header.sh,footer.sf{display:none}}
+  </style><!-- site-chrome-css:end -->
+  <!-- jsonld:start --><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://jnewmedia.com/#organization","name":"제이 미디어","legalName":"제이 미디어(Media)","alternateName":["J MEDIA","제이미디어","제이 미디어(Media)"],"url":"https://jnewmedia.com/","logo":{"@type":"ImageObject","url":"https://jnewmedia.com/assets/mark.svg"},"address":{"@type":"PostalAddress","streetAddress":"의료원로 80-8, 301호(지곡동)","addressLocality":"군산시","addressRegion":"전북특별자치도","addressCountry":"KR"},"telephone":"+82-10-2846-2011","email":"consultingjinjeong@gmail.com","identifier":{"@type":"PropertyValue","name":"사업자등록번호","value":"456-33-01705"},"sameAs":["https://www.instagram.com/boribaydotcom/","https://blog.naver.com/plannerset","https://jnewmedia.com/","https://boribay.com/"]},{"@type":"WebSite","@id":"https://policyfundpedia.com/#website","url":"https://policyfundpedia.com/","name":"농업 정책자금 백과","alternateName":"policyfundpedia.com","inLanguage":"ko-KR","publisher":{"@id":"https://jnewmedia.com/#organization"}},{"@type":"CollectionPage","@id":"https://policyfundpedia.com/agri/#webpage","url":"https://policyfundpedia.com/agri/","name":"농업 정책자금 종류·대상·신청 시기 비교 (2026)","description":"후계농업경영인 육성자금, 청년농 영농정착지원, 귀농 창업·주택자금, 농업기계 구입자금의 대상·한도·금리·상환·신청 시기를 2026년 공식 지침으로 비교하고, 공고 원문 확인 경로와 신청 전 점검표·기록표를 제공합니다.","inLanguage":"ko-KR","datePublished":"2026-09-27","dateModified":"2026-10-26","isPartOf":{"@id":"https://policyfundpedia.com/#website"},"publisher":{"@id":"https://jnewmedia.com/#organization"},"author":{"@id":"https://jnewmedia.com/#organization"},"mainEntity":{"@type":"ItemList","name":"2026 농업 정책자금 해설","itemListElement":[{"@type":"ListItem","position":1,"name":"2026 후계농업경영인 육성자금 — 자격·한도·선발 일정","url":"https://policyfundpedia.com/2026-%ED%9B%84%EA%B3%84%EB%86%8D%EC%97%85%EA%B2%BD%EC%98%81%EC%9D%B8-%EC%9C%A1%EC%84%B1%EC%9E%90%EA%B8%88/"},{"@type":"ListItem","position":2,"name":"2026 청년농업인 영농정착지원사업 — 월 최대 110만원 조건과 의무","url":"https://policyfundpedia.com/2026-%EC%B2%AD%EB%85%84%EB%86%8D%EC%97%85%EC%9D%B8-%EC%98%81%EB%86%8D%EC%A0%95%EC%B0%A9%EC%A7%80%EC%9B%90%EC%82%AC%EC%97%85/"},{"@type":"ListItem","position":3,"name":"2026 농업기계 구입자금 융자 — 새 기계·중고 기계 조건","url":"https://policyfundpedia.com/2026-%EB%86%8D%EC%97%85%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88-%EC%9C%B5%EC%9E%90/"},{"@type":"ListItem","position":4,"name":"2026 귀농 농업창업·주택구입 지원 — 창업 3억·주택 7,500만원 융자","url":"https://policyfundpedia.com/2026-%EA%B7%80%EB%86%8D-%EB%86%8D%EC%97%85%EC%B0%BD%EC%97%85-%EC%A3%BC%ED%83%9D%EA%B5%AC%EC%9E%85-%EC%A7%80%EC%9B%90/"},{"@type":"ListItem","position":5,"name":"2026 후계농업경영인 육성자금 — 농기계 구입 전 확인","url":"https://policyfundpedia.com/2026-%ED%9B%84%EA%B3%84%EB%86%8D-%EB%86%8D%EA%B8%B0%EA%B3%84-%EA%B5%AC%EC%9E%85%EC%9E%90%EA%B8%88/"}]}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"홈","item":"https://policyfundpedia.com/"},{"@type":"ListItem","position":2,"name":"농업 정책자금 한눈에","item":"https://policyfundpedia.com/agri/"}]}]}</script><!-- jsonld:end -->
 </head>
 <body>
-<header class="top"><div class="top-in"><a class="logo" href="/">농업 정책자금 <span>백과</span></a><nav aria-label="주요 메뉴"><a href="#compare">자금 비교</a><a href="#official">공고 원문 확인</a><a href="#worksheet">기록표</a></nav></div></header>
+<!-- site-header:start --><header class="sh"><div class="sh-in"><a class="sh-logo" href="/">농업 정책자금 <span>백과</span></a><nav class="sh-nav" aria-label="주요 메뉴"><a href="/agri/" aria-current="page">자금 비교</a><a href="/guides/used-farm-machinery-loan-limit-2026/">한도 계산</a><a href="/about/">소개</a><a href="/contact/">문의</a></nav></div></header><!-- site-header:end -->
 <main>
   <nav class="crumb" aria-label="위치"><a href="/">홈</a> / 농업 정책자금 한눈에</nav>
+  <nav class="jump" aria-label="이 페이지 바로가기"><a href="#compare">자금 비교표</a><a href="#official">공고 원문 확인</a><a href="#worksheet">기록표</a><a href="#sources">출처</a></nav>
   <header class="hero">
     <p class="tag">2026년 농림축산식품부 지침 기준 · 확인일 2026-10-26</p>
     <h1>농업 정책자금, 내 상황에 맞는 자금부터 찾으세요</h1>
     <p class="lead">농업 정책자금은 나이·영농경력·이주 여부·돈을 쓸 곳에 따라 사업이 나뉩니다. 아래에서 맞는 자금을 고르고, 대상·한도·금리·신청 시기를 비교한 뒤, 공고 원문과 기관 답변을 기록표에 남기세요.</p>
     <p class="notice">이 페이지는 자격이나 대출 승인을 판정하지 않습니다. 선정은 시군·시도 평가로, 대출 금액은 농협·농신보 심사로 정해집니다. 지침은 해마다 바뀌므로 최종 판단은 그 해 공식 지침과 시군 공고로 하세요.</p>
+    <!-- page-meta:start --><div class="pmeta" role="note"><span><b>작성·관리</b> <a href="/editorial-policy/">제이 미디어 편집팀 (운영 책임: 대표 이정우)</a></span><span><b>게시일</b> 2026-09-27</span><span><b>최종 확인일</b> 2026-10-26</span><span><b>출처</b> <a href="#sources">7건</a></span></div><!-- page-meta:end -->
   </header>
 
   <section class="card" aria-labelledby="pick-title">
@@ -195,17 +211,31 @@
     <a href="/editorial-policy/">공고 원문을 검토하고 문서를 고치는 기준</a>
   </section>
 
-  <section class="card" aria-labelledby="src-title">
-    <h2 id="src-title">공식 근거</h2>
-    <ul class="src">
-      <li><a href="https://www.mafra.go.kr/bbs/home/791/593059/download.do" rel="noopener">농림축산식품부 「2026년 후계농업경영인 육성사업 시행지침」</a>(2025년 12월) · <a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000598&amp;bizYr=2026" rel="noopener">농업e지 후계농업경영인 선발 및 지원사업</a></li>
-      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000132&amp;bizYr=2026" rel="noopener">농업e지 청년농업인영농정착지원금</a>(2차 시행지침 2026년 5월) · <a href="https://www.mafra.go.kr/bbs/home/792/575810/artclView.do" rel="noopener">농식품부 보도자료 2025-11-04</a></li>
-      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000250&amp;bizYr=2026" rel="noopener">농업e지 귀농 농업창업 및 주택구입지원사업</a>(2026년 시행지침)</li>
-      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000687&amp;bizYr=2026" rel="noopener">농업e지 농업기계 구입지원</a>(사업시행지침 2025-12-26 배포) · <a href="https://www.mafra.go.kr/bbs/home/791/579525/artclView.do" rel="noopener">농업정책자금 변동금리 알림('26.11월)</a></li>
-    </ul>
-    <p class="meta">모든 원문 확인일: 2026-10-26 · 정리 책임: <a href="/about/">농업 정책자금 백과 운영자</a>(J MEDIA) · 신청 대행, 대출 중개, 승인 보장을 하지 않습니다. 오류는 <a href="/corrections/">정정 정책</a>에 따라 고칩니다.</p>
+  <section class="card" id="sources" aria-labelledby="src-title">
+    <h2 id="src-title">출처</h2>
+    <!-- sources:start -->
+    <ol class="src-list">
+      <li><a href="https://www.mafra.go.kr/bbs/home/791/593059/download.do" target="_blank" rel="noopener">「2026년 후계농업경영인 육성사업 시행지침」 PDF</a><span class="src-meta">농림축산식품부 · 확인일 2026-10-26 · 2025년 12월 발행</span></li>
+      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000598&amp;bizYr=2026" target="_blank" rel="noopener">농업e지 「후계농업경영인 선발 및 지원사업」(2026) 사업 상세</a><span class="src-meta">농림축산식품부(농업e지) · 확인일 2026-10-26 · 신청기간·지원자격</span></li>
+      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000132&amp;bizYr=2026" target="_blank" rel="noopener">농업e지 「청년농업인영농정착지원금」(2026) 사업 상세</a><span class="src-meta">농림축산식품부(농업e지) · 확인일 2026-10-26 · 2차 시행지침(2026년 5월)</span></li>
+      <li><a href="https://www.mafra.go.kr/bbs/home/792/575810/artclView.do" target="_blank" rel="noopener">보도자료 「2026년 청년농업인 영농정착지원사업 모집 개시」</a><span class="src-meta">농림축산식품부 · 확인일 2026-10-26 · 2025-11-04 게시, 콜센터 1670-0255</span></li>
+      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000250&amp;bizYr=2026" target="_blank" rel="noopener">농업e지 「귀농 농업창업 및 주택구입지원사업」(2026) 사업 상세</a><span class="src-meta">농림축산식품부(농업e지) · 확인일 2026-10-26 · 2026년 시행지침 첨부</span></li>
+      <li><a href="https://www.nongupez.go.kr/nsm/bizAply/wholeBiz/wholeBizDtls?afbzCd=AB000687&amp;bizYr=2026" target="_blank" rel="noopener">농업e지 「농업기계 구입지원」(2026) 사업 상세</a><span class="src-meta">농림축산식품부(농업e지) · 확인일 2026-10-26 · 사업시행지침 2025-12-26 배포, 농협은행 문의 02-2080-7559</span></li>
+      <li><a href="https://www.mafra.go.kr/bbs/home/791/579525/artclView.do" target="_blank" rel="noopener">「농업정책자금 변동금리 알림('26.11월)」</a><span class="src-meta">농림축산식품부 · 확인일 2026-10-26 · 2026-10-21 게시</span></li>
+    </ol>
+    <!-- sources:end -->
+    <div class="scope">
+      <p><b>범위와 한계:</b> 이 페이지는 네 가지 주요 농업 정책자금의 2026년 지침 조건을 비교한 요약입니다. 시군 자체 지원사업, 축산·시설 현대화 등 다른 농림사업, 개인별 자격·대출 가능액 판정은 다루지 않습니다. 선정은 시군·시도 평가로, 대출은 농협·농신보 심사로 정해집니다.</p>
+      <p><b>다음 확인:</b> 2027년 지침은 2026년 12월에 나올 예정입니다. 공개되면 비교표와 일정을 새 지침과 다시 대조해 고치고 <a href="/corrections/">수정 기록</a>에 남깁니다.</p>
+    </div>
   </section>
 </main>
-<footer><a href="/">홈</a> · <a href="/about/">사이트 소개</a> · <a href="/editorial-policy/">편집 원칙</a> · <a href="/privacy/">개인정보 처리 안내</a> · <a href="/contact/">문의</a></footer>
+<!-- site-footer:start --><footer class="sf"><div class="sf-in">
+    <nav class="sf-links" aria-label="사이트 정보"><a href="/about/">소개</a><a href="/contact/">문의</a><a href="/editorial-policy/">편집 원칙</a><a href="/corrections/">정정·수정 기록</a><a href="/privacy/">개인정보처리방침</a><a href="/terms/">이용약관·면책</a></nav>
+    <p><span class="nw">운영: 제이 미디어</span> · <span class="nw">대표 이정우</span> · <span class="nw">사업자등록번호 456-33-01705</span> · <span class="nw">고객센터 <a href="tel:010-2846-2011">010-2846-2011</a></span></p>
+    <p>전북특별자치도 군산시 의료원로 80-8, 301호(지곡동) · <a href="mailto:consultingjinjeong@gmail.com">consultingjinjeong@gmail.com</a></p>
+    <p>농업 정책자금 백과는 정부기관이 아닌 민간 정보 사이트입니다. 지원 대상 선정과 대출 승인은 시군·농협 등 담당 기관이 결정하며, 이 사이트는 신청 대행·대출 중개·승인 보장을 하지 않습니다.</p>
+    <p>© 2026 제이 미디어 · 농업 정책자금 백과</p>
+  </div></footer><!-- site-footer:end -->
 </body>
 </html>
