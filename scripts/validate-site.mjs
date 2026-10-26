@@ -124,7 +124,7 @@ for (const page of publicPages) {
 
 const notFound = await read("404.html");
 assert(notFound.includes('name="robots" content="noindex, nofollow"'), "404 페이지는 noindex여야 합니다.");
-assert(notFound.includes("adsbygoogle.js?client=ca-pub-5877883031077615"), "404 페이지에도 AdSense 로더가 있어야 합니다.");
+assert(!notFound.includes("adsbygoogle"), "404 페이지에는 광고 로더를 두지 않습니다.");
 assert(!notFound.includes('rel="canonical"'), "404 페이지에는 canonical을 두지 않습니다.");
 
 const sitemap = await read("sitemap.xml");
