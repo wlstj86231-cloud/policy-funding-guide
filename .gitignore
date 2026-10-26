@@ -7,3 +7,10 @@ android/app/build/
 android/build/
 android/.idea/
 *.iml
+
+# 내부 작업 노트(로컬 전용, 공개 사이트에 배포하지 않음)
+필수_행동강령_cli.txt
+계획서_아키텍쳐.txt
+맥락노트.txt
+체크리스트_업데이트로그.txt
+*.env
