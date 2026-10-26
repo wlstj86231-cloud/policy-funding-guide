@@ -80,7 +80,7 @@ const boribayUtm = "utm_source=policyfundpedia.com&amp;utm_medium=referral&amp;u
 const boribayMachinery = `https://boribay.com/?category=MACHINERY&amp;${boribayUtm}`;
 const boribayTractor = `https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}`;
 const boribayRules = {
-  "about/index.html": ["https://boribay.com/"],
+  "about/index.html": [`https://boribay.com/?${boribayUtm}`],
   "guides/farmer-machinery-loan-execution-2026/index.html": [`https://boribay.com/guides/farm-machinery-transport-checklist?${boribayUtm}`],
   "guides/used-farm-machinery-loan-limit-2026/index.html": [boribayMachinery, boribayTractor],
   "2026-후계농-농기계-구입자금/index.html": [boribayTractor],

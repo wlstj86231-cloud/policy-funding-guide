@@ -438,6 +438,7 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
 .home-faq{background:var(--white);border-top:1px solid var(--line);padding:44px 24px 8px}.home-faq-in{max-width:1080px;margin:0 auto}.home-faq h2{font-size:22px;margin-bottom:14px}.home-faq details{border-bottom:1px solid var(--line);padding:14px 0}.home-faq summary{font-size:17px;font-weight:700;cursor:pointer}.home-faq details p{font-size:16px;color:var(--ink2);line-height:1.8;margin-top:8px}.home-faq .faq-more{display:inline-flex;align-items:center;min-height:44px;margin-top:14px;font-size:16px;font-weight:700;color:var(--blue)}
 @media(max-width:600px){.home-faq{padding:32px 16px 4px}}
 .card-heart{min-width:44px;min-height:44px;font-size:20px;display:flex;align-items:center;justify-content:center;right:8px;bottom:6px}
+.legacy-list{list-style:none;margin:0;padding:0}.legacy-list li{border-bottom:1px solid var(--line)}.legacy-list a{display:flex;align-items:center;min-height:44px;font-size:15px;color:var(--ink2);text-decoration:none}.legacy-list a:hover{color:var(--blue)}
 </style>
   <meta name="google-adsense-account" content="ca-pub-5877883031077615">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5877883031077615"
@@ -459,7 +460,6 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <a href="/agri/">농업 자금 한눈에</a>
       <a href="/?cat=%EC%A0%84%EC%B2%B4" onclick="return filterCat(event,'전체')" id="nav-all">기존 자료 전체</a>
       <a href="/?cat=%EC%86%8C%EC%83%81%EA%B3%B5%EC%9D%B8" onclick="return filterCat(event,'소상공인')" id="nav-소상공인">소상공인</a>
-      <a href="/?cat=%EC%B0%BD%EC%97%85" onclick="return filterCat(event,'창업')" id="nav-창업">창업</a>
       <a href="/?cat=%EA%B3%A0%EC%9A%A9" onclick="return filterCat(event,'고용')" id="nav-고용">고용</a>
       <a href="/?cat=%EB%86%8D%EC%97%85%EC%9D%B8" onclick="return filterCat(event,'농업인')" id="nav-농업인">농업인</a>
       <a href="/" onclick="showSaved();return false">♥ 찜한 정보</a>
@@ -482,13 +482,10 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
       <a class="ctab" href="/agri/" style="color:#176047;font-weight:700">농업 자금 한눈에</a>
       <span class="ctab" id="tab-전체" onclick="filterCat(null,'전체')">기존 자료 전체 <span id="total-cnt" style="font-size:12px;color:var(--ink4)"></span></span>
       <span class="ctab" id="tab-소상공인" onclick="filterCat(null,'소상공인')">소상공인</span>
-      <span class="ctab" id="tab-창업" onclick="filterCat(null,'창업')">창업 · 스타트업</span>
-      <span class="ctab" id="tab-중소기업" onclick="filterCat(null,'중소기업')">중소기업</span>
       <span class="ctab" id="tab-고용" onclick="filterCat(null,'고용')">고용 · 일자리</span>
       <span class="ctab" id="tab-비사업자" onclick="filterCat(null,'비사업자')">비사업자</span>
       <span class="ctab" id="tab-서민금융" onclick="filterCat(null,'서민금융')">서민금융</span>
       <span class="ctab on" id="tab-농업인" onclick="filterCat(null,'농업인')">농업인</span>
-      <span class="ctab" id="tab-보증" onclick="filterCat(null,'보증')">보증 제도</span>
       <span class="ctab" id="tab-저장" onclick="showSaved()" style="color:var(--ink3)">♥ 저장한 정보</span>
       <span class="ctab" id="tab-live" onclick="showLive()" style="color:var(--blue);font-weight:600">📢 최신 공고</span>
       <a class="ctab" href="/editorial-policy/" style="color:#3d6842;font-weight:600">✓ 출처·검수 기준</a>
@@ -599,48 +596,38 @@ footer{background:var(--white);border-top:1px solid var(--line);padding:28px 24p
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px">
 
       <div>
-        <h2 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">소상공인 정책자금</h2>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.8">
-          소상공인 정책자금은 연도별 통합 공고 안에서도 자금 목적과 접수 방식이 나뉩니다.
-          현재 접수 여부, 업종 제외 기준, 직접·대리대출 구분과 세부 금리는 반드시 해당 공고에서 확인해야 합니다.
-        </p>
+        <h3 style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">소상공인</h3>
+        <ul class="legacy-list">
+          <li><a href="/%EC%86%8C%EC%83%81%EA%B3%B5%EC%9D%B8-%ED%8A%B9%EB%A1%80-%ED%96%87%EC%82%B4%EB%A1%A0%EC%B9%B4%EB%93%9C/">소상공인 특례 햇살론카드</a></li>
+          <li><a href="/%ED%96%87%EC%82%B4%EB%A1%A0119/">햇살론119</a></li>
+          <li><a href="/2026-%EC%86%8C%EC%83%81%EA%B3%B5%EC%9D%B8-%EC%A0%95%EC%B1%85%EC%9E%90%EA%B8%88/">2026 소상공인 정책자금</a></li>
+        </ul>
       </div>
 
       <div>
-        <h2 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">창업지원금 종류</h2>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.8">
-          창업지원사업은 예비창업자, 초기기업, 도약기기업 등 업력 구간과 사업 유형에 따라 대상이 달라집니다.
-          같은 사업명도 일반형·특화형의 한도와 요건이 다르므로 K-Startup의 개별 모집공고를 기준으로 확인합니다.
-        </p>
+        <h3 style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">서민금융·비사업자</h3>
+        <ul class="legacy-list">
+          <li><a href="/%ED%96%87%EC%82%B4%EB%A1%A0%EC%9D%BC%EB%B0%98/">햇살론일반</a></li>
+          <li><a href="/%ED%96%87%EC%82%B4%EB%A1%A0%ED%8A%B9%EB%A1%80/">햇살론특례</a></li>
+          <li><a href="/%ED%96%87%EC%82%B4%EB%A1%A0%EC%9C%A0%EC%8A%A4/">햇살론유스</a></li>
+          <li><a href="/%EB%B6%88%EB%B2%95%EC%82%AC%EA%B8%88%EC%9C%B5%EC%98%88%EB%B0%A9%EB%8C%80%EC%B6%9C/">불법사금융예방대출</a></li>
+          <li><a href="/%EA%B8%88%EC%9C%B5%EC%B7%A8%EC%95%BD%EA%B3%84%EC%B8%B5-%EC%83%9D%EA%B3%84%EC%9E%90%EA%B8%88/">금융취약계층 생계자금</a></li>
+          <li><a href="/%EC%B2%AD%EB%85%84-%EB%AF%B8%EB%9E%98%EC%9D%B4%EC%9D%8C-%EB%8C%80%EC%B6%9C/">청년 미래이음 대출</a></li>
+          <li><a href="/%EC%8B%A0%EC%9A%A9%ED%9A%8C%EB%B3%B5%EC%9C%84%EC%9B%90%ED%9A%8C-%EC%86%8C%EC%95%A1%EA%B8%88%EC%9C%B5-%EB%B3%B4%EC%A6%9D/">신용회복위원회 소액금융 보증</a></li>
+          <li><a href="/%ED%96%87%EC%82%B4%EB%A1%A0%EC%B9%B4%EB%93%9C/">햇살론카드</a></li>
+        </ul>
       </div>
 
       <div>
-        <h2 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">중소기업 정책자금</h2>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.8">
-          중소기업 정책자금은 혁신창업, 신시장 진출, 신성장 기반, 재도약 등 목적별로 접수 조건과 심사 방식이 다릅니다.
-          기업 규모·업력·융자제한 업종·기존 대출잔액을 확인한 뒤 중진공의 최신 공고를 살펴보세요.
-        </p>
+        <h3 style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">고용</h3>
+        <ul class="legacy-list">
+          <li><a href="/2026-%EC%B2%AD%EB%85%84%EC%9D%BC%EC%9E%90%EB%A6%AC%EB%8F%84%EC%95%BD%EC%9E%A5%EB%A0%A4%EA%B8%88/">2026 청년일자리도약장려금</a></li>
+        </ul>
       </div>
 
       <div>
-        <h2 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">고용지원금 신청방법</h2>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.8">
-          고용지원사업은 채용 전에 참여 신청이 필요한 제도와 사후 신청 제도가 구분됩니다.
-          기업 규모, 근로자 요건, 임금, 고용보험 가입과 고용 유지기간을 고용24의 개별 제도 안내에서 확인해야 합니다.
-        </p>
-      </div>
-
-      <div>
-        <h2 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">비사업자 서민금융</h2>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.8">
-          2026년에는 기존 일부 햇살론 상품이 햇살론일반·햇살론특례로 통합되는 등 상품 체계가 바뀌었습니다.
-          소득·신용·연령·재직 요건과 보증·금융회사 심사를 모두 거치므로 최신 상품 안내를 기준으로 비교하세요.
-        </p>
-      </div>
-
-      <div>
-        <h2 style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">정책자금 신청 절차</h2>
-        <p style="font-size:13px;color:var(--ink3);line-height:1.8">
+        <h3 style="font-size:16px;font-weight:700;color:var(--ink);margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--blue)">정책자금 신청 절차</h3>
+        <p style="font-size:15px;color:var(--ink3);line-height:1.8">
           먼저 공식 공고의 기준일과 신청 기간을 확인하고, 대상·제외 요건을 대조한 뒤 요구된 증빙만 준비합니다.
           선정·대출 여부는 담당 기관의 심사로 결정되며, 정보 사이트나 민간 업체가 승인을 보장할 수 없습니다.
         </p>
@@ -936,7 +923,7 @@ function toggleSave(id, e) {
    RENDER
 ══════════════════════════════════════ */
 function renderSideCats() {
-  const all = [{name:'전체',cnt:FUNDS.length}].concat(CATS.map(c=>({name:c,cnt:FUNDS.filter(f=>f.cat===c).length})));
+  const all = [{name:'전체',cnt:FUNDS.length}].concat(CATS.map(c=>({name:c,cnt:FUNDS.filter(f=>f.cat===c).length})).filter(c=>c.cnt>0));
   document.getElementById('sb-cats').innerHTML = all.map(c=>
     `<button type="button" class="sb-cat${activeCat===c.name?' on':''}" data-cat="${escapeSoftHtml(c.name)}">
       <span class="sb-cat-name">${c.name}</span>
