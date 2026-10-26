@@ -50,6 +50,10 @@ for (const fund of funds) {
     ...(fund.faq || []).flatMap((item) => [item.q, item.a]), fund.editorNote
   ].join(" ");
   assert(evidence.length >= 650, `${fund.title}: 고유 설명이 650자 미만입니다.`);
+  if (fund.cat === "농업인") {
+    assert(Array.isArray(fund.timeline) && fund.timeline.length >= 3, `${fund.title}: 농업 자금 문서는 일정 3개 이상이 필요합니다.`);
+    assert(Array.isArray(fund.rejections) && fund.rejections.length >= 2, `${fund.title}: 농업 자금 문서는 지침상 제외·거절 사유 2개 이상이 필요합니다.`);
+  }
 }
 
 const indexHtml = await read("index.html");
@@ -66,9 +70,22 @@ const publicPages = [
   { relative: "index.html", canonical: `${siteUrl}/` },
   { relative: "agri/index.html", canonical: `${siteUrl}/agri/` },
   ...trustSlugs.map((slug) => ({ relative: `${slug}/index.html`, canonical: `${siteUrl}/${slug}/` })),
-  { relative: "guides/farmer-machinery-loan-execution-2026/index.html", canonical: `${siteUrl}/guides/farmer-machinery-loan-execution-2026/`, guide: true },
+  { relative: "guides/farmer-machinery-loan-execution-2026/index.html", canonical: `${siteUrl}/guides/farmer-machinery-loan-execution-2026/` },
+  { relative: "guides/used-farm-machinery-loan-limit-2026/index.html", canonical: `${siteUrl}/guides/used-farm-machinery-loan-limit-2026/` },
   ...funds.map((fund) => ({ relative: `${fund.slug}/index.html`, canonical: `${siteUrl}/${encodeURIComponent(fund.slug)}/`, fund }))
 ];
+
+// 보리장터 연결은 운영 관계 고지와 농기계 구입·운송 맥락의 검수된 주소만 허용한다.
+const boribayUtm = "utm_source=policyfundpedia.com&amp;utm_medium=referral&amp;utm_campaign=support";
+const boribayMachinery = `https://boribay.com/?category=MACHINERY&amp;${boribayUtm}`;
+const boribayTractor = `https://boribay.com/guides/used-tractor-buying-checklist?${boribayUtm}`;
+const boribayRules = {
+  "about/index.html": ["https://boribay.com/"],
+  "guides/farmer-machinery-loan-execution-2026/index.html": [`https://boribay.com/guides/farm-machinery-transport-checklist?${boribayUtm}`],
+  "guides/used-farm-machinery-loan-limit-2026/index.html": [boribayMachinery, boribayTractor],
+  "2026-후계농-농기계-구입자금/index.html": [boribayTractor],
+  "2026-농업기계-구입자금-융자/index.html": [boribayMachinery, boribayTractor]
+};
 
 const availablePaths = new Set(["/"]);
 for (const page of publicPages.slice(1)) availablePaths.add(new URL(page.canonical).pathname);
@@ -86,20 +103,12 @@ for (const page of publicPages) {
   for (const forbidden of ["https://goatool", "emailjs"]) {
     assert(!html.toLowerCase().includes(forbidden), `${page.relative}: 심사 전 제거해야 할 외부 유도·상담 코드가 있습니다: ${forbidden}`);
   }
-  const boribayLinks = [...html.matchAll(/href="(https:\/\/boribay\.com[^\"]*)"/g)];
-  if (page.guide) {
-    const expected = "https://boribay.com/guides/farm-machinery-transport-checklist";
-    assert(boribayLinks.length === 1 && boribayLinks[0][1] === expected,
-      `${page.relative}: 운송 준비 자료 링크 한 개만 허용합니다.`);
-  } else if (page.fund?.slug === "2026-후계농-농기계-구입자금") {
-    const expected = "https://boribay.com/guides/used-tractor-buying-checklist";
-    assert(boribayLinks.length === 1 && boribayLinks[0][1] === expected,
-      `${page.relative}: 검수된 거래 점검 자료 링크 한 개만 허용합니다.`);
-  } else if (page.relative === "about/index.html") {
-    assert(boribayLinks.length === 1 && boribayLinks[0][1] === "https://boribay.com/" && html.includes("보리장터(boribay.com)</a> 운영사"),
-      `${page.relative}: 운영 관계를 밝힌 보리장터 홈 링크 한 개만 허용합니다.`);
-  } else {
-    assert(boribayLinks.length === 0, `${page.relative}: 보리장터 링크는 검수된 농기계 문서에만 허용합니다.`);
+  const boribayLinks = [...html.matchAll(/href="(https:\/\/boribay\.com[^\"]*)"/g)].map((match) => match[1]).sort();
+  const expectedBoribay = (boribayRules[page.relative] || []).slice().sort();
+  assert(JSON.stringify(boribayLinks) === JSON.stringify(expectedBoribay),
+    `${page.relative}: 보리장터 링크는 농기계 구입·운송 맥락의 검수된 주소만 허용합니다(발견 ${boribayLinks.length}개).`);
+  if (page.relative === "about/index.html") {
+    assert(html.includes("보리장터(boribay.com)</a> 운영사"), `${page.relative}: 운영 관계 표시 누락`);
   }
 
   for (const match of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
@@ -116,7 +125,7 @@ for (const page of publicPages) {
   if (page.fund) {
     const escapedSourceUrl = page.fund.sourceUrl.replaceAll("&", "&amp;");
     assert(html.includes(`href="${escapedSourceUrl}"`), `${page.relative}: 직접 공식 출처 링크 누락`);
-    assert(html.includes(`검수일 ${page.fund.reviewedAt}`), `${page.relative}: 검수일 표시 누락`);
+    assert(html.includes(`확인일 ${page.fund.reviewedAt}`), `${page.relative}: 확인일 표시 누락`);
     assert(html.includes('data-generated="policyfundpedia-static-detail"'), `${page.relative}: 생성 페이지 마커 누락`);
     assert(html.length >= 15000, `${page.relative}: 상세 페이지 본문이 비정상적으로 짧습니다.`);
   }
